@@ -21,7 +21,6 @@ dependencyResolutionManagement {
 
 rootProject.name = "lighton"
 include(":app")
-include(":domain")
 include(":data")
 include(":core")
 include(":feature-auth")

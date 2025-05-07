@@ -42,7 +42,6 @@ android {
 
 dependencies {
     implementation(project(":core"))
-    implementation(project(":domain"))
 
     // Android/Compose 의존성
     implementation(libs.androidx.core.ktx)

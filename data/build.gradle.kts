@@ -33,7 +33,6 @@ android {
 }
 
 dependencies {
-    implementation(project(":domain"))
 
     // Android Core
     implementation(libs.androidx.core.ktx)
