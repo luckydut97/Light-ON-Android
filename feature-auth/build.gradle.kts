@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.kotlin.android)
-    id("com.android.library")
+    alias(libs.plugins.android.library)
+    alias(libs.plugins.compose.compiler)
 }
 
 android {
@@ -35,8 +36,9 @@ android {
         compose = true
     }
 
+    // Compose 컴파일러 옵션 추가
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.6" // Compose 컴파일러 버전 확인 필요
+        kotlinCompilerExtensionVersion = "2.0.0" // Kotlin 2.0 호환 버전
     }
 }
 
@@ -51,8 +53,9 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
+    implementation(libs.androidx.lifecycle.viewmodel.android)
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.7")
 
-    // 테스트 의존성
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.kotlin.android)
-    id("com.android.library")
+    alias(libs.plugins.android.library)
+    alias(libs.plugins.compose.compiler)
 }
 
 android {
@@ -36,7 +37,7 @@ android {
     }
 
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.6" // Compose 컴파일러 버전 확인 필요
+        kotlinCompilerExtensionVersion = "2.0.0"
     }
 }
 
