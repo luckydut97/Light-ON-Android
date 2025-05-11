@@ -37,15 +37,13 @@ android {
     }
 
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.6" // Compose 컴파일러 버전 확인 필요
+        kotlinCompilerExtensionVersion = "2.1.10"
     }
 }
 
 dependencies {
-    // Android Core
     implementation(libs.androidx.core.ktx)
 
-    // Compose
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.ui)
     implementation(libs.androidx.ui.graphics)

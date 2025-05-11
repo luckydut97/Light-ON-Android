@@ -20,12 +20,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.luckydut97.lighton.core.ui.theme.LightonTheme  // 추가: 테마 import
 import com.luckydut97.lighton.feature.auth.R
 import com.luckydut97.lighton.feature_auth.splash.viewmodel.SplashViewModel
 
@@ -36,13 +35,13 @@ fun SplashScreen(
 ) {
     val isLoading by viewModel.isLoading.collectAsState()
     val navigateToLogin by viewModel.navigateToLogin.collectAsState()
-    
+
     LaunchedEffect(navigateToLogin) {
         if (navigateToLogin) {
             onNavigateToLogin()
         }
     }
-    
+
     SplashContent()
 }
 
@@ -62,20 +61,19 @@ fun SplashContent() {
             // 로고 이미지
             Image(
                 painter = painterResource(id = R.drawable.ic_typo_white),
-                contentDescription = "Light On Logo",
-                modifier = Modifier.size(180.dp)
+                contentDescription = "LightOn Logo",
+                modifier = Modifier.size(247.dp)
             )
-            
-            Spacer(modifier = Modifier.height(24.dp))
-            
-            // 텍스트
+
+            Spacer(modifier = Modifier.height(1.dp))
+
+            // 텍스트 - MaterialTheme.typography 사용
             Text(
                 text = "전국의 모든 공연 정보",
                 color = Color.White,
-                fontSize = 18.sp,
-                fontWeight = FontWeight.Medium,
+                style = MaterialTheme.typography.titleMedium, // Pretendard 폰트 적용
                 textAlign = TextAlign.Center,
-                modifier = Modifier.padding(horizontal = 16.dp)
+                modifier = Modifier.padding(horizontal = 50.dp)
             )
         }
     }
@@ -84,5 +82,7 @@ fun SplashContent() {
 @Preview(showBackground = true)
 @Composable
 fun SplashScreenPreview() {
-    SplashContent()
+    LightonTheme {  // 추가: 테마 적용
+        SplashContent()
+    }
 }

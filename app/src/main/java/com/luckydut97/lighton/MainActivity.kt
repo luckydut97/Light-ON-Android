@@ -16,7 +16,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.luckydut97.lighton.feature_auth.splash.ui.SplashScreen
-import com.luckydut97.lighton.ui.theme.LightonTheme
+import com.luckydut97.lighton.core.ui.theme.LightonTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -26,7 +26,7 @@ class MainActivity : ComponentActivity() {
             LightonTheme {
                 // 앱 상태 관리
                 var currentScreen by remember { mutableStateOf(Screen.SPLASH) }
-                
+
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     when (currentScreen) {
                         Screen.SPLASH -> {
