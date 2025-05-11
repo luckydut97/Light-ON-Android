@@ -16,6 +16,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.luckydut97.lighton.feature_auth.splash.ui.SplashScreen
+import com.luckydut97.lighton.feature_auth.login.ui.LoginScreen
 import com.luckydut97.lighton.core.ui.theme.LightonTheme
 
 class MainActivity : ComponentActivity() {
@@ -32,13 +33,57 @@ class MainActivity : ComponentActivity() {
                         Screen.SPLASH -> {
                             SplashScreen(
                                 onNavigateToLogin = {
+                                    currentScreen = Screen.LOGIN
+                                }
+                            )
+                        }
+                        Screen.LOGIN -> {
+                            LoginScreen(
+                                onBackClick = {
+                                    // 뒤로가기 시 스플래시 또는 앱 종료
+                                    finish()
+                                },
+                                onKakaoLoginClick = {
+                                    // 카카오 로그인 처리 후
                                     currentScreen = Screen.HOME
+                                },
+                                onNaverLoginClick = {
+                                    // 네이버 로그인 처리 후
+                                    currentScreen = Screen.HOME
+                                },
+                                onEmailLoginClick = {
+                                    // 이메일 로그인 페이지로 이동
+                                    // 향후 이메일 로그인 화면 구현 시 연결
+                                    currentScreen = Screen.HOME
+                                },
+                                onSignUpClick = {
+                                    // 회원가입 화면으로 이동
+                                    // 향후 회원가입 화면 구현 시 연결
+                                    currentScreen = Screen.SIGNUP
+                                },
+                                onFindIdClick = {
+                                    // 아이디 찾기 화면으로 이동
+                                    // 향후 아이디 찾기 화면 구현 시 연결
+                                    currentScreen = Screen.FINDID
+                                },
+                                onFindPasswordClick = {
+                                    // 비밀번호 찾기 화면으로 이동
+                                    // 향후 비밀번호 찾기 화면 구현 시 연결
+                                    currentScreen = Screen.FINDPASSWORD
                                 }
                             )
                         }
                         Screen.HOME -> {
                             Greeting(
                                 name = "Android",
+                                modifier = Modifier.padding(innerPadding)
+                            )
+                        }
+                        Screen.SIGNUP, Screen.FINDID, Screen.FINDPASSWORD -> {
+                            // 현재는 임시로 동일한 화면 표시
+                            // 향후 각 화면 구현 시 변경
+                            Text(
+                                text = "준비 중인 기능입니다",
                                 modifier = Modifier.padding(innerPadding)
                             )
                         }
@@ -51,7 +96,11 @@ class MainActivity : ComponentActivity() {
 
 enum class Screen {
     SPLASH,
-    HOME
+    LOGIN,
+    HOME,
+    SIGNUP,
+    FINDID,
+    FINDPASSWORD
 }
 
 @Composable
