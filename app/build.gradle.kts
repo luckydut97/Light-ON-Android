@@ -43,7 +43,7 @@ android {
 
     // 명시적으로 Compose 컴파일러 옵션 추가
     composeOptions {
-        kotlinCompilerExtensionVersion = "2.0.0" // Kotlin 2.0 호환 버전
+        kotlinCompilerExtensionVersion = "2.1.10" // Kotlin 2.0 호환 버전
     }
 }
 
