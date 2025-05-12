@@ -12,6 +12,8 @@ val Purple80 = Color(0xFFD0BCFF)
 val PurpleGrey80 = Color(0xFFCCC2DC)
 val Pink80 = Color(0xFFEFB8C8)
 
-// 앱 전용 색상 (필요시 추가)
-// val PrimaryLight = Color(0xFF...)
-// val PrimaryDark = Color(0xFF...)
+// 앱 전용 색상
+val BrandColor = Color(0xFF6137DD)
+val TextFieldBorderColor = Color(0xFFEEEEEE)
+val TextFieldBackgroundColor = Color(0xFFFAFAFA)
+val PlaceholderTextColor = Color(0xFFC2C2C2)

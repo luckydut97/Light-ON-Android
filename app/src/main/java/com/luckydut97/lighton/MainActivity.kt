@@ -16,7 +16,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.luckydut97.lighton.feature_auth.splash.ui.SplashScreen
-import com.luckydut97.lighton.feature_auth.login.ui.LoginScreen
+import com.luckydut97.lighton.feature_auth.login.navigation.LoginNavigation
+import com.luckydut97.lighton.feature_auth.login.navigation.LoginRoute
 import com.luckydut97.lighton.core.ui.theme.LightonTheme
 
 class MainActivity : ComponentActivity() {
@@ -38,38 +39,21 @@ class MainActivity : ComponentActivity() {
                             )
                         }
                         Screen.LOGIN -> {
-                            LoginScreen(
-                                onBackClick = {
-                                    // 뒤로가기 시 스플래시 또는 앱 종료
-                                    finish()
-                                },
-                                onKakaoLoginClick = {
-                                    // 카카오 로그인 처리 후
-                                    currentScreen = Screen.HOME
-                                },
-                                onNaverLoginClick = {
-                                    // 네이버 로그인 처리 후
-                                    currentScreen = Screen.HOME
-                                },
-                                onEmailLoginClick = {
-                                    // 이메일 로그인 페이지로 이동
-                                    // 향후 이메일 로그인 화면 구현 시 연결
-                                    currentScreen = Screen.HOME
-                                },
+                            // LoginNavigation을 사용하여 로그인 관련 화면 처리
+                            LoginNavigation(
+                                startDestination = LoginRoute.Login.route,
                                 onSignUpClick = {
                                     // 회원가입 화면으로 이동
-                                    // 향후 회원가입 화면 구현 시 연결
                                     currentScreen = Screen.SIGNUP
                                 },
-                                onFindIdClick = {
-                                    // 아이디 찾기 화면으로 이동
-                                    // 향후 아이디 찾기 화면 구현 시 연결
-                                    currentScreen = Screen.FINDID
+                                onLoginSuccess = {
+                                    // 로그인 성공 시 홈 화면으로 이동
+                                    currentScreen = Screen.HOME
                                 },
-                                onFindPasswordClick = {
-                                    // 비밀번호 찾기 화면으로 이동
-                                    // 향후 비밀번호 찾기 화면 구현 시 연결
-                                    currentScreen = Screen.FINDPASSWORD
+                                onBackToWelcome = {
+                                    // 뒤로 가기 버튼 누를 때 메인 액티비티 종료
+                                    // 스플래시 화면으로 돌아가지 않고 앱 종료
+                                    finish()
                                 }
                             )
                         }
