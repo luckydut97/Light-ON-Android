@@ -47,6 +47,7 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.luckydut97.lighton.core.ui.components.LightonBackButton
 import com.luckydut97.lighton.core.ui.components.LightonButton
 import com.luckydut97.lighton.core.ui.theme.BrandColor
 import com.luckydut97.lighton.core.ui.theme.LightonTheme
@@ -62,6 +63,7 @@ fun EmailLoginScreen(
     onLoginClick: () -> Unit = {},
     onKakaoLoginClick: () -> Unit = {},
     onGoogleLoginClick: () -> Unit = {},
+    onSignUpClick: () -> Unit = {},
     onFindIdClick: () -> Unit = {},
     onFindPasswordClick: () -> Unit = {}
 ) {
@@ -74,21 +76,14 @@ fun EmailLoginScreen(
             color = Color.White
         ) {
             Box(modifier = Modifier.fillMaxSize()) {
-                // 뒤로가기 버튼 - 왼쪽 상단에 위치시키고 약간 여백 추가
-                IconButton(
+                LightonBackButton(
                     onClick = onBackClick,
                     modifier = Modifier
-                        .absoluteOffset(x = (-4).dp, y = 8.dp)
-                        .padding(16.dp)
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.ArrowBack,
-                        contentDescription = "뒤로가기",
-                        tint = Color.Black
-                    )
-                }
+                        .align(Alignment.TopStart)
+                        .padding(start = 17.dp, top = 32.dp)
+                )
 
-                // 로고
+                // 로고 - 뒤로가기 버튼과 입력 필드 사이에 정확히 위치
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -113,7 +108,7 @@ fun EmailLoginScreen(
                 ) {
                     // 로고 아래 여백
                     Spacer(modifier = Modifier.height(160.dp))
-
+                    
                     // 중앙 콘텐츠 - 입력 필드, 버튼
                     Column(
                         modifier = Modifier.fillMaxWidth()
@@ -269,13 +264,33 @@ fun EmailLoginScreen(
 
                         Spacer(modifier = Modifier.height(24.dp))
 
-                        // 아이디찾기, 비밀번호 찾기 링크
+                        // 회원가입, 아이디찾기, 비밀번호 찾기 링크
                         Row(
                             modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.Center
+                            horizontalArrangement = Arrangement.Center,
+                            verticalAlignment = Alignment.CenterVertically
                         ) {
                             Text(
+                                text = "회원가입",
+                                color = Color.Black,
+                                modifier = Modifier
+                                    .clickable { onSignUpClick() }
+                                    .padding(horizontal = 8.dp),
+                                fontSize = 14.sp,
+                                fontFamily = PretendardFamily,
+                                style = MaterialTheme.typography.labelSmall
+                            )
+
+                            Box(
+                                modifier = Modifier
+                                    .height(12.dp)
+                                    .width(1.dp)
+                                    .background(Color.LightGray)
+                            )
+
+                            Text(
                                 text = "아이디 찾기",
+                                color = Color.Black,
                                 modifier = Modifier
                                     .clickable { onFindIdClick() }
                                     .padding(horizontal = 8.dp),
@@ -284,15 +299,16 @@ fun EmailLoginScreen(
                                 style = MaterialTheme.typography.labelSmall
                             )
 
-                            Text(
-                                text = "|",
-                                color = Color.Gray,
-                                fontFamily = PretendardFamily,
-                                style = MaterialTheme.typography.labelSmall
+                            Box(
+                                modifier = Modifier
+                                    .height(12.dp)
+                                    .width(1.dp)
+                                    .background(Color.LightGray)
                             )
 
                             Text(
                                 text = "비밀번호 찾기",
+                                color = Color.Black,
                                 modifier = Modifier
                                     .clickable { onFindPasswordClick() }
                                     .padding(horizontal = 8.dp),
