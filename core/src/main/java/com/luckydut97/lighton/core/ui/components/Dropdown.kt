@@ -47,31 +47,33 @@ fun LightonDropdown(
 ) {
     var expanded by remember { mutableStateOf(false) }
     val displayText = if (selectedItem.isEmpty()) placeholder else selectedItem
-    
+
     Column(modifier = modifier.fillMaxWidth()) {
-        // 라벨 + 필수 표시(*)
-        Row(
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(
-                text = label,
-                color = Color.Black,
-                fontSize = 14.sp,
-                fontFamily = PretendardFamily,
-                modifier = Modifier.padding(bottom = 8.dp)
-            )
-            
-            if (isRequired) {
+        // 라벨 + 필수 표시(*) - 라벨이 있을 때만 표시
+        if (label.isNotEmpty()) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically
+            ) {
                 Text(
-                    text = " *", 
-                    color = Color.Red,
+                    text = label,
+                    color = Color.Black,
                     fontSize = 14.sp,
                     fontFamily = PretendardFamily,
                     modifier = Modifier.padding(bottom = 8.dp)
                 )
+
+                if (isRequired) {
+                    Text(
+                        text = " *",
+                        color = Color.Red,
+                        fontSize = 14.sp,
+                        fontFamily = PretendardFamily,
+                        modifier = Modifier.padding(bottom = 8.dp)
+                    )
+                }
             }
         }
-        
+
         // 드롭다운 영역
         Box(
             modifier = Modifier
@@ -99,7 +101,7 @@ fun LightonDropdown(
                     fontFamily = PretendardFamily,
                     modifier = Modifier.weight(1f)
                 )
-                
+
                 Icon(
                     imageVector = Icons.Default.KeyboardArrowDown,
                     contentDescription = "드롭다운 열기",
@@ -107,7 +109,7 @@ fun LightonDropdown(
                     modifier = Modifier.size(24.dp)
                 )
             }
-            
+
             DropdownMenu(
                 expanded = expanded,
                 onDismissRequest = { expanded = false },
@@ -115,11 +117,11 @@ fun LightonDropdown(
             ) {
                 items.forEach { item ->
                     DropdownMenuItem(
-                        text = { 
+                        text = {
                             Text(
                                 text = item,
                                 fontFamily = PretendardFamily
-                            ) 
+                            )
                         },
                         onClick = {
                             onItemSelected(item)

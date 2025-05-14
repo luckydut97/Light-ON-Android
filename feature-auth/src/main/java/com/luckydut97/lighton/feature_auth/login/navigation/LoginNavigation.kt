@@ -7,6 +7,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.luckydut97.lighton.feature_auth.login.ui.EmailLoginScreen
 import com.luckydut97.lighton.feature_auth.login.ui.LoginScreen
+import com.luckydut97.lighton.feature_auth.signup.ui.PersonalInfoScreen
 import com.luckydut97.lighton.feature_auth.signup.ui.SignUpScreen
 
 // 로그인 관련 화면 경로 정의
@@ -14,6 +15,7 @@ sealed class LoginRoute(val route: String) {
     object Login : LoginRoute("login")
     object EmailLogin : LoginRoute("email_login")
     object SignUp : LoginRoute("sign_up")
+    object PersonalInfo : LoginRoute("personal_info") // 추가된 경로
 }
 
 /**
@@ -74,6 +76,25 @@ fun LoginNavigation(
                 onBackClick = {
                     // 회원가입 화면에서 뒤로가기 버튼을 누르면 이전 화면으로 돌아감
                     navController.popBackStack()
+                },
+                onNextClick = {
+                    // 다음 버튼을 누르면 개인정보 입력 화면으로 이동
+                    navController.navigate(LoginRoute.PersonalInfo.route)
+                }
+            )
+        }
+
+        // 개인정보 입력 화면 추가
+        composable(LoginRoute.PersonalInfo.route) {
+            PersonalInfoScreen(
+                onBackClick = {
+                    // 개인정보 입력 화면에서 뒤로가기 버튼을 누르면 이전 화면으로 돌아감
+                    navController.popBackStack()
+                },
+                onNextClick = {
+                    // 회원가입 완료 또는 다음 단계로 이동 구현
+                    // 예시: navController.navigate(LoginRoute.SignUpComplete.route)
+                    // 또는: onLoginSuccess()
                 }
             )
         }

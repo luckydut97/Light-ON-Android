@@ -39,7 +39,8 @@ import com.luckydut97.lighton.core.ui.theme.PretendardFamily
 
 @Composable
 fun SignUpScreen(
-    onBackClick: () -> Unit = {}
+    onBackClick: () -> Unit = {},
+    onNextClick: () -> Unit = {}
 ) {
     // 상태 관리
     var email by remember { mutableStateOf("") }
@@ -110,7 +111,10 @@ fun SignUpScreen(
                     LightonNextButton(
                         text = "다음",
                         isEnabled = isFormValid,
-                        onClick = { /* 다음 단계로 이동 */ }
+                        onClick = {
+                            // 다음 화면(PersonalInfoScreen)으로 이동
+                            onNextClick() // 네비게이션 핸들러를 통해 PersonalInfoScreen으로 이동
+                        }
                     )
                 }
             }

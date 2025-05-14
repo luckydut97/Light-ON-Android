@@ -6,12 +6,9 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.absoluteOffset
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -19,15 +16,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -37,24 +26,18 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.luckydut97.lighton.core.ui.components.LightonBackButton
 import com.luckydut97.lighton.core.ui.components.LightonButton
-import com.luckydut97.lighton.core.ui.theme.BrandColor
+import com.luckydut97.lighton.core.ui.components.LightonInputField
 import com.luckydut97.lighton.core.ui.theme.LightonTheme
-import com.luckydut97.lighton.core.ui.theme.PlaceholderTextColor
 import com.luckydut97.lighton.core.ui.theme.PretendardFamily
-import com.luckydut97.lighton.core.ui.theme.TextFieldBackgroundColor
-import com.luckydut97.lighton.core.ui.theme.TextFieldBorderColor
 import com.luckydut97.lighton.feature.auth.R
 
 @Composable
@@ -108,84 +91,30 @@ fun EmailLoginScreen(
                 ) {
                     // 로고 아래 여백
                     Spacer(modifier = Modifier.height(160.dp))
-                    
+
                     // 중앙 콘텐츠 - 입력 필드, 버튼
                     Column(
                         modifier = Modifier.fillMaxWidth()
                     ) {
-                        // 아이디(이메일) 입력 필드
-                        Text(
-                            text = "아이디",
-                            color = Color.Black,
-                            fontSize = 14.sp,
-                            fontWeight = FontWeight.Medium,
-                            fontFamily = PretendardFamily,
-                            modifier = Modifier.padding(bottom = 8.dp)
-                        )
-
-                        OutlinedTextField(
+                        // 아이디(이메일) 입력 필드 - LightonInputField 컴포넌트 사용
+                        LightonInputField(
+                            label = "아이디",
                             value = email,
                             onValueChange = { email = it },
-                            placeholder = {
-                                Text(
-                                    "아이디 (이메일 주소)",
-                                    color = PlaceholderTextColor,
-                                    fontFamily = PretendardFamily
-                                )
-                            },
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(56.dp)
-                                .clip(RoundedCornerShape(8.dp))
-                                .background(TextFieldBackgroundColor, RoundedCornerShape(8.dp)),
-                            shape = RoundedCornerShape(8.dp),
-                            colors = OutlinedTextFieldDefaults.colors(
-                                focusedBorderColor = BrandColor,
-                                unfocusedBorderColor = TextFieldBorderColor,
-                                focusedContainerColor = TextFieldBackgroundColor,
-                                unfocusedContainerColor = TextFieldBackgroundColor
-                            ),
-                            singleLine = true,
-                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email)
+                            placeholder = "아이디 (이메일 주소)",
+                            keyboardType = KeyboardType.Email
                         )
 
                         Spacer(modifier = Modifier.height(16.dp))
 
-                        // 비밀번호 입력 필드
-                        Text(
-                            text = "비밀번호",
-                            color = Color.Black,
-                            fontSize = 14.sp,
-                            fontWeight = FontWeight.Medium,
-                            fontFamily = PretendardFamily,
-                            modifier = Modifier.padding(bottom = 8.dp)
-                        )
-
-                        OutlinedTextField(
+                        // 비밀번호 입력 필드 - LightonInputField 컴포넌트 사용
+                        LightonInputField(
+                            label = "비밀번호",
                             value = password,
                             onValueChange = { password = it },
-                            placeholder = {
-                                Text(
-                                    "비밀번호",
-                                    color = PlaceholderTextColor,
-                                    fontFamily = PretendardFamily
-                                )
-                            },
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(56.dp)
-                                .clip(RoundedCornerShape(8.dp))
-                                .background(TextFieldBackgroundColor, RoundedCornerShape(8.dp)),
-                            shape = RoundedCornerShape(8.dp),
-                            colors = OutlinedTextFieldDefaults.colors(
-                                focusedBorderColor = BrandColor,
-                                unfocusedBorderColor = TextFieldBorderColor,
-                                focusedContainerColor = TextFieldBackgroundColor,
-                                unfocusedContainerColor = TextFieldBackgroundColor
-                            ),
-                            singleLine = true,
-                            visualTransformation = PasswordVisualTransformation(),
-                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password)
+                            placeholder = "비밀번호",
+                            keyboardType = KeyboardType.Password,
+                            isPassword = true
                         )
 
                         Spacer(modifier = Modifier.height(24.dp))
