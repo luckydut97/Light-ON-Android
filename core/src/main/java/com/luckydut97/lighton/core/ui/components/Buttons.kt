@@ -1,5 +1,6 @@
 package com.luckydut97.lighton.core.ui.components
 
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
@@ -16,6 +17,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.luckydut97.lighton.core.R
@@ -119,20 +121,28 @@ fun LightonBackButton(
 
 /**
  * 외형만 다른 버전의 라이트온 버튼 (아웃라인 스타일)
+ * 보라색(BrandColor) 테두리가 추가된 버전
  */
 @Composable
 fun LightonOutlinedButton(
     text: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
-    enabled: Boolean = true
+    enabled: Boolean = true,
+    borderColor: Color = BrandColor,  // 기본 테두리 색상은 브랜드 색상(보라색)
+    borderWidth: Dp = 1.dp  // 테두리 두께
 ) {
     Button(
         onClick = onClick,
         enabled = enabled,
         modifier = modifier
             .fillMaxWidth()
-            .height(47.dp),
+            .height(47.dp)
+            .border(
+                width = borderWidth,
+                color = if (enabled) borderColor else borderColor.copy(alpha = 0.5f),
+                shape = RoundedCornerShape(12.dp)
+            ),
         shape = RoundedCornerShape(12.dp),
         colors = ButtonDefaults.buttonColors(
             containerColor = Color.Transparent,

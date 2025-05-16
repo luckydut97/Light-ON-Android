@@ -7,6 +7,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.luckydut97.lighton.feature_auth.login.ui.EmailLoginScreen
 import com.luckydut97.lighton.feature_auth.login.ui.LoginScreen
+import com.luckydut97.lighton.feature_auth.signup.ui.MusicPreferenceScreen
 import com.luckydut97.lighton.feature_auth.signup.ui.PersonalInfoScreen
 import com.luckydut97.lighton.feature_auth.signup.ui.SignUpScreen
 
@@ -15,7 +16,8 @@ sealed class LoginRoute(val route: String) {
     object Login : LoginRoute("login")
     object EmailLogin : LoginRoute("email_login")
     object SignUp : LoginRoute("sign_up")
-    object PersonalInfo : LoginRoute("personal_info") // 추가된 경로
+    object PersonalInfo : LoginRoute("personal_info")
+    object MusicPreference : LoginRoute("music_preference") // 새로 추가된 경로
 }
 
 /**
@@ -84,7 +86,7 @@ fun LoginNavigation(
             )
         }
 
-        // 개인정보 입력 화면 추가
+        // 개인정보 입력 화면
         composable(LoginRoute.PersonalInfo.route) {
             PersonalInfoScreen(
                 onBackClick = {
@@ -92,9 +94,28 @@ fun LoginNavigation(
                     navController.popBackStack()
                 },
                 onNextClick = {
-                    // 회원가입 완료 또는 다음 단계로 이동 구현
-                    // 예시: navController.navigate(LoginRoute.SignUpComplete.route)
-                    // 또는: onLoginSuccess()
+                    // 다음 버튼을 누르면 음악 취향 선택 화면으로 이동
+                    navController.navigate(LoginRoute.MusicPreference.route)
+                }
+            )
+        }
+
+        // 음악 취향 선택 화면 추가
+        composable(LoginRoute.MusicPreference.route) {
+            MusicPreferenceScreen(
+                onBackClick = {
+                    // 뒤로가기 버튼을 누르면 이전 화면으로 돌아감
+                    navController.popBackStack()
+                },
+                onSkipClick = {
+                    // 건너뛰기 버튼을 누르면 홈 화면으로 이동하거나 다음 단계로 이동
+                    // 추후에 기능 구현
+                    onLoginSuccess()
+                },
+                onNextClick = { selectedGenres ->
+                    // 다음 버튼을 누르면 홈 화면으로 이동하거나 다음 단계로 이동
+                    // 선택된 장르 목록(selectedGenres)을 활용하여 추후 기능 구현
+                    onLoginSuccess()
                 }
             )
         }
