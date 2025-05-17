@@ -10,6 +10,7 @@ import com.luckydut97.lighton.feature_auth.login.ui.LoginScreen
 import com.luckydut97.lighton.feature_auth.signup.ui.MusicPreferenceScreen
 import com.luckydut97.lighton.feature_auth.signup.ui.PersonalInfoScreen
 import com.luckydut97.lighton.feature_auth.signup.ui.SignUpScreen
+import com.luckydut97.lighton.feature_auth.signup.ui.SignupCompleteScreen
 
 // 로그인 관련 화면 경로 정의
 sealed class LoginRoute(val route: String) {
@@ -17,7 +18,8 @@ sealed class LoginRoute(val route: String) {
     object EmailLogin : LoginRoute("email_login")
     object SignUp : LoginRoute("sign_up")
     object PersonalInfo : LoginRoute("personal_info")
-    object MusicPreference : LoginRoute("music_preference") // 새로 추가된 경로
+    object MusicPreference : LoginRoute("music_preference") // 음악 취향 화면
+    object SignupComplete : LoginRoute("signup_complete") // 회원가입 완료 화면
 }
 
 /**
@@ -100,7 +102,7 @@ fun LoginNavigation(
             )
         }
 
-        // 음악 취향 선택 화면 추가
+        // 음악 취향 선택 화면
         composable(LoginRoute.MusicPreference.route) {
             MusicPreferenceScreen(
                 onBackClick = {
@@ -108,13 +110,27 @@ fun LoginNavigation(
                     navController.popBackStack()
                 },
                 onSkipClick = {
-                    // 건너뛰기 버튼을 누르면 홈 화면으로 이동하거나 다음 단계로 이동
-                    // 추후에 기능 구현
-                    onLoginSuccess()
+                    // 건너뛰기 버튼을 누르면 회원가입 완료 화면으로 이동
+                    navController.navigate(LoginRoute.SignupComplete.route)
                 },
                 onNextClick = { selectedGenres ->
-                    // 다음 버튼을 누르면 홈 화면으로 이동하거나 다음 단계로 이동
-                    // 선택된 장르 목록(selectedGenres)을 활용하여 추후 기능 구현
+                    // 다음 버튼을 누르면 회원가입 완료 화면으로 이동
+                    navController.navigate(LoginRoute.SignupComplete.route)
+                }
+            )
+        }
+
+        // 회원가입 완료 화면 추가
+        composable(LoginRoute.SignupComplete.route) {
+            SignupCompleteScreen(
+                onConfirmClick = {
+                    // 확인 버튼을 누르면 로그인 성공으로 간주하고 홈 화면으로 이동
+                    // 로그인 화면으로 돌아가고 모든 회원가입 관련 화면을 스택에서 제거
+                    navController.navigate(LoginRoute.Login.route) {
+                        popUpTo(LoginRoute.Login.route) {
+                            inclusive = true
+                        }
+                    }
                     onLoginSuccess()
                 }
             )

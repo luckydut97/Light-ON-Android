@@ -78,7 +78,7 @@ fun LightonNextButton(
         modifier = modifier
             .fillMaxWidth()
             .height(47.dp),
-        shape = RoundedCornerShape(24.dp),
+        shape = RoundedCornerShape(8.dp),
         colors = ButtonDefaults.buttonColors(
             containerColor = BrandColor,
             contentColor = Color.White,

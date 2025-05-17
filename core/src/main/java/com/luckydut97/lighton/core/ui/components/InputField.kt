@@ -140,7 +140,7 @@ fun LightonInputField(
                 Spacer(modifier = Modifier.width(8.dp))
                 Button(
                     onClick = onVerifyClick,
-                    modifier = Modifier.height(56.dp),
+                    modifier = Modifier.height(47.dp),
                     shape = RoundedCornerShape(8.dp),
                     contentPadding = PaddingValues(horizontal = 16.dp),
                     colors = ButtonDefaults.buttonColors(
