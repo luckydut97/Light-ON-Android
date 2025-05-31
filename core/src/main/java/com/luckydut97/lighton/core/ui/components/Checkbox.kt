@@ -22,7 +22,7 @@ import com.luckydut97.lighton.core.ui.theme.BrandColor
 import com.luckydut97.lighton.core.ui.theme.PretendardFamily
 
 /**
- * 라이트온 앱의 체크박스 컴포넌트
+ * 체크박스 컴포넌트
  */
 @Composable
 fun LightonCheckbox(

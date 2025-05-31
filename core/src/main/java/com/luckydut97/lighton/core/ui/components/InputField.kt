@@ -48,7 +48,7 @@ sealed class ValidationResult {
 }
 
 /**
- * 라이트온 앱의 공통 입력 필드 컴포넌트
+ * 공통 입력 필드 컴포넌트
  * 라벨, 필수 여부(*), 입력 필드, 유효성 검사 결과 메시지를 표시
  */
 @Composable

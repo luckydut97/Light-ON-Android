@@ -26,8 +26,8 @@ import com.luckydut97.lighton.core.ui.theme.DisabledColor
 import com.luckydut97.lighton.core.ui.theme.PretendardFamily
 
 /**
- * 라이트온 앱의 공통 버튼 컴포넌트
- * 높이: 47px, 라운드 모서리, 브랜드 색상(#6137DD) 사용
+ * 공통 버튼
+ * 높이: 47px, 라운드 모서리, 브랜드 색상(#6137DD)
  */
 @Composable
 fun LightonButton(
@@ -104,7 +104,7 @@ fun LightonNextButton(
 fun LightonBackButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
-    iconSize: Float = 0.8f // 아이콘 크기 비율, 1.0f가 원래 크기, 작게 하려면 1.0f 미만으로
+    iconSize: Float = 0.8f // 아이콘 크기 비율
 ) {
     IconButton(
         onClick = onClick,
@@ -129,7 +129,7 @@ fun LightonOutlinedButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
-    borderColor: Color = BrandColor,  // 기본 테두리 색상은 브랜드 색상(보라색)
+    borderColor: Color = BrandColor,  // 테두리 색상
     borderWidth: Dp = 1.dp  // 테두리 두께
 ) {
     Button(

@@ -19,6 +19,7 @@ import com.luckydut97.lighton.feature_auth.splash.ui.SplashScreen
 import com.luckydut97.lighton.feature_auth.login.navigation.LoginNavigation
 import com.luckydut97.lighton.feature_auth.login.navigation.LoginRoute
 import com.luckydut97.lighton.core.ui.theme.LightonTheme
+import com.luckydut97.feature_home.main.ui.HomeScreen
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -58,14 +59,13 @@ class MainActivity : ComponentActivity() {
                             )
                         }
                         Screen.HOME -> {
-                            Greeting(
-                                name = "Android",
-                                modifier = Modifier.padding(innerPadding)
+                            HomeScreen(
+                                modifier = Modifier.padding(innerPadding),
+                                onSearchClick = { /* 검색 클릭 처리 */ },
+                                onAlarmClick = { /* 알림 클릭 처리 */ }
                             )
                         }
                         Screen.SIGNUP, Screen.FINDID, Screen.FINDPASSWORD -> {
-                            // 현재는 임시로 동일한 화면 표시
-                            // 향후 각 화면 구현 시 변경
                             Text(
                                 text = "준비 중인 기능입니다",
                                 modifier = Modifier.padding(innerPadding)

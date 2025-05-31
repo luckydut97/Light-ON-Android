@@ -120,17 +120,9 @@ fun LoginNavigation(
             )
         }
 
-        // 회원가입 완료 화면 추가
         composable(LoginRoute.SignupComplete.route) {
             SignupCompleteScreen(
                 onConfirmClick = {
-                    // 확인 버튼을 누르면 로그인 성공으로 간주하고 홈 화면으로 이동
-                    // 로그인 화면으로 돌아가고 모든 회원가입 관련 화면을 스택에서 제거
-                    navController.navigate(LoginRoute.Login.route) {
-                        popUpTo(LoginRoute.Login.route) {
-                            inclusive = true
-                        }
-                    }
                     onLoginSuccess()
                 }
             )
