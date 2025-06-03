@@ -42,7 +42,7 @@ class MainActivity : ComponentActivity() {
                         Screen.LOGIN -> {
                             // LoginNavigation을 사용하여 로그인 관련 화면 처리
                             LoginNavigation(
-                                startDestination = LoginRoute.Login.route,
+                                startDestination = LoginRoute.EmailLogin.route,
                                 onSignUpClick = {
                                     // 회원가입 화면으로 이동
                                     currentScreen = Screen.SIGNUP

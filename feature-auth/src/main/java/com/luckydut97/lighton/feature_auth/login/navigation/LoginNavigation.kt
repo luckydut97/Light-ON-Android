@@ -6,7 +6,6 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.luckydut97.lighton.feature_auth.login.ui.EmailLoginScreen
-import com.luckydut97.lighton.feature_auth.login.ui.LoginScreen
 import com.luckydut97.lighton.feature_auth.signup.ui.MusicPreferenceScreen
 import com.luckydut97.lighton.feature_auth.signup.ui.PersonalInfoScreen
 import com.luckydut97.lighton.feature_auth.signup.ui.SignUpScreen
@@ -14,7 +13,6 @@ import com.luckydut97.lighton.feature_auth.signup.ui.SignupCompleteScreen
 
 // 로그인 관련 화면 경로 정의
 sealed class LoginRoute(val route: String) {
-    object Login : LoginRoute("login")
     object EmailLogin : LoginRoute("email_login")
     object SignUp : LoginRoute("sign_up")
     object PersonalInfo : LoginRoute("personal_info")
@@ -31,39 +29,15 @@ fun LoginNavigation(
     onSignUpClick: () -> Unit = {},
     onLoginSuccess: () -> Unit = {},
     onBackToWelcome: () -> Unit = {},
-    startDestination: String = LoginRoute.Login.route
+    startDestination: String = LoginRoute.EmailLogin.route
 ) {
     NavHost(
         navController = navController,
         startDestination = startDestination
     ) {
-        composable(LoginRoute.Login.route) {
-            LoginScreen(
-                onBackClick = { onBackToWelcome() },
-                onEmailLoginClick = {
-                    // 이메일 로그인 화면으로 이동 (스택에 쌓이지 않고 대체)
-                    navController.navigate(LoginRoute.EmailLogin.route) {
-                        popUpTo(LoginRoute.Login.route) { inclusive = true }
-                    }
-                },
-                onKakaoLoginClick = { /* 카카오 로그인 구현 */ },
-                onNaverLoginClick = { /* 네이버 로그인 구현 */ },
-                onSignUpClick = {
-                    navController.navigate(LoginRoute.SignUp.route)
-                },
-                onFindIdClick = { /* 아이디 찾기 화면으로 이동 구현 */ },
-                onFindPasswordClick = { /* 비밀번호 찾기 화면으로 이동 구현 */ }
-            )
-        }
-
         composable(LoginRoute.EmailLogin.route) {
             EmailLoginScreen(
-                onBackClick = {
-                    // 로그인 화면으로 다시 이동 (스택에 쌓이지 않고 대체)
-                    navController.navigate(LoginRoute.Login.route) {
-                        popUpTo(LoginRoute.EmailLogin.route) { inclusive = true }
-                    }
-                },
+                onBackClick = onBackToWelcome,
                 onLoginClick = onLoginSuccess,
                 onKakaoLoginClick = { /* 카카오 로그인 구현 */ },
                 onGoogleLoginClick = { /* 구글 로그인 구현 */ },

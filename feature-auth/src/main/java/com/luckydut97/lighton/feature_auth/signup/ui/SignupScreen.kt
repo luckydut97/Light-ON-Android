@@ -42,7 +42,7 @@ fun SignUpScreen(
     onBackClick: () -> Unit = {},
     onNextClick: () -> Unit = {}
 ) {
-    // 상태 관리
+    // 입력값 상태/결과 상태 선언
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var confirmPassword by remember { mutableStateOf("") }
@@ -51,53 +51,64 @@ fun SignUpScreen(
     var passwordValidationResult by remember { mutableStateOf<ValidationResult>(ValidationResult.Initial) }
     var confirmPasswordValidationResult by remember { mutableStateOf<ValidationResult>(ValidationResult.Initial) }
 
-    // 이메일 중복 확인 함수 - @ 및 .com 확인
+    // 이메일 중복 확인 함수 (동일)
     val checkEmailDuplicate: () -> Unit = {
-        // 중복된 이메일 주소인 경우 (백엔드 연동 전 예시로 처리)
         if (email == "duplicate@example.com") {
             emailValidationResult = ValidationResult.Invalid("중복된 이메일 주소입니다.")
             isEmailChecked = false
         }
-        // 이메일 형식이 올바르지 않은 경우
         else if (!email.contains('@') || !email.lowercase().contains(".com")) {
             emailValidationResult = ValidationResult.Invalid("올바른 메일주소를 입력하세요.")
             isEmailChecked = false
         } else {
-            // 유효한 이메일이며 중복되지 않은 경우
             emailValidationResult = ValidationResult.Valid
             isEmailChecked = true
         }
     }
 
-    // 비밀번호 유효성 검사 함수
-    val validatePassword: (String) -> ValidationResult = { pwd ->
-        if (pwd.isEmpty()) {
-            ValidationResult.Initial
-        } else if (pwd.length < 8) {
-            ValidationResult.Invalid("비밀번호는 영문, 숫자, 특수문자 모두 포함된 8자 이상이어야 합니다.")
-        } else if (!pwd.any { it.isDigit() } || !pwd.any { it.isLetter() } || !pwd.any { !it.isLetterOrDigit() }) {
-            ValidationResult.Invalid("비밀번호는 영문, 숫자, 특수문자 모두 포함된 8자 이상이어야 합니다.")
-        } else {
-            ValidationResult.Valid
+    // 비밀번호 유효성 검사 함수 (영/숫자/특수/대소문자 및 8~20자리)
+    fun validatePasswordStrict(pwd: String): ValidationResult {
+        if (pwd.isEmpty()) return ValidationResult.Initial
+        if (pwd.length < 8 || pwd.length > 20) {
+            return ValidationResult.Invalid("비밀번호는 영문, 숫자, 특수문자 포함 8-20자리여야 합니다.")
         }
+        // 소문자/대문자/숫자/특수문자 체크
+        if (!pwd.any { it.isLowerCase() })
+            return ValidationResult.Invalid("영문 소문자를 반드시 포함해야 합니다.")
+        if (!pwd.any { it.isUpperCase() })
+            return ValidationResult.Invalid("영문 대문자를 반드시 포함해야 합니다.")
+        if (!pwd.any { it.isDigit() })
+            return ValidationResult.Invalid("숫자를 반드시 포함해야 합니다.")
+        if (!pwd.any { !it.isLetterOrDigit() })
+            return ValidationResult.Invalid("특수문자를 반드시 포함해야 합니다.")
+        return ValidationResult.Valid
     }
 
-    // 비밀번호 확인 유효성 검사 함수
-    val validateConfirmPassword: () -> ValidationResult = {
-        if (confirmPassword.isEmpty()) {
-            ValidationResult.Initial
-        } else if (password != confirmPassword) {
-            ValidationResult.Invalid("비밀번호가 일치하지 않습니다.")
-        } else {
-            ValidationResult.Valid
-        }
+    // 비밀번호 확인 검사 (패스워드가 바뀌거나, 확인란이 바뀔 때 언제든 즉시 호출)
+    fun validateConfirmPasswordValue(password: String, confirm: String): ValidationResult {
+        if (confirm.isEmpty()) return ValidationResult.Initial
+        else if (password != confirm) return ValidationResult.Invalid("비밀번호가 일치하지 않습니다.")
+        else return ValidationResult.Valid
     }
 
-    // 모든 입력이 유효한지 확인
+    // ★ 입력이 바뀔때마다 항상 검증 결과도 동기화 (패스워드/확인필드 순서와 무관)
+    fun onPasswordChange(newPwd: String) {
+        password = newPwd
+        passwordValidationResult = validatePasswordStrict(newPwd)
+        // 비번이 바뀌면 비번확인도 즉시 재검증
+        confirmPasswordValidationResult = validateConfirmPasswordValue(newPwd, confirmPassword)
+    }
+
+    fun onConfirmPasswordChange(newConfirm: String) {
+        confirmPassword = newConfirm
+        confirmPasswordValidationResult = validateConfirmPasswordValue(password, newConfirm)
+    }
+
+    // 전체 제출 가능 체크 (동일)
     val isFormValid = isEmailChecked &&
-                      emailValidationResult is ValidationResult.Valid &&
-                      passwordValidationResult is ValidationResult.Valid &&
-                      confirmPasswordValidationResult is ValidationResult.Valid
+            emailValidationResult is ValidationResult.Valid &&
+            passwordValidationResult is ValidationResult.Valid &&
+            confirmPasswordValidationResult is ValidationResult.Valid
 
     LightonTheme {
         Scaffold(
@@ -189,16 +200,10 @@ fun SignUpScreen(
                         LightonInputField(
                             label = "비밀번호",
                             value = password,
-                            onValueChange = {
-                                password = it
-                                passwordValidationResult = validatePassword(it)
-                                // 비밀번호가 변경되면 확인 필드도 재검사
-                                if (confirmPassword.isNotEmpty()) {
-                                    confirmPasswordValidationResult = validateConfirmPassword()
-                                }
-                            },
+                            // 최대 20자까지만 허용 (초과 시 입력 안 됨)
+                            onValueChange = { if (it.length <= 20) onPasswordChange(it) },
                             isRequired = true,
-                            placeholder = "8-20자리, 영어 대소문자, 숫자, 특수문자 조합",
+                            placeholder = "영문 대소문자, 숫자, 특수문자 포함 8-20자리",
                             keyboardType = KeyboardType.Password,
                             isPassword = true,
                             validationResult = passwordValidationResult
@@ -211,12 +216,10 @@ fun SignUpScreen(
                         LightonInputField(
                             label = "비밀번호 확인",
                             value = confirmPassword,
-                            onValueChange = {
-                                confirmPassword = it
-                                confirmPasswordValidationResult = validateConfirmPassword()
-                            },
+                            // 최대 20자까지만 허용 (초과 시 입력 안 됨)
+                            onValueChange = { if (it.length <= 20) onConfirmPasswordChange(it) },
                             isRequired = true,
-                            placeholder = "8-20자리, 영어 대소문자, 숫자, 특수문자 조합",
+                            placeholder = "비밀번호를 다시 입력하세요",
                             keyboardType = KeyboardType.Password,
                             isPassword = true,
                             validationResult = confirmPasswordValidationResult
