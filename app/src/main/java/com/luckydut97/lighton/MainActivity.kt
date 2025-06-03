@@ -28,7 +28,8 @@ class MainActivity : ComponentActivity() {
         setContent {
             LightonTheme {
                 // 앱 상태 관리
-                var currentScreen by remember { mutableStateOf(Screen.SPLASH) }
+                //var currentScreen by remember { mutableStateOf(Screen.SPLASH) }
+                var currentScreen by remember { mutableStateOf(Screen.HOME) }
 
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     when (currentScreen) {

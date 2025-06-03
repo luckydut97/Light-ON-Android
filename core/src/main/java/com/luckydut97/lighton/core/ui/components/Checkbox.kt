@@ -1,5 +1,6 @@
 package com.luckydut97.lighton.core.ui.components
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
@@ -15,6 +16,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -129,4 +131,26 @@ fun LightonAgreementCheckbox(
             )
         }
     }
+}
+
+/**
+ * Figma-styled 커스텀 체크박스(서버 연동, 의도적으로 OK/NO 아이콘으로 분리)
+ */
+@Composable
+fun LightonIconCheckbox(
+    checked: Boolean,
+    onCheckedChange: (Boolean) -> Unit,
+    modifier: Modifier = Modifier,
+    iconSize: Int = 16, // 16~18 = Figma, 16기본(Figma row padding 모두 적용)
+    enabled: Boolean = true
+) {
+    val iconRes =
+        if (checked) com.luckydut97.lighton.core.R.drawable.ic_checkbox_ok else com.luckydut97.lighton.core.R.drawable.ic_checkbox_no
+    Image(
+        painter = painterResource(iconRes),
+        contentDescription = null,
+        modifier = modifier
+            .size(iconSize.dp)
+            .clickable(enabled) { onCheckedChange(!checked) }
+    )
 }

@@ -25,7 +25,9 @@ fun HomeScreen(
                 onSearchClick = onSearchClick,
                 onAlarmClick = onAlarmClick
             )
-            
+
+            // Main Hero Section
+            com.luckydut97.feature_home.component.HeroImageSection()
             // Content area below the TopBar
             // Add more components here as needed
         }

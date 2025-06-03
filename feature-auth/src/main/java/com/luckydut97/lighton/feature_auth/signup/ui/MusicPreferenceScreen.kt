@@ -62,7 +62,6 @@ data class MusicGenre(
 
 /**
  * 음악 취향 선택 화면
- * @param onBackClick 뒤로가기 버튼 클릭 시 호출될 콜백
  * @param onSkipClick 건너뛰기 버튼 클릭 시 호출될 콜백
  * @param onNextClick 다음 버튼 클릭 시 호출될 콜백 (선택된 장르 목록 전달)
  */
@@ -111,13 +110,6 @@ fun MusicPreferenceScreen(
                             .fillMaxWidth()
                             .padding(top = 16.dp, end = 16.dp)
                     ) {
-                        // 뒤로가기 버튼
-                        LightonBackButton(
-                            onClick = onBackClick,
-                            modifier = Modifier
-                                .align(Alignment.CenterStart)
-                                .padding(start = 16.dp)
-                        )
 
                         // X 버튼 추가 (삭제해도 됨)
                         Text(
