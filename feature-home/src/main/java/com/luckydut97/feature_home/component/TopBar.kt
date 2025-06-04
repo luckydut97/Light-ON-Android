@@ -1,4 +1,4 @@
-package com.luckydut97.feature_home.component
+package com.luckydut97.lighton.feature_home.component
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement

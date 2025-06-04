@@ -19,7 +19,9 @@ import com.luckydut97.lighton.feature_auth.splash.ui.SplashScreen
 import com.luckydut97.lighton.feature_auth.login.navigation.LoginNavigation
 import com.luckydut97.lighton.feature_auth.login.navigation.LoginRoute
 import com.luckydut97.lighton.core.ui.theme.LightonTheme
-import com.luckydut97.feature_home.main.ui.HomeScreen
+import com.luckydut97.lighton.feature_home.main.ui.HomeScreen
+import com.luckydut97.lighton.feature_map.main.ui.MapScreen
+import com.luckydut97.lighton.core.ui.components.NavigationItem
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -30,6 +32,7 @@ class MainActivity : ComponentActivity() {
                 // 앱 상태 관리
                 //var currentScreen by remember { mutableStateOf(Screen.SPLASH) }
                 var currentScreen by remember { mutableStateOf(Screen.HOME) }
+                var selectedNavItem by remember { mutableStateOf(NavigationItem.HOME) }
 
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     when (currentScreen) {
@@ -61,9 +64,37 @@ class MainActivity : ComponentActivity() {
                         }
                         Screen.HOME -> {
                             HomeScreen(
-                                modifier = Modifier.padding(innerPadding),
+                                selectedNavItem = selectedNavItem,
                                 onSearchClick = { /* 검색 클릭 처리 */ },
-                                onAlarmClick = { /* 알림 클릭 처리 */ }
+                                onAlarmClick = { /* 알림 클릭 처리 */ },
+                                onNavigationItemSelected = { navItem ->
+                                    selectedNavItem = navItem
+                                    when (navItem) {
+                                        NavigationItem.HOME -> currentScreen = Screen.HOME
+                                        NavigationItem.MAP -> currentScreen = Screen.MAP
+                                        NavigationItem.STAGE -> { /* TODO: 공연 화면 */
+                                        }
+
+                                        NavigationItem.MYPAGE -> { /* TODO: 마이페이지 화면 */
+                                        }
+                                    }
+                                }
+                            )
+                        }
+                        Screen.MAP -> {
+                            MapScreen(
+                                onNavigationItemSelected = { navItem ->
+                                    selectedNavItem = navItem
+                                    when (navItem) {
+                                        NavigationItem.HOME -> currentScreen = Screen.HOME
+                                        NavigationItem.MAP -> currentScreen = Screen.MAP
+                                        NavigationItem.STAGE -> { /* TODO: 공연 화면 */
+                                        }
+
+                                        NavigationItem.MYPAGE -> { /* TODO: 마이페이지 화면 */
+                                        }
+                                    }
+                                }
                             )
                         }
                         Screen.SIGNUP, Screen.FINDID, Screen.FINDPASSWORD -> {
@@ -83,6 +114,7 @@ enum class Screen {
     SPLASH,
     LOGIN,
     HOME,
+    MAP,
     SIGNUP,
     FINDID,
     FINDPASSWORD
