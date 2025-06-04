@@ -25,7 +25,6 @@ fun HomeScreen(
     selectedNavItem: NavigationItem = NavigationItem.HOME,
     onSearchClick: () -> Unit = {},
     onAlarmClick: () -> Unit = {},
-    onNavigationItemSelected: (NavigationItem) -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     Box(
@@ -49,13 +48,6 @@ fun HomeScreen(
             // Content area below the TopBar
             // Add more components here as needed
         }
-
-        // BottomNavigationBar positioned at absolute bottom
-        BottomNavigationBar(
-            selectedItem = selectedNavItem,
-            onItemSelected = onNavigationItemSelected,
-            modifier = Modifier.align(Alignment.BottomCenter)
-        )
     }
 }
 

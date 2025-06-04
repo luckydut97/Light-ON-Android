@@ -4,24 +4,12 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import com.luckydut97.lighton.feature_auth.splash.ui.SplashScreen
-import com.luckydut97.lighton.feature_auth.login.navigation.LoginNavigation
-import com.luckydut97.lighton.feature_auth.login.navigation.LoginRoute
 import com.luckydut97.lighton.core.ui.theme.LightonTheme
-import com.luckydut97.lighton.feature_home.main.ui.HomeScreen
-import com.luckydut97.lighton.feature_map.main.ui.MapScreen
-import com.luckydut97.lighton.core.ui.components.NavigationItem
+
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -29,95 +17,10 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             LightonTheme {
-                // 앱 상태 관리
-                //var currentScreen by remember { mutableStateOf(Screen.SPLASH) }
-                var currentScreen by remember { mutableStateOf(Screen.HOME) }
-                var selectedNavItem by remember { mutableStateOf(NavigationItem.HOME) }
-
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    when (currentScreen) {
-                        Screen.SPLASH -> {
-                            SplashScreen(
-                                onNavigateToLogin = {
-                                    currentScreen = Screen.LOGIN
-                                }
-                            )
-                        }
-                        Screen.LOGIN -> {
-                            // LoginNavigation을 사용하여 로그인 관련 화면 처리
-                            LoginNavigation(
-                                startDestination = LoginRoute.EmailLogin.route,
-                                onSignUpClick = {
-                                    // 회원가입 화면으로 이동
-                                    currentScreen = Screen.SIGNUP
-                                },
-                                onLoginSuccess = {
-                                    // 로그인 성공 시 홈 화면으로 이동
-                                    currentScreen = Screen.HOME
-                                },
-                                onBackToWelcome = {
-                                    // 뒤로 가기 버튼 누를 때 메인 액티비티 종료
-                                    // 스플래시 화면으로 돌아가지 않고 앱 종료
-                                    finish()
-                                }
-                            )
-                        }
-                        Screen.HOME -> {
-                            HomeScreen(
-                                selectedNavItem = selectedNavItem,
-                                onSearchClick = { /* 검색 클릭 처리 */ },
-                                onAlarmClick = { /* 알림 클릭 처리 */ },
-                                onNavigationItemSelected = { navItem ->
-                                    selectedNavItem = navItem
-                                    when (navItem) {
-                                        NavigationItem.HOME -> currentScreen = Screen.HOME
-                                        NavigationItem.MAP -> currentScreen = Screen.MAP
-                                        NavigationItem.STAGE -> { /* TODO: 공연 화면 */
-                                        }
-
-                                        NavigationItem.MYPAGE -> { /* TODO: 마이페이지 화면 */
-                                        }
-                                    }
-                                }
-                            )
-                        }
-                        Screen.MAP -> {
-                            MapScreen(
-                                onNavigationItemSelected = { navItem ->
-                                    selectedNavItem = navItem
-                                    when (navItem) {
-                                        NavigationItem.HOME -> currentScreen = Screen.HOME
-                                        NavigationItem.MAP -> currentScreen = Screen.MAP
-                                        NavigationItem.STAGE -> { /* TODO: 공연 화면 */
-                                        }
-
-                                        NavigationItem.MYPAGE -> { /* TODO: 마이페이지 화면 */
-                                        }
-                                    }
-                                }
-                            )
-                        }
-                        Screen.SIGNUP, Screen.FINDID, Screen.FINDPASSWORD -> {
-                            Text(
-                                text = "준비 중인 기능입니다",
-                                modifier = Modifier.padding(innerPadding)
-                            )
-                        }
-                    }
-                }
+                AppNavigation()
             }
         }
     }
-}
-
-enum class Screen {
-    SPLASH,
-    LOGIN,
-    HOME,
-    MAP,
-    SIGNUP,
-    FINDID,
-    FINDPASSWORD
 }
 
 @Composable

@@ -21,7 +21,6 @@ import com.luckydut97.lighton.core.ui.components.NavigationItem
 @Composable
 fun MapScreen(
     selectedNavItem: NavigationItem = NavigationItem.MAP,
-    onNavigationItemSelected: (NavigationItem) -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     Box(
@@ -46,13 +45,6 @@ fun MapScreen(
                 )
             }
         }
-
-        // BottomNavigationBar positioned at absolute bottom
-        BottomNavigationBar(
-            selectedItem = selectedNavItem,
-            onItemSelected = onNavigationItemSelected,
-            modifier = Modifier.align(Alignment.BottomCenter)
-        )
     }
 }
 
