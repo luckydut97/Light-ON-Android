@@ -42,91 +42,108 @@ fun HeroImageSection(
         }
     }
 
-    HorizontalPager(
-        state = pagerState,
-        modifier = modifier
-    ) { page ->
-        Box(
+    Box(modifier = modifier) {
+        HorizontalPager(
+            state = pagerState,
             modifier = Modifier
-                .fillMaxWidth()
-                .aspectRatio(1f)
-                .background(Color(0xFFC5C5C5))
-        ) {
-            // 그라데이션 오버레이 (하단에만 적용)
+        ) { page ->
             Box(
                 modifier = Modifier
-                    .matchParentSize()
-                    .background(
-                        Brush.verticalGradient(
-                            colors = listOf(
-                                Color(0x00000000), // 위(투명)
-                                Color(0x66000000), // 아래(블랙, 40% 투명)
-                            ),
-                            startY = 350f,
-                            endY = Float.POSITIVE_INFINITY
-                        )
-                    )
-            )
-            Column(
-                modifier = Modifier
-                    .align(Alignment.BottomCenter)
-                    .size(width = 402.dp, height = 167.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
+                    .fillMaxWidth()
+                    .aspectRatio(1f)
+                    .background(Color(0xFFC5C5C5))
             ) {
+                // 그라데이션 오버레이 (하단에만 적용)
                 Box(
                     modifier = Modifier
-                        .size(width = 342.dp, height = 72.dp)
-                ) {
-                    Text(
-                        text = pages[page].first,
-                        fontSize = 28.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = Color.White,
-                        lineHeight = 36.sp,
-                        letterSpacing = (-1).sp,
-                        maxLines = 2,
-                        modifier = Modifier.fillMaxSize()
-                    )
-                }
-                Spacer(modifier = Modifier.height(8.dp))
-                Box(
-                    modifier = Modifier
-                        .size(width = 342.dp, height = 27.dp)
-                ) {
-                    Text(
-                        text = pages[page].second,
-                        fontSize = 18.sp,
-                        color = Color.White,
-                        lineHeight = 36.sp,
-                        letterSpacing = (-1).sp,
-                        maxLines = 1,
-                        modifier = Modifier.fillMaxSize()
-                    )
-                }
-                Spacer(modifier = Modifier.height(30.dp))
-                Box(
-                    modifier = Modifier
-                        .width(46.dp)
-                        .height(18.dp)
-                        .background(color = Color(0x33000000), shape = RoundedCornerShape(100.dp)),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Row(
-                        horizontalArrangement = Arrangement.spacedBy(8.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        repeat(pages.size) { index ->
-                            Box(
-                                modifier = Modifier
-                                    .size(6.dp)
-                                    .background(
-                                        color = if (index == pagerState.currentPage) Color.White else Color.White.copy(
-                                            alpha = 0.3f
-                                        ),
-                                        shape = CircleShape
-                                    )
+                        .matchParentSize()
+                        .background(
+                            Brush.verticalGradient(
+                                colors = listOf(
+                                    Color(0x00000000), // 위(투명)
+                                    Color(0x66000000), // 아래(블랙, 40% 투명)
+                                ),
+                                startY = 350f,
+                                endY = Float.POSITIVE_INFINITY
                             )
-                        }
+                        )
+                )
+                Column(
+                    modifier = Modifier
+                        .align(Alignment.BottomCenter)
+                        .size(width = 402.dp, height = 167.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .size(width = 342.dp, height = 72.dp)
+                    ) {
+                        Text(
+                            text = pages[page].first,
+                            fontSize = 28.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = Color.White,
+                            lineHeight = 36.sp,
+                            letterSpacing = (-1).sp,
+                            maxLines = 2,
+                            modifier = Modifier.fillMaxSize()
+                        )
+                    }
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Box(
+                        modifier = Modifier
+                            .size(width = 342.dp, height = 27.dp)
+                    ) {
+                        Text(
+                            text = pages[page].second,
+                            fontSize = 18.sp,
+                            color = Color.White,
+                            lineHeight = 36.sp,
+                            letterSpacing = (-1).sp,
+                            maxLines = 1,
+                            modifier = Modifier.fillMaxSize()
+                        )
+                    }
+                    Spacer(modifier = Modifier.height(30.dp))
+                    // 인디케이터를 위한 공간만 확보 (실제 인디케이터는 밖에서 렌더링)
+                    Box(modifier = Modifier.height(18.dp))
+                }
+            }
+        }
+
+        // 인디케이터를 사진 위에 오버레이 (원래 위치 그대로, 하지만 HorizontalPager 밖에서 렌더링)
+        Column(
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .size(width = 402.dp, height = 167.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            // 텍스트 영역을 위한 공간 (72dp + 8dp + 27dp + 30dp = 137dp)
+            Spacer(modifier = Modifier.height(137.dp))
+
+            // 인디케이터 (원래 위치 그대로)
+            Box(
+                modifier = Modifier
+                    .width(46.dp)
+                    .height(18.dp)
+                    .background(color = Color(0x33000000), shape = RoundedCornerShape(100.dp)),
+                contentAlignment = Alignment.Center
+            ) {
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    repeat(pages.size) { index ->
+                        Box(
+                            modifier = Modifier
+                                .size(6.dp)
+                                .background(
+                                    color = if (index == pagerState.currentPage) Color.White else Color.White.copy(
+                                        alpha = 0.3f
+                                    ),
+                                    shape = CircleShape
+                                )
+                        )
                     }
                 }
             }

@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.windowInsetsPadding
@@ -44,7 +45,9 @@ fun HomeScreen(
             )
 
             // Main Hero Section and other content
-            com.luckydut97.lighton.feature_home.component.HeroImageSection()
+            com.luckydut97.lighton.feature_home.component.HeroImageSection(
+                modifier = Modifier.fillMaxWidth()
+            )
             // Content area below the TopBar
             // Add more components here as needed
         }
