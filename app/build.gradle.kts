@@ -71,4 +71,5 @@ dependencies {
     implementation(project(":feature-auth"))
     implementation(project(":feature-home"))
     implementation(project(":feature-map"))
+    implementation(project(":feature-stage"))
 }

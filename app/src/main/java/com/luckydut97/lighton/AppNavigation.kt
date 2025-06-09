@@ -131,21 +131,9 @@ fun MainScreenWithBottomNav() {
                 )
             }
 
-            // 공연 화면 (임시)
+            // 공연 화면
             composable("stage") {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .windowInsetsPadding(WindowInsets.statusBars)
-                        .padding(bottom = 108.dp),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        text = "공연 화면입니다.",
-                        fontSize = 24.sp,
-                        fontWeight = FontWeight.Bold
-                    )
-                }
+                com.luckydut97.feature_stage.main.ui.StageScreen()
             }
 
             // 지도 화면
