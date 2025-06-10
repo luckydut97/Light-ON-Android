@@ -1,4 +1,4 @@
-package com.luckydut97.lighton.feature_home.component
+package com.luckydut97.feature_home.component
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
@@ -26,9 +26,9 @@ fun HeroImageSection(
     modifier: Modifier = Modifier
 ) {
     val pages = listOf(
-        Pair("메인 텍스트는 최대 2줄까지 허용합니다. 주천음악 1", "서브텍스트 최대 1줄 허용 1"),
-        Pair("메인 텍스트는 최대 2줄까지 허용합니다. 주천음악 2", "서브텍스트 최대 1줄 허용 2"),
-        Pair("메인 텍스트는 최대 2줄까지 허용합니다. 주천음악 3", "서브텍스트 최대 1줄 허용 3")
+        Pair("메인 텍스트는 최대 2줄까지 허용합니다. 추천음악 1", "서브텍스트 최대 1줄 허용 1"),
+        Pair("메인 텍스트는 최대 2줄까지 허용합니다. 추천음악 2", "서브텍스트 최대 1줄 허용 2"),
+        Pair("메인 텍스트는 최대 2줄까지 허용합니다. 추천음악 3", "서브텍스트 최대 1줄 허용 3")
     )
 
     val pagerState = rememberPagerState(pageCount = { pages.size })

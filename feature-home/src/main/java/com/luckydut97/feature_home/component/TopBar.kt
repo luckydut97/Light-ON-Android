@@ -1,5 +1,6 @@
-package com.luckydut97.lighton.feature_home.component
+package com.luckydut97.feature_home.component
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -14,6 +15,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -22,12 +24,14 @@ import com.luckydut97.lighton.feature.home.R
 @Composable
 fun TopBar(
     onSearchClick: () -> Unit = {},
-    onAlarmClick: () -> Unit = {}
+    onAlarmClick: () -> Unit = {},
+    modifier: Modifier = Modifier
 ) {
     Box(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
-            .height(50.dp),
+            .height(50.dp)
+            .background(Color.White),
         contentAlignment = Alignment.Center
     ) {
         Row(

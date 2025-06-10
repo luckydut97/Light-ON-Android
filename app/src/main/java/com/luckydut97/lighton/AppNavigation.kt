@@ -116,16 +116,15 @@ fun MainScreenWithBottomNav() {
                 }
             )
         }
-    ) { _ ->
+    ) { contentPadding ->
         NavHost(
             navController = navController,
             startDestination = "home",
-            modifier = Modifier
+            modifier = Modifier.padding(contentPadding)
         ) {
             // 홈 화면
             composable("home") {
                 HomeScreen(
-                    selectedNavItem = NavigationItem.HOME,
                     onSearchClick = { /* 검색 클릭 처리 */ },
                     onAlarmClick = { /* 알림 클릭 처리 */ }
                 )
@@ -138,9 +137,7 @@ fun MainScreenWithBottomNav() {
 
             // 지도 화면
             composable("map") {
-                MapScreen(
-                    selectedNavItem = NavigationItem.MAP
-                )
+                MapScreen()
             }
 
             // 마이페이지 화면 (임시)
