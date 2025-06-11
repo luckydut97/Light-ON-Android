@@ -2,9 +2,11 @@ package com.luckydut97.lighton.feature_home.main.ui
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.windowInsetsPadding
@@ -17,9 +19,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.luckydut97.feature_home.component.TopBar
-import com.luckydut97.feature_home.component.RecommendationSection
 import com.luckydut97.feature_home.component.HeroImageSection
+import com.luckydut97.feature_home.component.RecommendationSection
+import com.luckydut97.feature_home.component.TopBar
 import com.luckydut97.lighton.feature_home.main.viewmodel.HomeViewModel
 
 @Composable
@@ -32,22 +34,22 @@ fun HomeScreen(
     val recommendedPerformances by viewModel.recommendedPerformances.collectAsState()
     val scrollState = rememberScrollState()
 
-    Box(
+    Column(
         modifier = modifier.fillMaxSize()
     ) {
-        // Main content area - only respects status bar padding
+        // TopBar - 고정 (스크롤되지 않음)
+        TopBar(
+            onSearchClick = onSearchClick,
+            onAlarmClick = onAlarmClick
+        )
+
+        // 스크롤 가능한 컨텐츠 영역
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(bottom = 108.dp) // 72dp(nav bar) + 36dp(bottom padding)
+                .weight(1f) // BottomNav를 위한 공간 확보
                 .verticalScroll(scrollState)
         ) {
-            // TopBar placed below the status bar
-            TopBar(
-                onSearchClick = onSearchClick,
-                onAlarmClick = onAlarmClick
-            )
-
             // Main Hero Section
             HeroImageSection(
                 modifier = Modifier.fillMaxWidth()
@@ -67,6 +69,9 @@ fun HomeScreen(
 
             // 향후 추가될 섹션들을 위한 공간
             // 예: FeaturedEventSection(), PopularArtistSection() 등
+
+            // BottomNav를 위한 여백 (바텀 네비게이션이 컨텐츠를 가리지 않도록)
+            Spacer(modifier = Modifier.height(108.dp)) // 72dp(nav bar) + 36dp(bottom padding)
         }
     }
 }

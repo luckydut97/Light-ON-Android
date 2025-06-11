@@ -13,6 +13,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -26,6 +27,14 @@ fun RecommendationSection(
     onPerformanceClick: (RecommendedPerformance) -> Unit = {},
     modifier: Modifier = Modifier
 ) {
+    val configuration = LocalConfiguration.current
+    val screenWidth = configuration.screenWidthDp.dp
+
+    // 화면 크기에 따른 동적 값들
+    val horizontalPadding = (screenWidth * 0.043f).coerceAtLeast(16.dp) // 약 18dp for 414dp screen
+    val itemSpacing = (screenWidth * 0.039f).coerceAtLeast(12.dp) // 약 16dp for 414dp screen
+    val itemWidth = (screenWidth * 0.314f).coerceAtLeast(110.dp) // 약 130dp for 414dp screen
+
     Box(
         modifier = modifier
             .fillMaxWidth()
@@ -57,7 +66,7 @@ fun RecommendationSection(
                             color = Color.Black,
                             modifier = Modifier
                                 .align(Alignment.CenterStart)
-                                .padding(start = 18.dp)
+                                .padding(start = horizontalPadding)
                         )
 
                         // 우측 화살표 아이콘
@@ -66,7 +75,7 @@ fun RecommendationSection(
                             contentDescription = "더보기",
                             modifier = Modifier
                                 .align(Alignment.CenterEnd)
-                                .padding(end = 18.dp)
+                                .padding(end = horizontalPadding)
                                 .size(24.dp)
                                 .clickable { onMoreClick() },
                             tint = Color.Gray
@@ -88,13 +97,14 @@ fun RecommendationSection(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(196.dp), // 206dp - 상하 10dp 패딩
-                    horizontalArrangement = Arrangement.spacedBy(16.dp),
-                    contentPadding = PaddingValues(horizontal = 18.dp) // 좌우 18dp 패딩
+                    horizontalArrangement = Arrangement.spacedBy(itemSpacing),
+                    contentPadding = PaddingValues(horizontal = horizontalPadding)
                 ) {
                     items(performances) { performance ->
                         RecommendedPerformanceItem(
                             performance = performance,
-                            onClick = onPerformanceClick
+                            onClick = onPerformanceClick,
+                            itemWidth = itemWidth
                         )
                     }
                 }
