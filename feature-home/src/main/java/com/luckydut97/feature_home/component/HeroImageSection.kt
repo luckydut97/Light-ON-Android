@@ -18,6 +18,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.platform.LocalConfiguration
 import kotlinx.coroutines.delay
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -76,7 +77,7 @@ fun HeroImageSection(
                 ) {
                     Box(
                         modifier = Modifier
-                            .size(width = 342.dp, height = 72.dp)
+                            .size(width = 310.dp, height = 72.dp)
                     ) {
                         Text(
                             text = pages[page].first,
@@ -92,7 +93,7 @@ fun HeroImageSection(
                     Spacer(modifier = Modifier.height(8.dp))
                     Box(
                         modifier = Modifier
-                            .size(width = 342.dp, height = 27.dp)
+                            .size(width = 310.dp, height = 27.dp)
                     ) {
                         Text(
                             text = pages[page].second,

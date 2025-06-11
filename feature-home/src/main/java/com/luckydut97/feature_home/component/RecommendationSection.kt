@@ -38,15 +38,15 @@ fun RecommendationSection(
     Box(
         modifier = modifier
             .fillMaxWidth()
-            .height(289.dp)
+            .height(260.dp)
             .background(Color.White)
     ) {
         Column {
-            // Row1: 제목과 화살표 (63dp)
+            // Row1: 제목과 화살표 (70dp)
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(63.dp)
+                    .height(70.dp)
             ) {
                 Column(
                     modifier = Modifier.fillMaxSize()
@@ -76,7 +76,7 @@ fun RecommendationSection(
                             modifier = Modifier
                                 .align(Alignment.CenterEnd)
                                 .padding(end = horizontalPadding)
-                                .size(24.dp)
+                                .size(29.dp)
                                 .clickable { onMoreClick() },
                             tint = Color.Gray
                         )
@@ -86,17 +86,17 @@ fun RecommendationSection(
                 }
             }
 
-            // Row2: 가로 스크롤 아이템들 (206dp)
+            // Row2: 가로 스크롤 아이템들 (166dp)
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(206.dp),
+                    .height(166.dp),
                 contentAlignment = Alignment.Center
             ) {
                 LazyRow(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(196.dp), // 206dp - 상하 10dp 패딩
+                        .height(166.dp), // 166dp - 상하 10dp 패딩
                     horizontalArrangement = Arrangement.spacedBy(itemSpacing),
                     contentPadding = PaddingValues(horizontal = horizontalPadding)
                 ) {
