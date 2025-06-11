@@ -28,6 +28,7 @@ import com.luckydut97.lighton.feature_home.main.ui.HomeScreen
 import com.luckydut97.lighton.feature_map.main.ui.MapScreen
 import com.luckydut97.lighton.core.ui.components.BottomNavigationBar
 import com.luckydut97.lighton.core.ui.components.NavigationItem
+import com.luckydut97.lighton.feature_auth.login.ui.EmailLoginScreen
 
 /**
  * 앱 전체의 메인 네비게이션을 처리하는 컴포넌트
@@ -37,22 +38,34 @@ fun AppNavigation(
     navController: NavHostController = rememberNavController(),
     isLoggedIn: Boolean = false
 ) {
-    // 🔥 메인 화면으로 바로 가기 (홈화면 + 바텀 네비게이션)
-    var startDestination by remember { mutableStateOf("main") }
-    // 🔥 원래 코드: 테스트 완료 후 이걸 사용
-    //var startDestination by remember { mutableStateOf(if (isLoggedIn) "main" else "auth") }
+    // 바로 메인화면으로(강제!)
+    //var startDestination by remember { mutableStateOf("main") }
+
+// 기본 플로우(스플래시 → 로그인 → 메인)
+    var startDestination by remember { mutableStateOf(if (isLoggedIn) "main" else "auth") }
 
     NavHost(
         navController = navController,
         startDestination = startDestination
     ) {
         // 인증 관련 화면들 (로그인, 회원가입 등)
-        composable("auth") {
+
             // 임시 스플래시 화면 - 나중에 실제 인증 플로우로 변경
-            SplashScreen(
-                onNavigateToLogin = {
+            composable("auth") {
+                SplashScreen(
+                    onNavigateToLogin = {
+                        navController.navigate("login") {
+                            popUpTo("auth") { inclusive = true }
+                        }
+                    }
+                )
+            }
+        // 🟩 로그인 화면을 NavHost에 추가
+        composable("login") {
+            EmailLoginScreen(
+                onLoginClick = {
                     navController.navigate("main") {
-                        popUpTo("auth") { inclusive = true }
+                        popUpTo("login") { inclusive = true }
                     }
                 }
             )

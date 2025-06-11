@@ -12,14 +12,29 @@ data class RecommendedPerformance(
     val title: String
 )
 
+data class ArtistPerformance(
+    val id: String,
+    val artistName: String,
+    val performanceTitle: String,
+    val genre: String,
+    val imageResId: Int,
+    val date: String,   // yyyy.MM.dd
+    val time: String,   // HH:mm
+    val place: String
+)
+
 class HomeViewModel : ViewModel() {
 
     private val _recommendedPerformances =
         MutableStateFlow<List<RecommendedPerformance>>(emptyList())
     val recommendedPerformances: StateFlow<List<RecommendedPerformance>> = _recommendedPerformances
 
+    private val _featuredArtistPerformances = MutableStateFlow<List<ArtistPerformance>>(emptyList())
+    val featuredArtistPerformances: StateFlow<List<ArtistPerformance>> = _featuredArtistPerformances
+
     init {
         loadRecommendedPerformances()
+        loadFeaturedArtistPerformances() // 주목 아티스트 데이터 불러오기
     }
 
     private fun loadRecommendedPerformances() {
@@ -49,6 +64,51 @@ class HomeViewModel : ViewModel() {
             )
             _recommendedPerformances.value = testData
         }
+    }
+
+    private fun loadFeaturedArtistPerformances() {
+        _featuredArtistPerformances.value = listOf(
+            ArtistPerformance(
+                id = "1",
+                artistName = "라이트온",
+                performanceTitle = "[여의도] Light ON 홀리데이 버스킹",
+                genre = "어쿠스틱",
+                imageResId = com.luckydut97.lighton.feature.home.R.drawable.reco_test_img1,
+                date = "2025.05.01",
+                time = "17:00",
+                place = "서울 영등포구 여의도동 81-8"
+            ),
+            ArtistPerformance(
+                id = "2",
+                artistName = "라이트온",
+                performanceTitle = "[홍대] 버스킹 나이트",
+                genre = "재즈",
+                imageResId = com.luckydut97.lighton.feature.home.R.drawable.reco_test_img2,
+                date = "2025.06.12",
+                time = "19:00",
+                place = "서울 마포구 홍익로 20"
+            ),
+            ArtistPerformance(
+                id = "3",
+                artistName = "라이트온",
+                performanceTitle = "[잠실] 청춘 콘서트",
+                genre = "발라드",
+                imageResId = com.luckydut97.lighton.feature.home.R.drawable.reco_test_img3,
+                date = "2025.07.02",
+                time = "18:00",
+                place = "서울 송파구 올림픽로 25"
+            ),
+            ArtistPerformance(
+                id = "4",
+                artistName = "라이트온",
+                performanceTitle = "[일산] 어쿠스틱 night",
+                genre = "어쿠스틱",
+                imageResId = com.luckydut97.lighton.feature.home.R.drawable.reco_test_img4,
+                date = "2025.08.14",
+                time = "20:00",
+                place = "경기 고양시 일산동구 정발산로 35"
+            )
+        )
     }
 
     // 향후 다른 섹션들을 위한 확장 공간

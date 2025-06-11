@@ -19,6 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.luckydut97.feature_home.component.FeaturedArtistPerformanceSection
 import com.luckydut97.feature_home.component.HeroImageSection
 import com.luckydut97.feature_home.component.RecommendationSection
 import com.luckydut97.feature_home.component.TopBar
@@ -32,6 +33,7 @@ fun HomeScreen(
     viewModel: HomeViewModel = viewModel()
 ) {
     val recommendedPerformances by viewModel.recommendedPerformances.collectAsState()
+    val featuredArtistPerformances by viewModel.featuredArtistPerformances.collectAsState()
     val scrollState = rememberScrollState()
 
     Column(
@@ -67,11 +69,16 @@ fun HomeScreen(
                 modifier = Modifier.fillMaxWidth()
             )
 
+            // Featured Artist Performance Section
+            FeaturedArtistPerformanceSection(
+                performances = featuredArtistPerformances
+            )
+
             // 향후 추가될 섹션들을 위한 공간
             // 예: FeaturedEventSection(), PopularArtistSection() 등
 
             // BottomNav를 위한 여백 (바텀 네비게이션이 컨텐츠를 가리지 않도록)
-            Spacer(modifier = Modifier.height(108.dp)) // 72dp(nav bar) + 36dp(bottom padding)
+            Spacer(modifier = Modifier.height(60.dp)) // 72dp(nav bar) + 36dp(bottom padding)
         }
     }
 }
