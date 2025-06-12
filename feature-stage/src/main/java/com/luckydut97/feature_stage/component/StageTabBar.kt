@@ -27,16 +27,17 @@ fun StageTabBar(
                 .fillMaxWidth()
                 .height(40.dp)
                 .background(Color.White),
-            verticalAlignment = Alignment.Bottom
+            verticalAlignment = Alignment.CenterVertically  // 중앙 정렬로 변경
         ) {
             StageTab.values().forEach { tab ->
                 val isSelected = tab == selectedTab
                 Column(
                     modifier = Modifier
                         .weight(1f)
+                        .fillMaxHeight()  // 전체 높이를 채워서 클릭 영역 최대화
                         .clickable { onTabSelected(tab) },
                     horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Bottom
+                    verticalArrangement = Arrangement.Center  // 중앙 정렬
                 ) {
                     Text(
                         text = tab.title,
