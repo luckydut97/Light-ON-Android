@@ -1,5 +1,6 @@
 package com.luckydut97.lighton
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
@@ -15,6 +16,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -29,6 +31,10 @@ import com.luckydut97.lighton.feature_map.main.ui.MapScreen
 import com.luckydut97.lighton.core.ui.components.BottomNavigationBar
 import com.luckydut97.lighton.core.ui.components.NavigationItem
 import com.luckydut97.lighton.feature_auth.login.ui.EmailLoginScreen
+import com.luckydut97.lighton.feature_auth.signup.ui.SignUpScreen
+import com.luckydut97.lighton.feature_auth.signup.ui.PersonalInfoScreen
+import com.luckydut97.lighton.feature_auth.signup.ui.MusicPreferenceScreen
+import com.luckydut97.lighton.feature_auth.signup.ui.SignupCompleteScreen
 
 /**
  * 앱 전체의 메인 네비게이션을 처리하는 컴포넌트
@@ -38,34 +44,95 @@ fun AppNavigation(
     navController: NavHostController = rememberNavController(),
     isLoggedIn: Boolean = false
 ) {
-    // 바로 메인화면으로(강제!)
-    //var startDestination by remember { mutableStateOf("main") }
-
-// 기본 플로우(스플래시 → 로그인 → 메인)
-    var startDestination by remember { mutableStateOf(if (isLoggedIn) "main" else "auth") }
+    // 기본 플로우(스플래시 → 로그인 → 메인)
+    var startDestination by remember { mutableStateOf(if (isLoggedIn) "main" else "splash") }
 
     NavHost(
         navController = navController,
         startDestination = startDestination
     ) {
-        // 인증 관련 화면들 (로그인, 회원가입 등)
-
-            // 임시 스플래시 화면 - 나중에 실제 인증 플로우로 변경
-            composable("auth") {
-                SplashScreen(
-                    onNavigateToLogin = {
-                        navController.navigate("login") {
-                            popUpTo("auth") { inclusive = true }
-                        }
+        // 스플래시 화면
+        composable("splash") {
+            SplashScreen(
+                onNavigateToLogin = {
+                    navController.navigate("login") {
+                        popUpTo("splash") { inclusive = true }
                     }
-                )
-            }
-        // 🟩 로그인 화면을 NavHost에 추가
+                }
+            )
+        }
+
+        // 로그인 화면
         composable("login") {
             EmailLoginScreen(
+                onBackClick = {
+                    // 스플래시로 돌아가거나 앱 종료
+                    navController.navigate("splash")
+                },
                 onLoginClick = {
                     navController.navigate("main") {
                         popUpTo("login") { inclusive = true }
+                    }
+                },
+                onKakaoLoginClick = { /* 카카오 로그인 구현 */ },
+                onGoogleLoginClick = { /* 구글 로그인 구현 */ },
+                onSignUpClick = {
+                    navController.navigate("signup")
+                },
+                onFindIdClick = {
+                    navController.navigate("findid")
+                },
+                onFindPasswordClick = {
+                    navController.navigate("findpassword")
+                }
+            )
+        }
+
+        // 회원가입 화면
+        composable("signup") {
+            SignUpScreen(
+                onBackClick = {
+                    navController.popBackStack()
+                },
+                onNextClick = {
+                    navController.navigate("personal_info")
+                }
+            )
+        }
+
+        // 개인정보 입력 화면
+        composable("personal_info") {
+            PersonalInfoScreen(
+                onBackClick = {
+                    navController.popBackStack()
+                },
+                onNextClick = {
+                    navController.navigate("music_preference")
+                }
+            )
+        }
+
+        // 음악 취향 선택 화면
+        composable("music_preference") {
+            MusicPreferenceScreen(
+                onBackClick = {
+                    navController.popBackStack()
+                },
+                onSkipClick = {
+                    navController.navigate("signup_complete")
+                },
+                onNextClick = { selectedGenres ->
+                    navController.navigate("signup_complete")
+                }
+            )
+        }
+
+        // 회원가입 완료 화면
+        composable("signup_complete") {
+            SignupCompleteScreen(
+                onConfirmClick = {
+                    navController.navigate("main") {
+                        popUpTo("signup_complete") { inclusive = true }
                     }
                 }
             )
@@ -76,15 +143,12 @@ fun AppNavigation(
             MainScreenWithBottomNav()
         }
 
-        // 기타 화면들
-        composable("signup") {
-            Text(text = "준비 중인 기능입니다 - 회원가입")
-        }
-
+        // 아이디 찾기 화면
         composable("findid") {
             Text(text = "준비 중인 기능입니다 - 아이디 찾기")
         }
 
+        // 비밀번호 찾기 화면
         composable("findpassword") {
             Text(text = "준비 중인 기능입니다 - 비밀번호 찾기")
         }
@@ -101,7 +165,10 @@ fun MainScreenWithBottomNav() {
     val currentRoute = navBackStackEntry?.destination?.route ?: "home"
 
     Scaffold(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier
+            .fillMaxSize()
+            .background(androidx.compose.ui.graphics.Color.White),
+        containerColor = androidx.compose.ui.graphics.Color.White,
         bottomBar = {
             BottomNavigationBar(
                 selectedItem = when (currentRoute) {
