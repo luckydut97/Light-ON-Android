@@ -56,7 +56,7 @@ fun StageTabBar(
                 }
             }
         }
-        Spacer(modifier = Modifier.height(13.dp))
+        Spacer(modifier = Modifier.height(1.dp))
     }
 }
 
