@@ -136,6 +136,24 @@ fun StageScreen(
         recommendedPerformances
     }
 
+    // 필터링된 공연 목록
+    val filteredPerformances = if (selectedChipId == "all") {
+        currentPerformances
+    } else {
+        currentPerformances.filter { performance ->
+            when (selectedChipId) {
+                "acoustic" -> performance.tag == "어쿠스틱"
+                "jazz" -> performance.tag == "재즈"
+                "hiphop" -> performance.tag == "힙합"
+                "band" -> performance.tag == "밴드"
+                "genre1" -> performance.tag == "장르1"
+                "genre2" -> performance.tag == "장르2"
+                "genre3" -> performance.tag == "장르3"
+                else -> true
+            }
+        }
+    }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -157,7 +175,7 @@ fun StageScreen(
             contentPadding = PaddingValues(vertical = 16.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            items(currentPerformances) { performance ->
+            items(filteredPerformances) { performance ->
                 PerformanceItem(
                     performance = performance,
                     onClick = { onPerformanceClick(performance.id) }

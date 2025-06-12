@@ -57,19 +57,27 @@ fun PerformanceItem(
             performance.overlayTag?.let { tag ->
                 Box(
                     modifier = Modifier
-                        .padding(8.dp)
+                        .align(Alignment.TopStart)
+                        .height(17.dp)
                         .background(
-                            Color.Black.copy(alpha = 0.7f),
-                            RoundedCornerShape(4.dp)
-                        )
-                        .padding(horizontal = 8.dp, vertical = 4.dp)
+                            brand,
+                            RoundedCornerShape(
+                                topStart = 0.dp,
+                                topEnd = 0.dp,
+                                bottomStart = 0.dp,
+                                bottomEnd = 6.dp
+                            )
+                        ),
+                    contentAlignment = Alignment.Center
                 ) {
                     Text(
                         text = tag,
                         color = Color.White,
-                        fontSize = 11.sp,
-                        fontWeight = FontWeight.Medium,
-                        fontFamily = PretendardFamily
+                        fontSize = 10.sp,
+                        lineHeight = 10.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        fontFamily = PretendardFamily,
+                        modifier = Modifier.padding(horizontal = 8.dp)
                     )
                 }
             }
