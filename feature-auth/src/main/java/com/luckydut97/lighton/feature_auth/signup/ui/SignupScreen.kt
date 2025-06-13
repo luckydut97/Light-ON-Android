@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -111,25 +110,7 @@ fun SignUpScreen(
             confirmPasswordValidationResult is ValidationResult.Valid
 
     LightonTheme {
-        Scaffold(
-            bottomBar = {
-                // 하단 버튼을 고정으로 배치
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp)
-                ) {
-                    LightonNextButton(
-                        text = "다음",
-                        isEnabled = isFormValid,
-                        onClick = {
-                            // 다음 화면(PersonalInfoScreen)으로 이동
-                            onNextClick() // 네비게이션 핸들러를 통해 PersonalInfoScreen으로 이동
-                        }
-                    )
-                }
-            }
-        ) { paddingValues ->
+        Scaffold { paddingValues ->
             // 메인 콘텐츠
             Surface(
                 modifier = Modifier.fillMaxSize(),
@@ -140,9 +121,6 @@ fun SignUpScreen(
                         .fillMaxSize()
                         .padding(paddingValues)
                 ) {
-                    // 상단 툴바 - 여백 추가
-                    Spacer(modifier = Modifier.height(16.dp))
-
                     // 뒤로가기 버튼과 제목
                     Box(
                         modifier = Modifier
@@ -170,6 +148,7 @@ fun SignUpScreen(
                     Column(
                         modifier = Modifier
                             .fillMaxWidth()
+                            .weight(1f) // 스크롤 영역을 지정하기 위해 weight 사용
                             .padding(horizontal = 16.dp)
                             .verticalScroll(rememberScrollState())
                     ) {
@@ -226,7 +205,23 @@ fun SignUpScreen(
                         )
 
                         // 하단 여백
-                        Spacer(modifier = Modifier.height(40.dp))
+                        Spacer(modifier = Modifier.height(80.dp))
+                    }
+
+                    // 하단 버튼 영역
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp, vertical = 16.dp)
+                    ) {
+                        LightonNextButton(
+                            text = "다음",
+                            isEnabled = isFormValid,
+                            onClick = {
+                                // 다음 화면(PersonalInfoScreen)으로 이동
+                                onNextClick() // 네비게이션 핸들러를 통해 PersonalInfoScreen으로 이동
+                            }
+                        )
                     }
                 }
             }

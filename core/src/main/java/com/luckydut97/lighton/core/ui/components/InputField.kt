@@ -101,7 +101,7 @@ fun LightonInputField(
         // 6dp 간격
         Spacer(modifier = Modifier.height(6.dp))
 
-        // 입력 필드와 중복확인 버튼 (있는 경우) - 47dp 높이
+        // 입력 필드와 중복확인 버튼 (있는 경우) - 48dp 높이
         Row(
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -151,7 +151,7 @@ fun LightonInputField(
                 Spacer(modifier = Modifier.width(8.dp))
                 Button(
                     onClick = onVerifyClick,
-                    modifier = Modifier.height(47.dp),
+                    modifier = Modifier.height(48.dp),
                     shape = RoundedCornerShape(8.dp),
                     contentPadding = PaddingValues(horizontal = 16.dp),
                     colors = ButtonDefaults.buttonColors(

@@ -127,10 +127,14 @@ fun EmailLoginScreen(
                                         text = "아이디",
                                         color = if (isEmailFocused && email.isNotEmpty()) BrandColor else InfoTextColor,
                                         fontSize = (14 * scaleFactor).sp,
+                                        fontWeight = FontWeight.Bold,
                                         fontFamily = PretendardFamily
                                     )
                                 }
                             }
+
+                            // 6dp 간격
+                            Spacer(modifier = Modifier.height((6 * scaleFactor).dp))
 
                             // 아이디 입력 필드 - 334*47
                             BasicTextField(
@@ -200,10 +204,14 @@ fun EmailLoginScreen(
                                         text = "비밀번호",
                                         color = if (isPasswordFocused && password.isNotEmpty()) BrandColor else InfoTextColor,
                                         fontSize = (14 * scaleFactor).sp,
+                                        fontWeight = FontWeight.Bold,
                                         fontFamily = PretendardFamily
                                     )
                                 }
                             }
+
+                            // 6dp 간격
+                            Spacer(modifier = Modifier.height((6 * scaleFactor).dp))
 
                             // 비밀번호 입력 필드 - 334*47
                             BasicTextField(
@@ -360,7 +368,7 @@ fun EmailLoginScreen(
                             text = "아이디 찾기",
                             color = ClickableColor,
                             modifier = Modifier
-                                .clickable { onFindIdClick() }
+                                .clickable {  }
                                 .padding(horizontal = (8 * scaleFactor).dp),
                             fontSize = (14 * scaleFactor).sp,
                             fontFamily = PretendardFamily
@@ -377,7 +385,7 @@ fun EmailLoginScreen(
                             text = "비밀번호 찾기",
                             color = ClickableColor,
                             modifier = Modifier
-                                .clickable { onFindPasswordClick() }
+                                .clickable {  }
                                 .padding(horizontal = (8 * scaleFactor).dp),
                             fontSize = (14 * scaleFactor).sp,
                             fontFamily = PretendardFamily
