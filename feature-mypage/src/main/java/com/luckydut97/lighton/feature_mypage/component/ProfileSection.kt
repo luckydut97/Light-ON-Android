@@ -120,7 +120,6 @@ fun ProfileSection(
                     contentDescription = "Settings",
                     modifier = Modifier
                         .size(24.dp)
-                        .padding(bottom = 2.dp)
                         .clickable { onSettingClick() },
                     tint = clickableColor
                 )

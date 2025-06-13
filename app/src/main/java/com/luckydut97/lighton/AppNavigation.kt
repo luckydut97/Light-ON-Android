@@ -1,12 +1,8 @@
 package com.luckydut97.lighton
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.statusBars
-import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -14,12 +10,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -35,7 +26,6 @@ import com.luckydut97.lighton.feature_auth.signup.ui.SignUpScreen
 import com.luckydut97.lighton.feature_auth.signup.ui.PersonalInfoScreen
 import com.luckydut97.lighton.feature_auth.signup.ui.MusicPreferenceScreen
 import com.luckydut97.lighton.feature_auth.signup.ui.SignupCompleteScreen
-import com.luckydut97.lighton.feature_mypage.main.ui.MyPageScreen
 
 /**
  * 앱 전체의 메인 네비게이션을 처리하는 컴포넌트
@@ -46,7 +36,7 @@ fun AppNavigation(
     isLoggedIn: Boolean = false
 ) {
     // 음악 취향 선택 화면 개발용 변수 - true로 설정하면 스플래시 후 화면으로 이동
-    val isDevelopmentMode = true
+    val isDevelopmentMode = false
 
     // 기본 플로우(스플래시 → 로그인 → 메인)
     var startDestination by remember { mutableStateOf(if (isLoggedIn) "main" else "splash") }

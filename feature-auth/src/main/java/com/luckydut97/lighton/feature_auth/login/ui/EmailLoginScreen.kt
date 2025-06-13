@@ -262,7 +262,8 @@ fun EmailLoginScreen(
                         modifier = Modifier
                             .width((334 * scaleFactor).dp)
                             .height((47 * scaleFactor).dp),
-                        onClick = onLoginClick
+                        onClick = onLoginClick,
+                        borderWidth = -1.dp  // border 제거
                     )
 
                     // 23dp 간격
