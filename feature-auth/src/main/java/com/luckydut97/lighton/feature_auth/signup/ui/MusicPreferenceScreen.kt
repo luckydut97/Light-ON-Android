@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -75,18 +76,19 @@ fun MusicPreferenceScreen(
     // 실제 앱에서는 ViewModel에서 가져오거나 데이터 소스에서 로드할 수 있음
     val allGenres = remember {
         listOf(
-            MusicGenre("rock", "ROCK", R.drawable.img_genre_default),
-            MusicGenre("jazz", "JAZZ", R.drawable.img_genre_default),
-            MusicGenre("edm", "EDM", R.drawable.img_genre_default),
-            MusicGenre("acoustic", "어쿠스틱", R.drawable.img_genre_default),
-            MusicGenre("hiphop", "힙합", R.drawable.img_genre_default),
-            MusicGenre("band", "밴드", R.drawable.img_genre_default),
-            MusicGenre("genre4", "장르4", R.drawable.img_genre_default),
-            MusicGenre("genre5", "장르5", R.drawable.img_genre_default),
-            MusicGenre("genre6", "장르6", R.drawable.img_genre_default),
-            MusicGenre("genre7", "장르7", R.drawable.img_genre_default),
-            MusicGenre("genre8", "장르8", R.drawable.img_genre_default),
-            MusicGenre("genre9", "장르9", R.drawable.img_genre_default)
+            MusicGenre("pop", "팝", R.drawable.ic_pop),
+            MusicGenre("rock", "록", R.drawable.ic_rock),
+            MusicGenre("hiphop", "힙합", R.drawable.ic_hiphop),
+            MusicGenre("rnb", "R&B", R.drawable.ic_rnb),
+            MusicGenre("edm", "EDM", R.drawable.ic_edm),
+            MusicGenre("ballad", "발라드", R.drawable.ic_ballad),
+            MusicGenre("jazz", "재즈", R.drawable.ic_jazz),
+            MusicGenre("classic", "클래식", R.drawable.ic_classic),
+            MusicGenre("reggae", "레게", R.drawable.ic_reggae),
+            MusicGenre("country", "컨트리", R.drawable.ic_country),
+            MusicGenre("acoustic", "어쿠스틱", R.drawable.ic_acoustic),
+            MusicGenre("alternative", "얼터너티브", R.drawable.ic_alternative),
+            MusicGenre("etc", "기타", R.drawable.ic_etc)
         )
     }
 
@@ -111,15 +113,15 @@ fun MusicPreferenceScreen(
                             .padding(top = 16.dp, end = 16.dp)
                     ) {
 
-                        // X 버튼 추가 (삭제해도 됨)
-                        Text(
-                            text = "×",
-                            fontSize = 24.sp,
-                            fontWeight = FontWeight.Bold,
+                        // 닫기 아이콘 버튼
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_close_btn),
+                            contentDescription = "닫기",
                             modifier = Modifier
                                 .align(Alignment.CenterEnd)
-                                .clickable { onSkipClick() }
-                                .padding(8.dp)
+                                .size(24.dp)
+                                .clickable { onSkipClick() },
+                            tint = Color.Black
                         )
                     }
 
@@ -267,8 +269,7 @@ fun GenreItem(
         Box(
             contentAlignment = Alignment.Center,
             modifier = Modifier
-                .fillMaxWidth()
-                .aspectRatio(1f) // 1:1 비율의 원형
+                .size(101.dp) // 101x101 크기
                 .clip(CircleShape)
                 .background(Color.LightGray) // 기본 배경색
                 .border(
@@ -300,7 +301,7 @@ fun GenreItem(
                         color = Color.White,
                         fontFamily = PretendardFamily,
                         fontWeight = FontWeight.Bold,
-                        fontSize = 14.sp,
+                        fontSize = 20.sp,
                         textAlign = TextAlign.Center
                     )
                 }
@@ -316,11 +317,8 @@ fun GenreItem(
                         color = Color.White,
                         fontFamily = PretendardFamily,
                         fontWeight = FontWeight.Bold,
-                        fontSize = 14.sp,
-                        textAlign = TextAlign.Center,
-                        modifier = Modifier
-                            .background(Color(0x66000000)) // 텍스트 배경
-                            .padding(horizontal = 4.dp, vertical = 2.dp)
+                        fontSize = 20.sp,
+                        textAlign = TextAlign.Center
                     )
                 }
             }

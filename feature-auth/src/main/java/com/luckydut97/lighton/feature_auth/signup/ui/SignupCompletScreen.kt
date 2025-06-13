@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -52,15 +53,15 @@ fun SignupCompleteScreen(
                             .fillMaxWidth()
                             .padding(top = 16.dp, end = 16.dp)
                     ) {
-                        // X 버튼
-                        Text(
-                            text = "×",
-                            fontSize = 24.sp,
-                            fontWeight = FontWeight.Bold,
+                        // 닫기 아이콘 버튼
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_close_btn),
+                            contentDescription = "닫기",
                             modifier = Modifier
                                 .align(Alignment.CenterEnd)
-                                .clickable { onConfirmClick() }
-                                .padding(8.dp)
+                                .size(24.dp)
+                                .clickable { onConfirmClick() },
+                            tint = Color.Black
                         )
                     }
 
@@ -75,10 +76,10 @@ fun SignupCompleteScreen(
                     ) {
                         // 로고 이미지
                         Image(
-                            painter = painterResource(id = R.drawable.ic_type_purple),
+                            painter = painterResource(id = R.drawable.ic_complete_smile),
                             contentDescription = "Light On 로고",
                             modifier = Modifier
-                                .size(120.dp)
+                                .size(156.dp)
                                 .padding(bottom = 40.dp)
                         )
 

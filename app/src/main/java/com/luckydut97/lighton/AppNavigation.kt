@@ -44,6 +44,9 @@ fun AppNavigation(
     navController: NavHostController = rememberNavController(),
     isLoggedIn: Boolean = false
 ) {
+    // 개발용 변수 - true로 설정하면 스플래시 후 음악 취향 선택 화면으로 이동
+    val isDevelopmentMode = true
+
     // 기본 플로우(스플래시 → 로그인 → 메인)
     var startDestination by remember { mutableStateOf(if (isLoggedIn) "main" else "splash") }
 
@@ -55,8 +58,16 @@ fun AppNavigation(
         composable("splash") {
             SplashScreen(
                 onNavigateToLogin = {
-                    navController.navigate("login") {
-                        popUpTo("splash") { inclusive = true }
+                    if (isDevelopmentMode) {
+                        // 음악 취향 선택 화면으로 이동(개발 모드)
+                        navController.navigate("music_preference") {
+                            popUpTo("splash") { inclusive = true }
+                        }
+                    } else {
+                        // 로그인 화면으로 이동(일반 개발)
+                        navController.navigate("login") {
+                            popUpTo("splash") { inclusive = true }
+                        }
                     }
                 }
             )

@@ -27,7 +27,7 @@ import com.luckydut97.lighton.core.ui.theme.PretendardFamily
 
 /**
  * 공통 버튼
- * 높이: 47px, 라운드 모서리, 브랜드 색상(#6137DD)
+ * 높이: 46px, 라운드 모서리, 브랜드 색상(#6137DD)
  */
 @Composable
 fun LightonButton(
@@ -43,7 +43,7 @@ fun LightonButton(
         enabled = enabled,
         modifier = modifier
             .fillMaxWidth()
-            .height(47.dp),
+            .height(46.dp),
         shape = RoundedCornerShape(8.dp),
         colors = ButtonDefaults.buttonColors(
             containerColor = backgroundColor,
@@ -55,6 +55,7 @@ fun LightonButton(
         Text(
             text = text,
             fontSize = 16.sp,
+            fontWeight = FontWeight.Bold,
             fontFamily = PretendardFamily,
             textAlign = TextAlign.Center
         )
@@ -77,7 +78,7 @@ fun LightonNextButton(
         enabled = isEnabled,
         modifier = modifier
             .fillMaxWidth()
-            .height(47.dp),
+            .height(46.dp),
         shape = RoundedCornerShape(8.dp),
         colors = ButtonDefaults.buttonColors(
             containerColor = BrandColor,
@@ -137,7 +138,7 @@ fun LightonOutlinedButton(
         enabled = enabled,
         modifier = modifier
             .fillMaxWidth()
-            .height(47.dp)
+            .height(46.dp)
             .border(
                 width = borderWidth,
                 color = if (enabled) borderColor else borderColor.copy(alpha = 0.5f),
@@ -154,6 +155,7 @@ fun LightonOutlinedButton(
         Text(
             text = text,
             fontSize = 16.sp,
+            fontWeight = FontWeight.Bold,
             fontFamily = PretendardFamily,
             textAlign = TextAlign.Center
         )
