@@ -44,6 +44,7 @@ fun FeaturedArtistPerformanceSection(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(37.dp)
+                    .clickable { onMoreClick() }  // 전체 Box를 클릭 가능하게
             ) {
                 Text(
                     text = "주목할 만한 아티스트 공연",
@@ -60,8 +61,7 @@ fun FeaturedArtistPerformanceSection(
                     modifier = Modifier
                         .align(Alignment.CenterEnd)
                         .padding(end = horizontalPadding)
-                        .size(24.dp)
-                        .clickable { onMoreClick() },
+                        .size(24.dp),
                     tint = Color.Gray
                 )
             }

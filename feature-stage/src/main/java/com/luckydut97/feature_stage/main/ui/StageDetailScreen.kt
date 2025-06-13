@@ -114,7 +114,7 @@ fun StageDetailScreen(
                             .background(
                                 Brush.verticalGradient(
                                     colors = listOf(
-                                        Color.Black.copy(alpha = 1f),
+                                        Color.White,
                                         Color.Transparent
                                     )
                                 )

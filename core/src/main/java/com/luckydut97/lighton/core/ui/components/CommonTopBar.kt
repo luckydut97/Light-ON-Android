@@ -33,15 +33,21 @@ fun CommonTopBar(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Spacer(modifier = Modifier.width(17.dp))
-            Icon(
-                painter = painterResource(id = R.drawable.ic_arrow_back),
-                contentDescription = "Back",
+            Box(
                 modifier = Modifier
-                    .width(10.dp)
-                    .height(18.dp)
+                    .size(40.dp)  // 클릭 영역 확대
                     .clickable { onBackClick() },
-                tint = Color.Unspecified
-            )
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_arrow_back),
+                    contentDescription = "Back",
+                    modifier = Modifier
+                        .width(10.dp)
+                        .height(18.dp),
+                    tint = Color.Unspecified
+                )
+            }
         }
         Text(
             text = title,

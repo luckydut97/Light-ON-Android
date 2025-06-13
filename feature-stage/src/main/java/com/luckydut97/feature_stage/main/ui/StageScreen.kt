@@ -19,9 +19,16 @@ import com.luckydut97.feature_stage.model.Performance
 @Composable
 fun StageScreen(
     onBackClick: () -> Unit = {},
-    onPerformanceClick: (String) -> Unit = {}
+    onPerformanceClick: (String) -> Unit = {},
+    initialTab: String = "popular"
 ) {
-    var selectedTab by remember { mutableStateOf(StageTab.POPULAR) }
+    val selectedTabValue = when (initialTab) {
+        "popular" -> StageTab.POPULAR
+        "recommended" -> StageTab.RECOMMENDED
+        else -> StageTab.POPULAR
+    }
+
+    var selectedTab by remember { mutableStateOf(selectedTabValue) }
     var selectedChipId by remember { mutableStateOf("all") }
 
     // 더미 필터 칩 데이터

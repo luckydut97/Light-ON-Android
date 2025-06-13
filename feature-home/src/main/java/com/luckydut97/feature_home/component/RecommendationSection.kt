@@ -57,6 +57,7 @@ fun RecommendationSection(
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(27.dp)
+                            .clickable { onMoreClick() }  // 전체 Box를 클릭 가능하게
                     ) {
                         // 좌측 "추천 공연" 텍스트
                         Text(
@@ -76,8 +77,7 @@ fun RecommendationSection(
                             modifier = Modifier
                                 .align(Alignment.CenterEnd)
                                 .padding(end = horizontalPadding)
-                                .size(29.dp)
-                                .clickable { onMoreClick() },
+                                .size(29.dp),
                             tint = Color.Gray
                         )
                     }

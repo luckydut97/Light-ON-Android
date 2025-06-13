@@ -29,6 +29,8 @@ import com.luckydut97.lighton.feature_home.main.viewmodel.HomeViewModel
 fun HomeScreen(
     onSearchClick: () -> Unit = {},
     onAlarmClick: () -> Unit = {},
+    onRecommendedClick: () -> Unit = {},
+    onPopularClick: () -> Unit = {},
     modifier: Modifier = Modifier,
     viewModel: HomeViewModel = viewModel()
 ) {
@@ -60,9 +62,7 @@ fun HomeScreen(
             // Recommendation Section
             RecommendationSection(
                 performances = recommendedPerformances,
-                onMoreClick = {
-                    // TODO: 추천 공연 더보기 페이지로 이동
-                },
+                onMoreClick = onRecommendedClick,
                 onPerformanceClick = { performance ->
                     // TODO: 개별 공연 상세 페이지로 이동
                 },
@@ -71,7 +71,11 @@ fun HomeScreen(
 
             // Featured Artist Performance Section
             FeaturedArtistPerformanceSection(
-                performances = featuredArtistPerformances
+                performances = featuredArtistPerformances,
+                onMoreClick = onPopularClick,
+                onPerformanceClick = { performance ->
+                    // TODO: 개별 공연 상세 페이지로 이동
+                }
             )
 
             // 향후 추가될 섹션들을 위한 공간

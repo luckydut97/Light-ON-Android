@@ -35,6 +35,7 @@ import com.luckydut97.lighton.feature_auth.signup.ui.SignUpScreen
 import com.luckydut97.lighton.feature_auth.signup.ui.PersonalInfoScreen
 import com.luckydut97.lighton.feature_auth.signup.ui.MusicPreferenceScreen
 import com.luckydut97.lighton.feature_auth.signup.ui.SignupCompleteScreen
+import com.luckydut97.lighton.feature_mypage.main.ui.MyPageScreen
 
 /**
  * 앱 전체의 메인 네비게이션을 처리하는 컴포넌트
@@ -44,7 +45,7 @@ fun AppNavigation(
     navController: NavHostController = rememberNavController(),
     isLoggedIn: Boolean = false
 ) {
-    // 개발용 변수 - true로 설정하면 스플래시 후 음악 취향 선택 화면으로 이동
+    // 음악 취향 선택 화면 개발용 변수 - true로 설정하면 스플래시 후 화면으로 이동
     val isDevelopmentMode = true
 
     // 기본 플로우(스플래시 → 로그인 → 메인)
@@ -149,7 +150,7 @@ fun AppNavigation(
             )
         }
 
-        // 메인 화면 (바텀 네비게이션이 있는 화면들)
+        // 메인 화면 (바텀 네비게이션 포함)
         composable("main") {
             MainScreenWithBottomNav()
         }
@@ -186,11 +187,11 @@ fun MainScreenWithBottomNav() {
         bottomBar = {
             if (shouldShowBottomBar) {
                 BottomNavigationBar(
-                    selectedItem = when (currentRoute) {
-                        "home" -> NavigationItem.HOME
-                        "stage" -> NavigationItem.STAGE
-                        "map" -> NavigationItem.MAP
-                        "mypage" -> NavigationItem.MYPAGE
+                    selectedItem = when {
+                        currentRoute == "home" -> NavigationItem.HOME
+                        currentRoute.startsWith("stage") -> NavigationItem.STAGE
+                        currentRoute == "map" -> NavigationItem.MAP
+                        currentRoute == "mypage" -> NavigationItem.MYPAGE
                         else -> NavigationItem.HOME
                     },
                     onItemSelected = { navItem ->
@@ -202,11 +203,11 @@ fun MainScreenWithBottomNav() {
                         }
                         navController.navigate(route) {
                             // 바텀 네비게이션 클릭 시 백스택 관리 - 상태 저장/복원
-                            popUpTo(navController.graph.startDestinationId) {
-                                saveState = true
+                            popUpTo("home") {
+                                saveState = route != "home"
                             }
                             launchSingleTop = true
-                            restoreState = true
+                            restoreState = route != "home"
                         }
                     }
                 )
@@ -222,13 +223,36 @@ fun MainScreenWithBottomNav() {
             composable("home") {
                 HomeScreen(
                     onSearchClick = { /* 검색 클릭 처리 */ },
-                    onAlarmClick = { /* 알림 클릭 처리 */ }
+                    onAlarmClick = { /* 알림 클릭 처리 */ },
+                    onRecommendedClick = {
+                        navController.navigate("stage/recommended")
+                    },
+                    onPopularClick = {
+                        navController.navigate("stage/popular")
+                    }
                 )
             }
 
             // 공연 화면
             composable("stage") {
                 com.luckydut97.feature_stage.main.ui.StageScreen(
+                    onBackClick = {
+                        navController.popBackStack()
+                    },
+                    onPerformanceClick = { performanceId ->
+                        navController.navigate("stage_detail/$performanceId")
+                    }
+                )
+            }
+
+            // 특정 탭이 선택된 공연 화면
+            composable("stage/{selectedTab}") { backStackEntry ->
+                val selectedTab = backStackEntry.arguments?.getString("selectedTab") ?: "popular"
+                com.luckydut97.feature_stage.main.ui.StageScreen(
+                    initialTab = selectedTab,
+                    onBackClick = {
+                        navController.popBackStack()
+                    },
                     onPerformanceClick = { performanceId ->
                         navController.navigate("stage_detail/$performanceId")
                     }
@@ -251,21 +275,22 @@ fun MainScreenWithBottomNav() {
                 MapScreen()
             }
 
-            // 마이페이지 화면 (임시)
+            // 마이페이지 화면
             composable("mypage") {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .windowInsetsPadding(WindowInsets.statusBars)
-                        .padding(bottom = 108.dp),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        text = "마이페이지 화면입니다.",
-                        fontSize = 24.sp,
-                        fontWeight = FontWeight.Bold
-                    )
-                }
+                com.luckydut97.lighton.feature_mypage.main.ui.MyPageScreen(
+                    onBackClick = { /* 뒤로가기 처리 */ },
+                    onSettingClick = { /* 설정 클릭 처리 */ },
+                    onActivityClick = { /* 내 활동 내역 처리 */ },
+                    onRegisterClick = { /* 공연 등록 처리 */ },
+                    onNoticeClick = { /* 공지사항 처리 */ },
+                    onAppSettingClick = { /* 앱 설정 처리 */ },
+                    onFaqClick = { /* FAQ 처리 */ },
+                    onArtistApplyClick = { /* 아티스트 신청 처리 */ },
+                    onTermsClick = { /* 이용약관 처리 */ },
+                    onVersionClick = { /* 버전 정보 처리 */ },
+                    onLogoutClick = { /* 로그아웃 처리 */ },
+                    onWithdrawClick = { /* 회원 탈퇴 처리 */ }
+                )
             }
         }
     }

@@ -36,15 +36,22 @@ fun LightonButton(
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
     backgroundColor: Color = BrandColor,
-    contentColor: Color = Color.White
+    contentColor: Color = Color.White,
+    borderColor: Color = BrandColor,  // 테두리 색상
+    borderWidth: Dp = 1.dp  // 테두리 두께
 ) {
     Button(
         onClick = onClick,
         enabled = enabled,
         modifier = modifier
             .fillMaxWidth()
-            .height(46.dp),
-        shape = RoundedCornerShape(8.dp),
+            .height(46.dp)
+            .border(
+                width = borderWidth,
+                color = if (enabled) borderColor else borderColor.copy(alpha = 0.5f),
+                shape = RoundedCornerShape(6.dp)
+            ),
+        shape = RoundedCornerShape(6.dp),
         colors = ButtonDefaults.buttonColors(
             containerColor = backgroundColor,
             contentColor = contentColor,
@@ -142,9 +149,9 @@ fun LightonOutlinedButton(
             .border(
                 width = borderWidth,
                 color = if (enabled) borderColor else borderColor.copy(alpha = 0.5f),
-                shape = RoundedCornerShape(12.dp)
+                shape = RoundedCornerShape(6.dp)
             ),
-        shape = RoundedCornerShape(12.dp),
+        shape = RoundedCornerShape(6.dp),
         colors = ButtonDefaults.buttonColors(
             containerColor = Color.Transparent,
             contentColor = Color.Black,
@@ -157,7 +164,8 @@ fun LightonOutlinedButton(
             fontSize = 16.sp,
             fontWeight = FontWeight.Bold,
             fontFamily = PretendardFamily,
-            textAlign = TextAlign.Center
+            textAlign = TextAlign.Center,
+            color = BrandColor
         )
     }
 }
