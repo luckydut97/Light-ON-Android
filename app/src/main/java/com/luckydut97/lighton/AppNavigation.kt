@@ -164,37 +164,42 @@ fun MainScreenWithBottomNav() {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route ?: "home"
 
+    // StageDetailScreen인지 확인
+    val shouldShowBottomBar = !currentRoute.startsWith("stage_detail")
+
     Scaffold(
         modifier = Modifier
             .fillMaxSize()
             .background(androidx.compose.ui.graphics.Color.White),
         containerColor = androidx.compose.ui.graphics.Color.White,
         bottomBar = {
-            BottomNavigationBar(
-                selectedItem = when (currentRoute) {
-                    "home" -> NavigationItem.HOME
-                    "stage" -> NavigationItem.STAGE
-                    "map" -> NavigationItem.MAP
-                    "mypage" -> NavigationItem.MYPAGE
-                    else -> NavigationItem.HOME
-                },
-                onItemSelected = { navItem ->
-                    val route = when (navItem) {
-                        NavigationItem.HOME -> "home"
-                        NavigationItem.STAGE -> "stage"
-                        NavigationItem.MAP -> "map"
-                        NavigationItem.MYPAGE -> "mypage"
-                    }
-                    navController.navigate(route) {
-                        // 바텀 네비게이션 클릭 시 백스택 관리 - 상태 저장/복원
-                        popUpTo(navController.graph.startDestinationId) {
-                            saveState = true
+            if (shouldShowBottomBar) {
+                BottomNavigationBar(
+                    selectedItem = when (currentRoute) {
+                        "home" -> NavigationItem.HOME
+                        "stage" -> NavigationItem.STAGE
+                        "map" -> NavigationItem.MAP
+                        "mypage" -> NavigationItem.MYPAGE
+                        else -> NavigationItem.HOME
+                    },
+                    onItemSelected = { navItem ->
+                        val route = when (navItem) {
+                            NavigationItem.HOME -> "home"
+                            NavigationItem.STAGE -> "stage"
+                            NavigationItem.MAP -> "map"
+                            NavigationItem.MYPAGE -> "mypage"
                         }
-                        launchSingleTop = true
-                        restoreState = true
+                        navController.navigate(route) {
+                            // 바텀 네비게이션 클릭 시 백스택 관리 - 상태 저장/복원
+                            popUpTo(navController.graph.startDestinationId) {
+                                saveState = true
+                            }
+                            launchSingleTop = true
+                            restoreState = true
+                        }
                     }
-                }
-            )
+                )
+            }
         }
     ) { contentPadding ->
         NavHost(
@@ -212,7 +217,22 @@ fun MainScreenWithBottomNav() {
 
             // 공연 화면
             composable("stage") {
-                com.luckydut97.feature_stage.main.ui.StageScreen()
+                com.luckydut97.feature_stage.main.ui.StageScreen(
+                    onPerformanceClick = { performanceId ->
+                        navController.navigate("stage_detail/$performanceId")
+                    }
+                )
+            }
+
+            // 공연 상세 화면
+            composable("stage_detail/{performanceId}") { backStackEntry ->
+                val performanceId = backStackEntry.arguments?.getString("performanceId") ?: ""
+                com.luckydut97.feature_stage.main.ui.StageDetailScreen(
+                    performanceId = performanceId,
+                    onBackClick = {
+                        navController.popBackStack()
+                    }
+                )
             }
 
             // 지도 화면

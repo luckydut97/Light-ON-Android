@@ -16,3 +16,27 @@ data class FilterChip(
     val name: String,
     val isSelected: Boolean = false
 )
+
+data class PerformanceDetail(
+    val id: String,
+    val artistName: String,
+    val genre: String,
+    val title: String,
+    val date: String,
+    val time: String,
+    val location: String,
+    val address: String,
+    val price: Int?,
+    val isPaid: Boolean,
+    val description: String,
+    val artistInfo: ArtistInfo,
+    val seatTypes: List<String>,
+    val entryNotes: List<String>,
+    val imageUrl: String,
+    val isLiked: Boolean = false
+)
+
+data class ArtistInfo(
+    val name: String,
+    val description: String
+)
