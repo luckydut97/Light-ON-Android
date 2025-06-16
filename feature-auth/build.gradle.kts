@@ -48,6 +48,7 @@ android {
 
 dependencies {
     implementation(project(":core"))
+    implementation(project(":data"))  // data 모듈 의존성 추가
 
     // Android/Compose 의존성
     implementation(libs.androidx.core.ktx)

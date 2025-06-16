@@ -27,7 +27,7 @@ fun FeaturedArtistPerformanceItem(
 ) {
     Box(
         modifier = modifier
-            .size(width = 330.dp, height = 104.dp)
+            .size(width = 330.dp, height = 94.dp)
             .clip(RoundedCornerShape(5.dp))
             .background(Color.White) // 배경은 흰색으로
             .border(1.dp, Color(0xFFE9E9E9), RoundedCornerShape(5.dp)) // stroke만 회색
@@ -88,7 +88,9 @@ fun FeaturedArtistPerformanceItem(
                     }
                 }
                 // 아랫 그룹 (일정 Row, 위치 Row)
-                Column {
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(-6.dp)
+                ) {
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Image(
                             painter = painterResource(id = R.drawable.ic_clock_caption),
@@ -115,7 +117,6 @@ fun FeaturedArtistPerformanceItem(
                             color = Color(0xFF555555)
                         )
                     }
-                    Spacer(modifier = Modifier.height(0.5.dp))
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Image(
                             painter = painterResource(id = R.drawable.ic_location_caption),
