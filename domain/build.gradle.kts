@@ -14,21 +14,11 @@ kotlin {
     }
 }
 
-// 소스 세트 설정 추가
-sourceSets {
-    main {
-        java.srcDirs("src/main/java", "src/main/kotlin")
-    }
-    test {
-        java.srcDirs("src/test/java", "src/test/kotlin")
-    }
-}
-
-// 의존성 섹션 추가
 dependencies {
-    // 코틀린 표준 라이브러리
-    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
+    // Kotlin Coroutines (Flow 사용을 위해)
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
 
-    // 테스트 관련 의존성
+    // Test dependencies
     testImplementation("junit:junit:4.13.2")
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3")
 }

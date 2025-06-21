@@ -3,7 +3,6 @@ pluginManagement {
         google()
         mavenCentral()
         gradlePluginPortal()
-        // JetBrains Compose 저장소 제거
     }
 }
 
@@ -12,7 +11,6 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
-        // JetBrains Compose 저장소 제거
     }
 }
 
@@ -20,9 +18,9 @@ rootProject.name = "lighton"
 include(":app")
 include(":core")
 include(":data")
+include(":domain")
 include(":feature-auth")
 include(":feature-home")
 include(":feature-map")
-include(":feature-stage")
 include(":feature-stage")
 include(":feature-mypage")

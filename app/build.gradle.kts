@@ -68,6 +68,7 @@ dependencies {
 
     implementation(project(":core"))
     implementation(project(":data"))
+    implementation(project(":domain"))
     implementation(project(":feature-auth"))
     implementation(project(":feature-home"))
     implementation(project(":feature-map"))

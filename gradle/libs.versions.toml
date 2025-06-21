@@ -20,6 +20,10 @@ compose-compiler = "1.5.15"
 jetbrainsKotlinJvm = "2.0.0"
 # 내비게이션 컴포넌트 버전
 navigation = "2.7.7"
+# Hilt 의존성 주입 버전 (더 안정적인 버전으로 다운그레이드)
+hilt = "2.46.1"
+# KSP 버전
+ksp = "2.1.10-1.0.29"
 
 # 라이브러리 의존성 정의
 [libraries]
@@ -52,6 +56,11 @@ androidx-material3 = { group = "androidx.compose.material3", name = "material3" 
 androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigation" }
 androidx-navigation-runtime-ktx = { group = "androidx.navigation", name = "navigation-runtime-ktx", version.ref = "navigation" }
 
+# Hilt 의존성 주입 라이브러리
+hilt-android = { group = "com.google.dagger", name = "hilt-android", version.ref = "hilt" }
+hilt-compiler = { group = "com.google.dagger", name = "hilt-android-compiler", version.ref = "hilt" }
+hilt-navigation-compose = { group = "androidx.hilt", name = "hilt-navigation-compose", version = "1.1.0" }
+
 # 빌드 플러그인 정의
 [plugins]
 # 안드로이드 애플리케이션 및 라이브러리 플러그인
@@ -61,3 +70,7 @@ android-library = { id = "com.android.library", version.ref = "agp" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 jetbrains-kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
+# Hilt 플러그인
+hilt = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
+# KSP 플러그인
+ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }

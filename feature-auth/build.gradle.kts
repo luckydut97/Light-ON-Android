@@ -1,6 +1,6 @@
 plugins {
     alias(libs.plugins.kotlin.android)
-    alias(libs.plugins.android.library)
+    id("com.android.library")
     alias(libs.plugins.compose.compiler)
 }
 
@@ -36,24 +36,19 @@ android {
         compose = true
     }
 
-    buildFeatures {
-        compose = true
-    }
-
-    // Compose 컴파일러 옵션 추가
     composeOptions {
-        kotlinCompilerExtensionVersion = "2.1.10" // Kotlin 2.0 호환 버전
+        kotlinCompilerExtensionVersion = "2.1.10"
     }
 }
 
 dependencies {
     implementation(project(":core"))
     implementation(project(":data"))  // data 모듈 의존성 추가
+    implementation(project(":domain"))  // domain 모듈 의존성 추가
 
     // Android/Compose 의존성
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
-    implementation(libs.androidx.activity.compose)
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.ui)
     implementation(libs.androidx.ui.graphics)
@@ -66,8 +61,11 @@ dependencies {
     // 네비게이션 의존성
     implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.navigation.runtime.ktx)
-    
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
-    androidTestImplementation(libs.androidx.espresso.core)
+    androidTestImplementation(platform(libs.androidx.compose.bom))
+    androidTestImplementation(libs.androidx.ui.test.junit4)
+    debugImplementation(libs.androidx.ui.tooling)
+    debugImplementation(libs.androidx.ui.test.manifest)
 }

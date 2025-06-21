@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.kotlin.android)
     id("com.android.library")
+    alias(libs.plugins.ksp) // Room을 위한 KSP만 유지
 }
 
 android {
@@ -37,15 +38,18 @@ dependencies {
     // Android Core
     implementation(libs.androidx.core.ktx)
 
+    // Domain 모듈 의존성 추가
+    implementation(project(":domain"))
+
     // 네트워크 통신 라이브러리
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
     implementation("com.squareup.okhttp3:logging-interceptor:4.12.0")
 
-    // Room Database
+    // Room Database (KSP 사용)
     implementation("androidx.room:room-runtime:2.6.1")
     implementation("androidx.room:room-ktx:2.6.1")
-    annotationProcessor("androidx.room:room-compiler:2.6.1")
+    ksp("androidx.room:room-compiler:2.6.1")
 
     // 테스트 의존성
     testImplementation(libs.junit)
