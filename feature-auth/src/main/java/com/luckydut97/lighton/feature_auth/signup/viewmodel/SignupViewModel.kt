@@ -18,6 +18,7 @@ data class SignupUiState(
     val isSuccess: Boolean = false,
     val errorMessage: String? = null,
     val user: User? = null,
+    val temporaryUserId: String? = null,
     // 이메일 중복 확인 관련
     val emailCheckResult: EmailCheckResult? = null,
     val isEmailChecked: Boolean = false
@@ -98,7 +99,8 @@ class SignupViewModel : ViewModel() {
                         println("✅ 회원가입 성공 - 사용자 ID: ${user.id}")
                         _uiState.value = SignupUiState(
                             isSuccess = true,
-                            user = user
+                            user = user,
+                            temporaryUserId = user.id
                         )
                     },
                     onFailure = { exception ->

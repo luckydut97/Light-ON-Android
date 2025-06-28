@@ -41,10 +41,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.unit.sp
 import com.luckydut97.lighton.core.ui.theme.BrandColor
-import com.luckydut97.lighton.core.ui.theme.InfoTextColor
 import com.luckydut97.lighton.core.ui.theme.ThumbLineColor
-import com.luckydut97.lighton.core.ui.theme.DistructiveColor
+import com.luckydut97.lighton.core.ui.theme.DestructiveColor
 import com.luckydut97.lighton.core.ui.theme.AssistiveColor
+import com.luckydut97.lighton.core.ui.theme.CaptionColor
 import com.luckydut97.lighton.core.ui.theme.PretendardFamily
 
 /**
@@ -96,7 +96,7 @@ fun LoginInputField(
     }
 
     // focus 상태에 따른 색상 결정
-    val titleColor = if (isFocusedLocal) BrandColor else InfoTextColor
+    val titleColor = if (isFocusedLocal) BrandColor else CaptionColor
 
     Column(modifier = modifier.fillMaxWidth()) {
         // 타이틀 텍스트 - 18dp 높이
@@ -133,7 +133,7 @@ fun LoginInputField(
                     onFocusChanged(focusState.isFocused)
                 },
             singleLine = true,
-            textStyle = textStyle.copy(color = if (isPassword) DistructiveColor else Color.Black),
+            textStyle = textStyle.copy(color = if (isPassword) DestructiveColor else Color.Black),
             visualTransformation = if (isPassword) LoginCustomPasswordVisualTransformation() else VisualTransformation.None,
             keyboardOptions = KeyboardOptions(keyboardType = keyboardType),
             keyboardActions = KeyboardActions.Default,

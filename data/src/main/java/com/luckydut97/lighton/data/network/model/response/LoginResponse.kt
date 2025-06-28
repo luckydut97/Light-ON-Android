@@ -33,7 +33,19 @@ data class ErrorResponse(
     fun getUserFriendlyMessage(): String = when {
         // 인증 관련 에러 (401)
         message.contains("Authorization 헤더가 없습니다") -> "서버 설정에 문제가 있습니다. 관리자에게 문의해주세요."
+        message.contains("인증이 되지 않았습니다") -> "인증에 실패했습니다. 다시 로그인해주세요."
         status == 401 -> "인증에 실패했습니다. 이메일과 비밀번호를 확인해주세요."
+
+        // 개인정보 입력 관련 에러 (400번대)
+        message.contains("존재하지 않는 회원입니다") -> "유효하지 않은 회원 정보입니다."
+        message.contains("이미 존재하는 회원입니다") -> "이미 개인정보가 등록된 회원입니다."
+        message.contains("존재하지 않는 지역입니다") -> "선택하신 지역 정보가 올바르지 않습니다."
+        message.contains("이름은 필수 입력 사항입니다") -> "이름을 입력해주세요."
+        message.contains("전화번호는 필수 입력 사항입니다") -> "전화번호를 입력해주세요."
+        message.contains("이미 존재하는 전화번호입니다") -> "이미 등록된 전화번호입니다."
+        message.contains("전화번호 형식이 올바르지 않습니다") -> "올바른 전화번호 형식을 입력해주세요."
+        message.contains("지역 정보(city, district)를 입력해주세요") -> "지역 정보를 선택해주세요."
+        message.contains("필수 약관에 동의해야 가입이 완료됩니다") -> "필수 약관에 모두 동의해주세요."
 
         // 로그인 관련 에러 (400번대)
         message.contains("이메일 형식") -> "올바른 이메일 형식을 입력해주세요."

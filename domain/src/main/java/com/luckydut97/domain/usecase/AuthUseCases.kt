@@ -6,18 +6,32 @@ import com.luckydut97.domain.repository.SocialProvider
 import kotlinx.coroutines.flow.Flow
 
 /**
- * 개인정보 데이터 (Domain Layer)
+ * 개인정보 데이터 (Domain Layer) - API 명세에 맞춘 구조
  */
 data class PersonalInfoData(
     val name: String,
     val phone: String,
     val regionCode: Int,
-    val agreeTerms: Boolean,
-    val agreePrivacy: Boolean,
-    val agreeOver14: Boolean,
-    val agreeSMS: Boolean,
-    val agreePush: Boolean,
-    val agreeEmail: Boolean
+    val agreements: AgreementsData
+)
+
+/**
+ * 약관 동의 데이터
+ */
+data class AgreementsData(
+    val terms: Boolean,
+    val privacy: Boolean,
+    val over14: Boolean,
+    val marketing: MarketingAgreementsData
+)
+
+/**
+ * 마케팅 약관 동의 데이터
+ */
+data class MarketingAgreementsData(
+    val sms: Boolean,
+    val push: Boolean,
+    val email: Boolean
 )
 
 /**

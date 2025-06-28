@@ -9,8 +9,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.material3.Checkbox
-import androidx.compose.material3.CheckboxDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -24,54 +23,42 @@ import com.luckydut97.lighton.core.ui.theme.BrandColor
 import com.luckydut97.lighton.core.ui.theme.PretendardFamily
 
 /**
- * 체크박스 컴포넌트
+ * 체크박스 컴포넌트 (새로운 스타일)
  */
 @Composable
 fun LightonCheckbox(
     text: String,
-    checked: Boolean,
+    isChecked: Boolean,
     onCheckedChange: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
-    textColor: Color = Color.Black,
-    actionText: String = "",
-    onActionClick: (() -> Unit)? = null
+    fontSize: Int = 14,
+    fontWeight: FontWeight = FontWeight.SemiBold,
+    letterSpacing: Int = -1
 ) {
     Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .clickable { onCheckedChange(!checked) }
-            .padding(vertical = 4.dp),
+        modifier = modifier.clickable { onCheckedChange(!isChecked) },
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Checkbox(
-            checked = checked,
-            onCheckedChange = onCheckedChange,
-            colors = CheckboxDefaults.colors(
-                checkedColor = BrandColor,
-                uncheckedColor = Color.Gray
-            )
+        Icon(
+            painter = painterResource(
+                id = if (isChecked) com.luckydut97.lighton.core.R.drawable.ic_checkbox_ok
+                else com.luckydut97.lighton.core.R.drawable.ic_checkbox_no
+            ),
+            contentDescription = null,
+            modifier = Modifier.size(20.dp),
+            tint = Color.Unspecified
         )
-        
-        Spacer(modifier = Modifier.width(8.dp))
-        
-        Text(
-            text = text,
-            color = textColor,
-            fontSize = 14.sp,
-            fontFamily = PretendardFamily,
-            modifier = Modifier.weight(1f)
-        )
-        
-        if (actionText.isNotEmpty() && onActionClick != null) {
+
+        if (text.isNotEmpty()) {
+            Spacer(modifier = Modifier.width(2.dp))
+
             Text(
-                text = actionText,
-                color = Color.Gray,
-                fontSize = 13.sp,
+                text = text,
+                fontSize = fontSize.sp,
+                fontWeight = if (isChecked) FontWeight.Bold else fontWeight,
+                color = if (isChecked) BrandColor else Color.Black,
                 fontFamily = PretendardFamily,
-                fontWeight = FontWeight.Medium,
-                modifier = Modifier
-                    .clickable(onClick = onActionClick)
-                    .padding(vertical = 4.dp, horizontal = 8.dp)
+                letterSpacing = letterSpacing.sp
             )
         }
     }
@@ -100,13 +87,14 @@ fun LightonAgreementCheckbox(
         Row(
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Checkbox(
-                checked = checked,
-                onCheckedChange = onCheckedChange,
-                colors = CheckboxDefaults.colors(
-                    checkedColor = BrandColor,
-                    uncheckedColor = Color.Gray
-                )
+            Icon(
+                painter = painterResource(
+                    id = if (checked) com.luckydut97.lighton.core.R.drawable.ic_checkbox_ok
+                    else com.luckydut97.lighton.core.R.drawable.ic_checkbox_no
+                ),
+                contentDescription = null,
+                modifier = Modifier.size(20.dp),
+                tint = Color.Unspecified
             )
             
             Spacer(modifier = Modifier.width(8.dp))

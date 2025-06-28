@@ -3,50 +3,52 @@ package com.luckydut97.lighton.data.repository
 import com.luckydut97.lighton.data.network.NetworkModule
 import com.luckydut97.lighton.data.network.model.request.LoginRequest
 import com.luckydut97.lighton.data.network.model.request.SignUpRequest
-import com.luckydut97.lighton.data.network.model.request.SocialLoginRequest
-import com.luckydut97.lighton.data.network.model.request.SocialSignUpRequest
 import com.luckydut97.lighton.data.network.model.request.PersonalInfoRequest
 import com.luckydut97.lighton.data.network.model.request.AgreementRequest
+import com.luckydut97.lighton.data.network.model.request.SocialLoginRequest
+import com.luckydut97.lighton.data.network.model.request.SocialSignUpRequest
+import com.luckydut97.lighton.data.network.model.request.MarketingAgreementRequest
 import com.luckydut97.domain.model.User
 import com.luckydut97.domain.repository.AuthRepository
 import com.luckydut97.domain.usecase.PersonalInfoData
 import com.luckydut97.domain.usecase.OAuthCallbackResult
-import com.luckydut97.lighton.data.network.model.request.MarketingAgreementRequest
+import com.luckydut97.domain.repository.SocialProvider as DomainSocialProvider
+import com.luckydut97.lighton.data.network.model.request.SocialProvider as DataSocialProvider
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import java.io.IOException
 import retrofit2.HttpException
 import retrofit2.Response
-import com.luckydut97.domain.repository.SocialProvider as DomainSocialProvider
-import com.luckydut97.lighton.data.network.model.request.SocialProvider as DataSocialProvider
+import android.util.Log
 
 class AuthRepositoryImpl : AuthRepository {
     private val authApi = NetworkModule.authApi
 
     override suspend fun login(email: String, password: String): Flow<Result<User>> = flow {
+        val tag = "🔍 디버깅: AuthRepositoryImpl"
         try {
-            println("🚀 [API] 로그인 요청 전송")
-            println("   - URL: POST ${NetworkModule.getBaseUrl()}api/members/login")
-            println("   - 이메일: $email")
+            Log.d(tag, "🚀 [API] 로그인 요청 전송")
+            Log.d(tag, "   - URL: POST ${NetworkModule.getBaseUrl()}api/members/login")
+            Log.d(tag, "   - 이메일: $email")
 
             val response = authApi.login(LoginRequest(email, password))
 
-            println("📡 [API] 로그인 응답 수신")
-            println("   - HTTP 상태: ${response.code()}")
+            Log.d(tag, "📡 [API] 로그인 응답 수신")
+            Log.d(tag, "   - HTTP 상태: ${response.code()}")
 
             if (response.isSuccessful) {
                 // 성공 응답 처리
                 response.body()?.let { loginResponse ->
-                    println("📄 [API] 성공 응답 본문 파싱")
-                    println("   - success: ${loginResponse.success}")
+                    Log.d(tag, "📄 [API] 성공 응답 본문 파싱")
+                    Log.d(tag, "   - success: ${loginResponse.success}")
 
                     if (loginResponse.success && loginResponse.response != null) {
                         val loginData = loginResponse.response
 
                         // TODO: 토큰 저장 로직 (나중에 추가)
-                        println("🔐 [토큰] 저장 준비")
-                        println("   - 액세스 토큰: ${loginData.accessToken.take(20)}...")
-                        println("   - 리프레시 토큰: ${loginData.refreshToken.take(20)}...")
+                        Log.d(tag, "🔐 [토큰] 저장 준비")
+                        Log.d(tag, "   - 액세스 토큰: ${loginData.accessToken.take(20)}...")
+                        Log.d(tag, "   - 리프레시 토큰: ${loginData.refreshToken.take(20)}...")
 
                         val user = User(
                             id = "temp_id", // TODO: JWT에서 추출
@@ -59,11 +61,11 @@ class AuthRepositoryImpl : AuthRepository {
                         )
                         emit(Result.success(user))
                     } else {
-                        println("❓ [API] 성공 상태이지만 데이터 없음")
+                        Log.d(tag, "❓ [API] 성공 상태이지만 데이터 없음")
                         emit(Result.failure(Exception("알 수 없는 오류가 발생했습니다.")))
                     }
                 } ?: run {
-                    println("❌ [API] 성공 응답 본문이 비어있음")
+                    Log.d(tag, "❌ [API] 성공 응답 본문이 비어있음")
                     emit(Result.failure(Exception("응답 본문이 비어있습니다.")))
                 }
             } else {
@@ -71,8 +73,8 @@ class AuthRepositoryImpl : AuthRepository {
                 response.errorBody()?.let { errorBody ->
                     try {
                         val errorJson = errorBody.string()
-                        println("📄 [API] 에러 응답 본문 파싱")
-                        println("   - 원본 JSON: $errorJson")
+                        Log.d(tag, "📄 [API] 에러 응답 본문 파싱")
+                        Log.d(tag, "   - 원본 JSON: $errorJson")
 
                         // JSON을 직접 파싱하여 에러 메시지 추출
                         val gson = com.google.gson.Gson()
@@ -82,36 +84,38 @@ class AuthRepositoryImpl : AuthRepository {
                         )
 
                         if (errorResponse?.error != null) {
-                            println("⚠️ [API] 서버 에러 메시지 추출 성공")
-                            println("   - 상태: ${errorResponse.error.status}")
-                            println("   - 메시지: ${errorResponse.error.message}")
+                            Log.e(tag, "⚠️ [API] 서버 에러 메시지 추출 성공")
+                            Log.e(tag, "   - 상태: ${errorResponse.error.status}")
+                            Log.e(tag, "   - 메시지: ${errorResponse.error.message}")
                             emit(Result.failure(Exception(errorResponse.error.getUserFriendlyMessage())))
                         } else {
-                            println("❓ [API] 에러 응답 구조가 예상과 다름")
+                            Log.e(tag, "❓ [API] 에러 응답 구조가 예상과 다름")
                             emit(Result.failure(Exception("서버 오류가 발생했습니다.")))
                         }
                     } catch (e: Exception) {
-                        println("💥 [API] 에러 응답 파싱 실패")
-                        println("   - 파싱 에러: ${e.message}")
+                        Log.e(tag, "💥 [API] 에러 응답 파싱 실패")
+                        Log.e(tag, "   - 파싱 에러: ${e.message}")
                         emit(Result.failure(Exception("로그인 실패: ${response.code()}")))
                     }
                 } ?: run {
-                    println("❌ [API] 에러 응답 본문도 비어있음")
+                    Log.e(tag, "❌ [API] 에러 응답 본문도 비어있음")
                     emit(Result.failure(Exception("로그인 실패: ${response.code()}")))
                 }
             }
         } catch (e: IOException) {
-            println("🌐 [네트워크] 연결 오류")
-            println("   - 에러: ${e.message}")
+            Log.e(tag, "🌐 네트워크 연결 오류")
+            Log.e(tag, "   - 에러: ${e.message}")
             emit(Result.failure(Exception("네트워크 연결 오류가 발생했습니다.")))
         } catch (e: Exception) {
-            println("💥 [예외] 예상치 못한 오류")
-            println("   - 에러: ${e.message}")
+            Log.e(tag, "💥 예상치 못한 오류 발생")
+            Log.e(tag, "   - 에러: ${e.message}")
+            Log.e(tag, "   - 스택 트레이스: ${e.stackTraceToString()}")
             emit(Result.failure(Exception("로그인 중 오류가 발생했습니다: ${e.message}")))
         }
     }
 
     override suspend fun getOAuthUrl(provider: String): Flow<Result<String>> = flow {
+        val tag = "🔍 디버깅: AuthRepositoryImpl"
         try {
             val response = authApi.getOAuthUrl(provider)
             if (response.isSuccessful) {
@@ -128,8 +132,13 @@ class AuthRepositoryImpl : AuthRepository {
                 emit(Result.failure(Exception("OAuth URL 요청 실패: ${response.code()}")))
             }
         } catch (e: IOException) {
+            Log.e(tag, "🌐 네트워크 연결 오류")
+            Log.e(tag, "   - 에러: ${e.message}")
             emit(Result.failure(Exception("네트워크 연결 오류가 발생했습니다.")))
         } catch (e: Exception) {
+            Log.e(tag, "💥 예상치 못한 오류 발생")
+            Log.e(tag, "   - 에러: ${e.message}")
+            Log.e(tag, "   - 스택 트레이스: ${e.stackTraceToString()}")
             emit(Result.failure(Exception("OAuth URL 요청 중 오류가 발생했습니다: ${e.message}")))
         }
     }
@@ -138,6 +147,7 @@ class AuthRepositoryImpl : AuthRepository {
         provider: String,
         code: String
     ): Flow<Result<OAuthCallbackResult>> = flow {
+        val tag = "🔍 디버깅: AuthRepositoryImpl"
         try {
             val response = authApi.handleOAuthCallback(provider, code)
             if (response.isSuccessful) {
@@ -162,8 +172,13 @@ class AuthRepositoryImpl : AuthRepository {
                 emit(Result.failure(Exception("OAuth 콜백 처리 실패: ${response.code()}")))
             }
         } catch (e: IOException) {
+            Log.e(tag, "🌐 네트워크 연결 오류")
+            Log.e(tag, "   - 에러: ${e.message}")
             emit(Result.failure(Exception("네트워크 연결 오류가 발생했습니다.")))
         } catch (e: Exception) {
+            Log.e(tag, "💥 예상치 못한 오류 발생")
+            Log.e(tag, "   - 에러: ${e.message}")
+            Log.e(tag, "   - 스택 트레이스: ${e.stackTraceToString()}")
             emit(Result.failure(Exception("OAuth 콜백 처리 중 오류가 발생했습니다: ${e.message}")))
         }
     }
@@ -173,6 +188,7 @@ class AuthRepositoryImpl : AuthRepository {
         accessToken: String,
         email: String?
     ): Flow<Result<User>> = flow {
+        val tag = "🔍 디버깅: AuthRepositoryImpl"
         try {
             val request = SocialLoginRequest(
                 provider = provider.toDataSocialProvider(),
@@ -186,7 +202,7 @@ class AuthRepositoryImpl : AuthRepository {
                         val loginData = loginResponse.response
 
                         // TODO: 토큰 저장 로직
-                        println("소셜 로그인 토큰: ${loginData.accessToken}")
+                        Log.d(tag, "소셜 로그인 토큰: ${loginData.accessToken.take(20)}...")
 
                         val user = User(
                             id = "temp_id",
@@ -209,8 +225,8 @@ class AuthRepositoryImpl : AuthRepository {
                 response.errorBody()?.let { errorBody ->
                     try {
                         val errorJson = errorBody.string()
-                        println("📄 [API] 에러 응답 본문 파싱")
-                        println("   - 원본 JSON: $errorJson")
+                        Log.d(tag, "📄 [API] 에러 응답 본문 파싱")
+                        Log.d(tag, "   - 원본 JSON: $errorJson")
 
                         // JSON을 직접 파싱하여 에러 메시지 추출
                         val gson = com.google.gson.Gson()
@@ -220,51 +236,57 @@ class AuthRepositoryImpl : AuthRepository {
                         )
 
                         if (errorResponse?.error != null) {
-                            println("⚠️ [API] 서버 에러 메시지 추출 성공")
-                            println("   - 상태: ${errorResponse.error.status}")
-                            println("   - 메시지: ${errorResponse.error.message}")
+                            Log.e(tag, "⚠️ [API] 서버 에러 메시지 추출 성공")
+                            Log.e(tag, "   - 상태: ${errorResponse.error.status}")
+                            Log.e(tag, "   - 메시지: ${errorResponse.error.message}")
                             emit(Result.failure(Exception(errorResponse.error.message)))
                         } else {
-                            println("❓ [API] 에러 응답 구조가 예상과 다름")
+                            Log.e(tag, "❓ [API] 에러 응답 구조가 예상과 다름")
                             emit(Result.failure(Exception("서버 오류가 발생했습니다.")))
                         }
                     } catch (e: Exception) {
-                        println("💥 [API] 에러 응답 파싱 실패")
-                        println("   - 파싱 에러: ${e.message}")
+                        Log.e(tag, "💥 [API] 에러 응답 파싱 실패")
+                        Log.e(tag, "   - 파싱 에러: ${e.message}")
                         emit(Result.failure(Exception("소셜 로그인 실패: ${response.code()}")))
                     }
                 } ?: run {
-                    println("❌ [API] 에러 응답 본문도 비어있음")
+                    Log.e(tag, "❌ [API] 에러 응답 본문도 비어있음")
                     emit(Result.failure(Exception("소셜 로그인 실패: ${response.code()}")))
                 }
             }
         } catch (e: IOException) {
+            Log.e(tag, "🌐 네트워크 연결 오류")
+            Log.e(tag, "   - 에러: ${e.message}")
             emit(Result.failure(Exception("네트워크 연결 오류가 발생했습니다.")))
         } catch (e: Exception) {
+            Log.e(tag, "💥 예상치 못한 오류 발생")
+            Log.e(tag, "   - 에러: ${e.message}")
+            Log.e(tag, "   - 스택 트레이스: ${e.stackTraceToString()}")
             emit(Result.failure(Exception("소셜 로그인 중 오류가 발생했습니다: ${e.message}")))
         }
     }
 
     override suspend fun signUp(email: String, password: String): Flow<Result<User>> = flow {
+        val tag = "🔍 디버깅: AuthRepositoryImpl"
         try {
-            println("🚀 [API] 회원가입 요청 전송")
-            println("   - URL: POST ${NetworkModule.getBaseUrl()}api/members")
-            println("   - 이메일: $email")
+            Log.d(tag, "🚀 [API] 회원가입 요청 전송")
+            Log.d(tag, "   - URL: POST ${NetworkModule.getBaseUrl()}api/members")
+            Log.d(tag, "   - 이메일: $email")
 
             val response = authApi.signUp(SignUpRequest(email, password))
 
-            println("📡 [API] 회원가입 응답 수신")
-            println("   - HTTP 상태: ${response.code()}")
+            Log.d(tag, "📡 [API] 회원가입 응답 수신")
+            Log.d(tag, "   - HTTP 상태: ${response.code()}")
 
             if (response.isSuccessful) {
                 // 성공 응답 처리
                 response.body()?.let { signUpResponse ->
-                    println("📄 [API] 성공 응답 본문 파싱")
-                    println("   - success: ${signUpResponse.success}")
+                    Log.d(tag, "📄 [API] 성공 응답 본문 파싱")
+                    Log.d(tag, "   - success: ${signUpResponse.success}")
 
                     if (signUpResponse.success && signUpResponse.response != null) {
-                        println("✅ [회원가입] 성공!")
-                        println("   - 임시 사용자 ID: ${signUpResponse.response.temporaryUserId}")
+                        Log.d(tag, "✅ [회원가입] 성공!")
+                        Log.d(tag, "   - 임시 사용자 ID: ${signUpResponse.response.temporaryUserId}")
 
                         val user = User(
                             id = signUpResponse.response.temporaryUserId.toString(),
@@ -277,11 +299,11 @@ class AuthRepositoryImpl : AuthRepository {
                         )
                         emit(Result.success(user))
                     } else {
-                        println("❓ [API] 성공 상태이지만 데이터 없음")
+                        Log.d(tag, "❓ [API] 성공 상태이지만 데이터 없음")
                         emit(Result.failure(Exception("알 수 없는 오류가 발생했습니다.")))
                     }
                 } ?: run {
-                    println("❌ [API] 성공 응답 본문이 비어있음")
+                    Log.d(tag, "❌ [API] 성공 응답 본문이 비어있음")
                     emit(Result.failure(Exception("응답 본문이 비어있습니다.")))
                 }
             } else {
@@ -289,10 +311,9 @@ class AuthRepositoryImpl : AuthRepository {
                 response.errorBody()?.let { errorBody ->
                     try {
                         val errorJson = errorBody.string()
-                        println("📄 [API] 에러 응답 본문 파싱")
-                        println("   - 원본 JSON: $errorJson")
+                        Log.d(tag, "📄 [API] 에러 응답 본문 파싱")
+                        Log.d(tag, "   - 원본 JSON: $errorJson")
 
-                        // JSON을 직접 파싱하여 에러 메시지 추출
                         val gson = com.google.gson.Gson()
                         val errorResponse = gson.fromJson(
                             errorJson,
@@ -300,31 +321,32 @@ class AuthRepositoryImpl : AuthRepository {
                         )
 
                         if (errorResponse?.error != null) {
-                            println("⚠️ [API] 서버 에러 메시지 추출 성공")
-                            println("   - 상태: ${errorResponse.error.status}")
-                            println("   - 메시지: ${errorResponse.error.message}")
+                            Log.e(tag, "⚠️ [API] 서버 에러 메시지 추출 성공")
+                            Log.e(tag, "   - 상태: ${errorResponse.error.status}")
+                            Log.e(tag, "   - 메시지: ${errorResponse.error.message}")
                             emit(Result.failure(Exception(errorResponse.error.getUserFriendlyMessage())))
                         } else {
-                            println("❓ [API] 에러 응답 구조가 예상과 다름")
+                            Log.e(tag, "❓ [API] 에러 응답 구조가 예상과 다름")
                             emit(Result.failure(Exception("서버 오류가 발생했습니다.")))
                         }
                     } catch (e: Exception) {
-                        println("💥 [API] 에러 응답 파싱 실패")
-                        println("   - 파싱 에러: ${e.message}")
+                        Log.e(tag, "💥 [API] 에러 응답 파싱 실패")
+                        Log.e(tag, "   - 파싱 에러: ${e.message}")
                         emit(Result.failure(Exception("회원가입 실패: ${response.code()}")))
                     }
                 } ?: run {
-                    println("❌ [API] 에러 응답 본문도 비어있음")
+                    Log.e(tag, "❌ [API] 에러 응답 본문도 비어있음")
                     emit(Result.failure(Exception("회원가입 실패: ${response.code()}")))
                 }
             }
         } catch (e: IOException) {
-            println("🌐 [네트워크] 연결 오류")
-            println("   - 에러: ${e.message}")
+            Log.e(tag, "🌐 [네트워크] 연결 오류")
+            Log.e(tag, "   - 에러: ${e.message}")
             emit(Result.failure(Exception("네트워크 연결 오류가 발생했습니다.")))
         } catch (e: Exception) {
-            println("💥 [예외] 예상치 못한 오류")
-            println("   - 에러: ${e.message}")
+            Log.e(tag, "💥 예상치 못한 오류 발생")
+            Log.e(tag, "   - 에러: ${e.message}")
+            Log.e(tag, "   - 스택 트레이스: ${e.stackTraceToString()}")
             emit(Result.failure(Exception("회원가입 중 오류가 발생했습니다: ${e.message}")))
         }
     }
@@ -336,6 +358,7 @@ class AuthRepositoryImpl : AuthRepository {
         name: String,
         profileImageUrl: String?
     ): Flow<Result<User>> = flow {
+        val tag = "🔍 디버깅: AuthRepositoryImpl"
         try {
             val request = SocialSignUpRequest(
                 provider = provider.toDataSocialProvider(),
@@ -369,8 +392,8 @@ class AuthRepositoryImpl : AuthRepository {
                 response.errorBody()?.let { errorBody ->
                     try {
                         val errorJson = errorBody.string()
-                        println("📄 [API] 에러 응답 본문 파싱")
-                        println("   - 원본 JSON: $errorJson")
+                        Log.d(tag, "📄 [API] 에러 응답 본문 파싱")
+                        Log.d(tag, "   - 원본 JSON: $errorJson")
 
                         // JSON을 직접 파싱하여 에러 메시지 추출
                         val gson = com.google.gson.Gson()
@@ -380,27 +403,32 @@ class AuthRepositoryImpl : AuthRepository {
                         )
 
                         if (errorResponse?.error != null) {
-                            println("⚠️ [API] 서버 에러 메시지 추출 성공")
-                            println("   - 상태: ${errorResponse.error.status}")
-                            println("   - 메시지: ${errorResponse.error.message}")
+                            Log.e(tag, "⚠️ [API] 서버 에러 메시지 추출 성공")
+                            Log.e(tag, "   - 상태: ${errorResponse.error.status}")
+                            Log.e(tag, "   - 메시지: ${errorResponse.error.message}")
                             emit(Result.failure(Exception(errorResponse.error.message)))
                         } else {
-                            println("❓ [API] 에러 응답 구조가 예상과 다름")
+                            Log.e(tag, "❓ [API] 에러 응답 구조가 예상과 다름")
                             emit(Result.failure(Exception("서버 오류가 발생했습니다.")))
                         }
                     } catch (e: Exception) {
-                        println("💥 [API] 에러 응답 파싱 실패")
-                        println("   - 파싱 에러: ${e.message}")
+                        Log.e(tag, "💥 [API] 에러 응답 파싱 실패")
+                        Log.e(tag, "   - 파싱 에러: ${e.message}")
                         emit(Result.failure(Exception("소셜 회원가입 실패: ${response.code()}")))
                     }
                 } ?: run {
-                    println("❌ [API] 에러 응답 본문도 비어있음")
+                    Log.e(tag, "❌ [API] 에러 응답 본문도 비어있음")
                     emit(Result.failure(Exception("소셜 회원가입 실패: ${response.code()}")))
                 }
             }
         } catch (e: IOException) {
+            Log.e(tag, "🌐 [네트워크] 연결 오류")
+            Log.e(tag, "   - 에러: ${e.message}")
             emit(Result.failure(Exception("네트워크 연결 오류가 발생했습니다.")))
         } catch (e: Exception) {
+            Log.e(tag, "💥 예상치 못한 오류 발생")
+            Log.e(tag, "   - 에러: ${e.message}")
+            Log.e(tag, "   - 스택 트레이스: ${e.stackTraceToString()}")
             emit(Result.failure(Exception("소셜 회원가입 중 오류가 발생했습니다: ${e.message}")))
         }
     }
@@ -409,32 +437,73 @@ class AuthRepositoryImpl : AuthRepository {
         temporaryUserId: Int,
         personalInfo: PersonalInfoData
     ): Flow<Result<User>> = flow {
+        val tag = "🔍 디버깅: PersonalInfoRepo"
+
         try {
+            Log.d(tag, "=== 개인정보 입력 완료 API 호출 시작 ===")
+            Log.d(tag, "임시 사용자 ID: $temporaryUserId")
+            Log.d(tag, "입력받은 개인정보:")
+            Log.d(tag, "  - 이름: ${personalInfo.name}")
+            Log.d(tag, "  - 전화번호: ${personalInfo.phone}")
+            Log.d(tag, "  - 지역코드: ${personalInfo.regionCode}")
+            Log.d(
+                tag,
+                "  - 약관동의: 이용약관=${personalInfo.agreements.terms}, 개인정보=${personalInfo.agreements.privacy}, 만14세=${personalInfo.agreements.over14}"
+            )
+            Log.d(
+                tag,
+                "  - 마케팅동의: SMS=${personalInfo.agreements.marketing.sms}, 푸시=${personalInfo.agreements.marketing.push}, 이메일=${personalInfo.agreements.marketing.email}"
+            )
+            Log.d(tag, "Endpoint: POST /api/members/$temporaryUserId/info")
+            Log.d(tag, "Base URL: ${NetworkModule.getBaseUrl()}")
+
             val request = PersonalInfoRequest(
                 name = personalInfo.name,
                 phone = personalInfo.phone,
                 regionCode = personalInfo.regionCode,
                 agreements = AgreementRequest(
-                    terms = personalInfo.agreeTerms,
-                    privacy = personalInfo.agreePrivacy,
-                    over14 = personalInfo.agreeOver14,
+                    terms = personalInfo.agreements.terms,
+                    privacy = personalInfo.agreements.privacy,
+                    over14 = personalInfo.agreements.over14,
                     marketing = MarketingAgreementRequest(
-                        sms = personalInfo.agreeSMS,
-                        push = personalInfo.agreePush,
-                        email = personalInfo.agreeEmail
+                        sms = personalInfo.agreements.marketing.sms,
+                        push = personalInfo.agreements.marketing.push,
+                        email = personalInfo.agreements.marketing.email
                     )
                 )
             )
 
+            Log.d(tag, "Request Body 생성:")
+            Log.d(tag, "  - name: ${request.name}")
+            Log.d(tag, "  - phone: ${request.phone}")
+            Log.d(tag, "  - regionCode: ${request.regionCode}")
+            Log.d(tag, "  - agreements.terms: ${request.agreements.terms}")
+            Log.d(tag, "  - agreements.privacy: ${request.agreements.privacy}")
+            Log.d(tag, "  - agreements.over14: ${request.agreements.over14}")
+            Log.d(tag, "  - agreements.marketing: ${request.agreements.marketing}")
+
+            Log.d(tag, "Retrofit API 호출 시작...")
             val response = authApi.completePersonalInfo(temporaryUserId, request)
+
+            Log.d(tag, "HTTP Status Code: ${response.code()}")
+            Log.d(tag, "HTTP Status Message: ${response.message()}")
+            Log.d(tag, "Response Headers: ${response.headers()}")
+
             if (response.isSuccessful) {
                 response.body()?.let { loginResponse ->
+                    Log.d(tag, "개인정보 입력 완료 API 호출 성공!")
+                    Log.d(tag, "  - success: ${loginResponse.success}")
+
                     if (loginResponse.success && loginResponse.response != null) {
                         val loginData = loginResponse.response
 
-                        // TODO: 토큰 저장
-                        println("개인정보 완료 - 액세스 토큰: ${loginData.accessToken}")
-                        println("개인정보 완료 - 리프레시 토큰: ${loginData.refreshToken}")
+                        Log.d(tag, "🎉 개인정보 입력 완료 성공!")
+                        Log.d(tag, "🔐 토큰 정보:")
+                        Log.d(tag, "  - 액세스 토큰: ${loginData.accessToken.take(50)}...")
+                        Log.d(tag, "  - 리프레시 토큰: ${loginData.refreshToken.take(50)}...")
+
+                        // TODO: 토큰 저장 로직 구현
+                        Log.d(tag, "⚠️ TODO: 토큰 저장 로직 필요")
 
                         val user = User(
                             id = temporaryUserId.toString(),
@@ -445,22 +514,38 @@ class AuthRepositoryImpl : AuthRepository {
                             preferredGenres = emptyList(),
                             preferredRegion = personalInfo.regionCode.toString() // TODO: 지역 코드를 지역명으로 변환
                         )
+
+                        Log.d(tag, "✅ User 객체 생성 완료:")
+                        Log.d(tag, "  - ID: ${user.id}")
+                        Log.d(tag, "  - 이름: ${user.name}")
+                        Log.d(tag, "  - 전화번호: ${user.phoneNumber}")
+                        Log.d(tag, "  - 선호지역: ${user.preferredRegion}")
+
                         emit(Result.success(user))
                     } else if (loginResponse.error != null) {
-                        emit(Result.failure(Exception(loginResponse.error.message)))
+                        Log.e(tag, "❌ 서버에서 에러 응답 반환")
+                        Log.e(tag, "  - 에러 상태: ${loginResponse.error.status}")
+                        Log.e(tag, "  - 에러 메시지: ${loginResponse.error.message}")
+                        emit(Result.failure(Exception(loginResponse.error.getUserFriendlyMessage())))
                     } else {
+                        Log.e(tag, "❓ 성공 상태이지만 응답 데이터 없음")
                         emit(Result.failure(Exception("알 수 없는 오류가 발생했습니다.")))
                     }
-                } ?: emit(Result.failure(Exception("응답 본문이 비어있습니다.")))
+                } ?: run {
+                    Log.e(tag, "❌ 성공 응답 본문이 비어있음")
+                    emit(Result.failure(Exception("응답 본문이 비어있습니다.")))
+                }
             } else {
-                // 에러 응답 처리 - errorBody() 사용
-                response.errorBody()?.let { errorBody ->
-                    try {
-                        val errorJson = errorBody.string()
-                        println("📄 [API] 에러 응답 본문 파싱")
-                        println("   - 원본 JSON: $errorJson")
+                // 에러 응답 처리
+                val errorBody = response.errorBody()?.string()
+                Log.e(tag, "❌ 개인정보 입력 완료 API 호출 실패!")
+                Log.e(tag, "  - Error Code: ${response.code()}")
+                Log.e(tag, "  - Error Message: ${response.message()}")
+                Log.e(tag, "  - Error Body: $errorBody")
 
-                        // JSON을 직접 파싱하여 에러 메시지 추출
+                errorBody?.let { errorJson ->
+                    try {
+                        Log.d(tag, "📄 에러 응답 본문 파싱 시도...")
                         val gson = com.google.gson.Gson()
                         val errorResponse = gson.fromJson(
                             errorJson,
@@ -468,72 +553,92 @@ class AuthRepositoryImpl : AuthRepository {
                         )
 
                         if (errorResponse?.error != null) {
-                            println("⚠️ [API] 서버 에러 메시지 추출 성공")
-                            println("   - 상태: ${errorResponse.error.status}")
-                            println("   - 메시지: ${errorResponse.error.message}")
-                            emit(Result.failure(Exception(errorResponse.error.message)))
+                            Log.w(tag, "⚠️ 서버 에러 메시지 추출 성공")
+                            Log.w(tag, "  - 상태: ${errorResponse.error.status}")
+                            Log.w(tag, "  - 메시지: ${errorResponse.error.message}")
+                            Log.w(
+                                tag,
+                                "  - 사용자 친화적 메시지: ${errorResponse.error.getUserFriendlyMessage()}"
+                            )
+                            emit(Result.failure(Exception(errorResponse.error.getUserFriendlyMessage())))
                         } else {
-                            println("❓ [API] 에러 응답 구조가 예상과 다름")
+                            Log.e(tag, "❓ 에러 응답 구조가 예상과 다름")
                             emit(Result.failure(Exception("서버 오류가 발생했습니다.")))
                         }
                     } catch (e: Exception) {
-                        println("💥 [API] 에러 응답 파싱 실패")
-                        println("   - 파싱 에러: ${e.message}")
+                        Log.e(tag, "💥 에러 응답 파싱 실패")
+                        Log.e(tag, "  - 파싱 에러: ${e.message}")
                         emit(Result.failure(Exception("개인정보 입력 실패: ${response.code()}")))
                     }
                 } ?: run {
-                    println("❌ [API] 에러 응답 본문도 비어있음")
+                    Log.e(tag, "❌ 에러 응답 본문도 비어있음")
                     emit(Result.failure(Exception("개인정보 입력 실패: ${response.code()}")))
                 }
             }
         } catch (e: IOException) {
+            Log.e(tag, "🌐 네트워크 연결 오류")
+            Log.e(tag, "  - 에러: ${e.message}")
             emit(Result.failure(Exception("네트워크 연결 오류가 발생했습니다.")))
         } catch (e: Exception) {
+            Log.e(tag, "💥 예상치 못한 오류 발생")
+            Log.e(tag, "  - 에러: ${e.message}")
+            Log.e(tag, "  - 스택 트레이스: ${e.stackTraceToString()}")
             emit(Result.failure(Exception("개인정보 입력 중 오류가 발생했습니다: ${e.message}")))
+        } finally {
+            Log.d(tag, "=== 개인정보 입력 완료 API 호출 종료 ===")
         }
     }
 
     override suspend fun getCurrentUser(): Flow<User?> = flow {
+        val tag = "🔍 디버깅: AuthRepositoryImpl"
         // TODO: 토큰 확인하여 현재 사용자 정보 반환
         emit(null)
     }
 
     override suspend fun logout(): Result<Unit> {
+        val tag = "🔍 디버깅: AuthRepositoryImpl"
         return try {
             // TODO: 토큰 삭제 및 서버 로그아웃 API 호출
-            println("로그아웃 완료")
+            Log.d(tag, "로그아웃 완료")
             Result.success(Unit)
         } catch (e: Exception) {
+            Log.e(tag, "💥 예상치 못한 오류 발생")
+            Log.e(tag, "  - 에러: ${e.message}")
+            Log.e(tag, "  - 스택 트레이스: ${e.stackTraceToString()}")
             Result.failure(e)
         }
     }
 
     override suspend fun checkEmailDuplicate(email: String): Flow<Result<Boolean>> = flow {
+        val tag = "🔍 디버깅: AuthRepositoryImpl"
         try {
-            println("🚀 [API] 이메일 중복 확인 요청 전송")
-            println("   - URL: GET ${NetworkModule.getBaseUrl()}api/members/duplicate-check?email=$email")
+            Log.d(tag, "🚀 [API] 이메일 중복 확인 요청 전송")
+            Log.d(
+                tag,
+                "   - URL: GET ${NetworkModule.getBaseUrl()}api/members/duplicate-check?email=$email"
+            )
 
             val response = authApi.checkEmailDuplicate(email)
 
-            println("📡 [API] 이메일 중복 확인 응답 수신")
-            println("   - HTTP 상태: ${response.code()}")
+            Log.d(tag, "📡 [API] 이메일 중복 확인 응답 수신")
+            Log.d(tag, "   - HTTP 상태: ${response.code()}")
 
             if (response.isSuccessful) {
                 response.body()?.let { duplicateResponse ->
-                    println("📄 [API] 성공 응답 본문 파싱")
-                    println("   - success: ${duplicateResponse.success}")
+                    Log.d(tag, "📄 [API] 성공 응답 본문 파싱")
+                    Log.d(tag, "   - success: ${duplicateResponse.success}")
 
                     if (duplicateResponse.success && duplicateResponse.response != null) {
                         val isDuplicated = duplicateResponse.response.isDuplicated
-                        println("✅ [중복 확인] 성공!")
-                        println("   - 중복 여부: $isDuplicated")
+                        Log.d(tag, "✅ [중복 확인] 성공!")
+                        Log.d(tag, "   - 중복 여부: $isDuplicated")
                         emit(Result.success(isDuplicated))
                     } else {
-                        println("❓ [API] 성공 상태이지만 데이터 없음")
+                        Log.d(tag, "❓ [API] 성공 상태이지만 데이터 없음")
                         emit(Result.failure(Exception("중복 확인 중 오류가 발생했습니다.")))
                     }
                 } ?: run {
-                    println("❌ [API] 성공 응답 본문이 비어있음")
+                    Log.d(tag, "❌ [API] 성공 응답 본문이 비어있음")
                     emit(Result.failure(Exception("응답 본문이 비어있습니다.")))
                 }
             } else {
@@ -541,8 +646,8 @@ class AuthRepositoryImpl : AuthRepository {
                 response.errorBody()?.let { errorBody ->
                     try {
                         val errorJson = errorBody.string()
-                        println("📄 [API] 에러 응답 본문 파싱")
-                        println("   - 원본 JSON: $errorJson")
+                        Log.d(tag, "📄 [API] 에러 응답 본문 파싱")
+                        Log.d(tag, "   - 원본 JSON: $errorJson")
 
                         val gson = com.google.gson.Gson()
                         val errorResponse = gson.fromJson(
@@ -551,31 +656,32 @@ class AuthRepositoryImpl : AuthRepository {
                         )
 
                         if (errorResponse?.error != null) {
-                            println("⚠️ [API] 서버 에러 메시지 추출 성공")
-                            println("   - 상태: ${errorResponse.error.status}")
-                            println("   - 메시지: ${errorResponse.error.message}")
+                            Log.e(tag, "⚠️ [API] 서버 에러 메시지 추출 성공")
+                            Log.e(tag, "   - 상태: ${errorResponse.error.status}")
+                            Log.e(tag, "   - 메시지: ${errorResponse.error.message}")
                             emit(Result.failure(Exception(errorResponse.error.getUserFriendlyMessage())))
                         } else {
-                            println("❓ [API] 에러 응답 구조가 예상과 다름")
+                            Log.e(tag, "❓ [API] 에러 응답 구조가 예상과 다름")
                             emit(Result.failure(Exception("서버 오류가 발생했습니다.")))
                         }
                     } catch (e: Exception) {
-                        println("💥 [API] 에러 응답 파싱 실패")
-                        println("   - 파싱 에러: ${e.message}")
+                        Log.e(tag, "💥 [API] 에러 응답 파싱 실패")
+                        Log.e(tag, "   - 파싱 에러: ${e.message}")
                         emit(Result.failure(Exception("중복 확인 실패: ${response.code()}")))
                     }
                 } ?: run {
-                    println("❌ [API] 에러 응답 본문도 비어있음")
+                    Log.e(tag, "❌ [API] 에러 응답 본문도 비어있음")
                     emit(Result.failure(Exception("중복 확인 실패: ${response.code()}")))
                 }
             }
         } catch (e: IOException) {
-            println("🌐 [네트워크] 연결 오류")
-            println("   - 에러: ${e.message}")
+            Log.e(tag, "🌐 [네트워크] 연결 오류")
+            Log.e(tag, "   - 에러: ${e.message}")
             emit(Result.failure(Exception("네트워크 연결 오류가 발생했습니다.")))
         } catch (e: Exception) {
-            println("💥 [예외] 예상치 못한 오류")
-            println("   - 에러: ${e.message}")
+            Log.e(tag, "💥 예상치 못한 오류 발생")
+            Log.e(tag, "   - 에러: ${e.message}")
+            Log.e(tag, "   - 스택 트레이스: ${e.stackTraceToString()}")
             emit(Result.failure(Exception("중복 확인 중 오류가 발생했습니다: ${e.message}")))
         }
     }

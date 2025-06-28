@@ -37,11 +37,13 @@ import com.luckydut97.lighton.core.ui.components.CommonTopBar
 import com.luckydut97.lighton.core.ui.theme.LightonTheme
 import com.luckydut97.lighton.core.ui.theme.PretendardFamily
 import com.luckydut97.lighton.feature_auth.signup.viewmodel.SignupViewModel
+import com.luckydut97.lighton.feature_auth.signup.viewmodel.EmailCheckResult
+import com.luckydut97.lighton.feature_auth.signup.viewmodel.EmailCheckResult.Error
 
 @Composable
 fun SignUpScreen(
     onBackClick: () -> Unit = {},
-    onNextClick: () -> Unit = {},
+    onNextClick: (String) -> Unit = {},
     viewModel: SignupViewModel = viewModel()
 ) {
     // 입력값 상태/결과 상태 선언
@@ -86,7 +88,9 @@ fun SignUpScreen(
     // 회원가입 성공시 다음 화면으로 이동
     LaunchedEffect(uiState.isSuccess) {
         if (uiState.isSuccess) {
-            onNextClick()
+            uiState.temporaryUserId?.let { userId ->
+                onNextClick(userId)
+            }
         }
     }
 

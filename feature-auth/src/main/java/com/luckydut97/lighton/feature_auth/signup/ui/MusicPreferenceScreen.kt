@@ -153,7 +153,7 @@ fun MusicPreferenceScreen(
                             text = "좋아하는 음악 장르를 알려주시면\n취향에 맞는 공연을 알려드려요",
                             fontFamily = PretendardFamily,
                             fontSize = 14.sp,
-                            color = Color.Gray,
+                            color = Color.Black,
                             textAlign = TextAlign.Center,
                             lineHeight = 20.sp
                         )

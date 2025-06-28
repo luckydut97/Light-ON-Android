@@ -35,22 +35,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.luckydut97.lighton.core.ui.theme.BrandColor
-import com.luckydut97.lighton.core.ui.theme.PlaceholderTextColor
-import com.luckydut97.lighton.core.ui.theme.TextFieldBorderColor
 import com.luckydut97.lighton.core.ui.theme.AssistiveColor
-import com.luckydut97.lighton.core.ui.theme.InfoTextColor
 import com.luckydut97.lighton.core.ui.theme.ThumbLineColor
-import com.luckydut97.lighton.core.ui.theme.DistructiveColor
+import com.luckydut97.lighton.core.ui.theme.DestructiveColor
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.input.OffsetMapping
@@ -169,7 +164,7 @@ fun LightonInputField(
                     .onFocusChanged { focusState ->
                         isFocused = focusState.isFocused
                     },
-                textStyle = textStyle.copy(color = if (isPassword) DistructiveColor else Color.Black),
+                textStyle = textStyle.copy(color = if (isPassword) DestructiveColor else Color.Black),
                 singleLine = true,
                 visualTransformation = if (isPassword) CustomPasswordVisualTransformation() else VisualTransformation.None,
                 keyboardOptions = KeyboardOptions(keyboardType = keyboardType),
@@ -315,8 +310,8 @@ fun LightonInputField(
                 }
             }
             ValidationResult.Initial -> {
-                // 초기 상태에서는 메시지 없음 - 18dp 높이 유지를 위해 빈 Spacer
-                Spacer(modifier = Modifier.height(18.dp))
+                // 초기 상태에서는 메시지 없음 - 18dp 높이 유지를 위해 빈 Spacer(하단 여백)
+                Spacer(modifier = Modifier.height(0.dp))
             }
         }
     }

@@ -18,7 +18,6 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.luckydut97.lighton.feature_auth.splash.ui.SplashScreen
 import com.luckydut97.lighton.feature_home.main.ui.HomeScreen
-import com.luckydut97.lighton.feature_map.main.ui.MapScreen
 import com.luckydut97.lighton.core.ui.components.BottomNavigationBar
 import com.luckydut97.lighton.core.ui.components.NavigationItem
 import com.luckydut97.lighton.feature_auth.login.ui.EmailLoginScreen
@@ -28,8 +27,7 @@ import com.luckydut97.lighton.feature_auth.signup.ui.SignUpScreen
 import com.luckydut97.lighton.feature_auth.signup.ui.PersonalInfoScreen
 import com.luckydut97.lighton.feature_auth.signup.ui.MusicPreferenceScreen
 import com.luckydut97.lighton.feature_auth.signup.ui.SignupCompleteScreen
-import com.luckydut97.feature_stage.main.ui.StageScreen
-import com.luckydut97.feature_stage.main.ui.StageDetailScreen
+import com.luckydut97.lighton.feature_map.main.ui.MapScreen
 
 /**
  * 앱 전체의 메인 네비게이션을 처리하는 컴포넌트
@@ -40,7 +38,7 @@ fun AppNavigation(
     isLoggedIn: Boolean = false
 ) {
     // 🔧 개발용 변수들 - 원하는 화면으로 바로 이동
-    // 
+    //
     // 사용법: 원하는 화면의 변수를 true로 설정
     // ⚠️ 주의: 한 번에 하나의 변수만 true로 설정해야 함
     //
@@ -50,9 +48,9 @@ fun AppNavigation(
     // val showPersonalInfoScreen = true  → 개인정보 입력 화면으로 바로 이동
     //
     val isDevelopmentMode = false  // 음악 취향 선택 화면으로 바로 이동
-    val showLoginScreen = true   // 로그인 화면으로 바로 이동
+    val showLoginScreen = false   // 로그인 화면으로 바로 이동
     val showSignupScreen = false   // 회원가입 화면으로 바로 이동
-    val showPersonalInfoScreen = true  // 개인정보 입력 화면으로 바로 이동
+    val showPersonalInfoScreen = false  // 개인정보 입력 화면으로 바로 이동
     val showMusicPreferenceScreen = false  // 음악 취향 선택 화면으로 바로 이동
     val showMainScreen = false     // 메인 화면으로 바로 이동
 
@@ -62,9 +60,8 @@ fun AppNavigation(
             when {
                 showMainScreen -> "main"
                 showMusicPreferenceScreen -> "music_preference"
-                showPersonalInfoScreen -> "personal_info"
+                showPersonalInfoScreen -> "personal_info/999"
                 showSignupScreen -> "signup"
-                showLoginScreen -> "login"
                 isDevelopmentMode -> "music_preference"
                 isLoggedIn -> "main"
                 else -> "splash"
@@ -99,7 +96,7 @@ fun AppNavigation(
         composable("login") {
             EmailLoginScreen(
                 onBackClick = {
-                    // 로그인 화면에서 뒤로가면 메인 화면으로
+                    // 메인 화면으로 이동
                     navController.navigate("main") {
                         popUpTo("login") { inclusive = true }
                     }
@@ -147,7 +144,7 @@ fun AppNavigation(
                         is SocialLoginResult.Success -> {
                             // 인가 코드 받음 - TODO: 실제 콜백 API 호출
                             // 임시로 개인정보 입력 화면으로 이동
-                            navController.navigate("personal_info_social/123") {
+                            navController.navigate("personal_info/123") {
                                 popUpTo("social_login/$provider") { inclusive = true }
                             }
                         }
@@ -173,40 +170,17 @@ fun AppNavigation(
         composable("signup") {
             SignUpScreen(
                 onBackClick = {
-                    // 회원가입 화면에서 뒤로가면 로그인 화면으로
-                    navController.navigate("login") {
-                        popUpTo("signup") { inclusive = true }
-                    }
+                    navController.popBackStack()
                 },
-                onNextClick = {
-                    navController.navigate("personal_info")
+                onNextClick = { temporaryUserId ->
+                    navController.navigate("personal_info/$temporaryUserId")
                 }
             )
         }
 
         // 개인정보 입력 화면 (일반 회원가입)
-        composable("personal_info") {
-            PersonalInfoScreen(
-                temporaryUserId = null, // 일반 회원가입
-                onBackClick = {
-                    // 개인정보 입력 화면에서 뒤로가면 회원가입 화면으로
-                    navController.navigate("signup") {
-                        popUpTo("personal_info") { inclusive = true }
-                    }
-                },
-                onNextClick = {
-                    navController.navigate("music_preference")
-                },
-                onCompleteClick = {
-                    // 일반 회원가입에서는 사용되지 않음
-                }
-            )
-        }
-
-        // 개인정보 입력 화면 (소셜 로그인)
-        composable("personal_info_social/{temporaryUserId}") { backStackEntry ->
-            val temporaryUserId =
-                backStackEntry.arguments?.getString("temporaryUserId")?.toIntOrNull()
+        composable("personal_info/{temporaryUserId}") { backStackEntry ->
+            val temporaryUserId = backStackEntry.arguments?.getString("temporaryUserId")
 
             PersonalInfoScreen(
                 temporaryUserId = temporaryUserId,
@@ -214,13 +188,10 @@ fun AppNavigation(
                     navController.popBackStack()
                 },
                 onNextClick = {
-                    // 소셜 로그인에서는 사용되지 않음
+                    navController.navigate("music_preference")
                 },
                 onCompleteClick = {
-                    // 개인정보 입력 완료 → 메인 화면으로
-                    navController.navigate("main") {
-                        popUpTo("personal_info_social/${temporaryUserId}") { inclusive = true }
-                    }
+                    navController.navigate("music_preference")
                 }
             )
         }
@@ -336,7 +307,7 @@ fun MainScreenWithBottomNav() {
 
             // 공연 화면
             composable("stage") {
-                StageScreen(
+                com.luckydut97.feature_stage.main.ui.StageScreen(
                     onBackClick = {
                         navController.popBackStack()
                     },
@@ -349,7 +320,7 @@ fun MainScreenWithBottomNav() {
             // 특정 탭이 선택된 공연 화면
             composable("stage/{selectedTab}") { backStackEntry ->
                 val selectedTab = backStackEntry.arguments?.getString("selectedTab") ?: "popular"
-                StageScreen(
+                com.luckydut97.feature_stage.main.ui.StageScreen(
                     initialTab = selectedTab,
                     onBackClick = {
                         navController.popBackStack()
@@ -363,7 +334,7 @@ fun MainScreenWithBottomNav() {
             // 공연 상세 화면
             composable("stage_detail/{performanceId}") { backStackEntry ->
                 val performanceId = backStackEntry.arguments?.getString("performanceId") ?: ""
-                StageDetailScreen(
+                com.luckydut97.feature_stage.main.ui.StageDetailScreen(
                     performanceId = performanceId,
                     onBackClick = {
                         navController.popBackStack()

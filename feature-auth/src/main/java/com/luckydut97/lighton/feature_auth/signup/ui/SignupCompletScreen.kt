@@ -99,7 +99,7 @@ fun SignupCompleteScreen(
                             text = "라이트온과 함께\n즐거운 공연을 즐겨보세요",
                             fontFamily = PretendardFamily,
                             fontSize = 16.sp,
-                            color = Color.Gray,
+                            color = Color.Black,
                             textAlign = TextAlign.Center,
                             lineHeight = 24.sp
                         )

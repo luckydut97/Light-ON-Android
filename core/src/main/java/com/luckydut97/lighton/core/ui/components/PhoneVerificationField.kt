@@ -63,7 +63,7 @@ fun PhoneVerificationField(
 
     // 2. 인증번호 입력 행 - 인증 완료되지 않았을 때만 표시
     if (showCodeField && !isVerified) {
-        Spacer(modifier = Modifier.height(-12.dp))
+        Spacer(modifier = Modifier.height(6.dp))
         Row(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
