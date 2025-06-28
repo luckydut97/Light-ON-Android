@@ -11,6 +11,8 @@ object NetworkModule {
     // 실제 서버 URL로 변경
     private const val BASE_URL = "https://light-on.store/"
 
+    fun getBaseUrl(): String = BASE_URL
+
     private val loggingInterceptor = HttpLoggingInterceptor().apply {
         level = HttpLoggingInterceptor.Level.BODY
     }

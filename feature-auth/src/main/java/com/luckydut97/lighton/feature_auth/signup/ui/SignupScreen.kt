@@ -9,14 +9,12 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -29,17 +27,22 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
+
 import com.luckydut97.lighton.core.ui.components.LightonBackButton
 import com.luckydut97.lighton.core.ui.components.LightonInputField
 import com.luckydut97.lighton.core.ui.components.LightonNextButton
 import com.luckydut97.lighton.core.ui.components.ValidationResult
+import com.luckydut97.lighton.core.ui.components.CommonTopBar
 import com.luckydut97.lighton.core.ui.theme.LightonTheme
 import com.luckydut97.lighton.core.ui.theme.PretendardFamily
+import com.luckydut97.lighton.feature_auth.signup.viewmodel.SignupViewModel
 
 @Composable
 fun SignUpScreen(
     onBackClick: () -> Unit = {},
-    onNextClick: () -> Unit = {}
+    onNextClick: () -> Unit = {},
+    viewModel: SignupViewModel = viewModel()
 ) {
     // 입력값 상태/결과 상태 선언
     var email by remember { mutableStateOf("") }
@@ -50,18 +53,71 @@ fun SignUpScreen(
     var passwordValidationResult by remember { mutableStateOf<ValidationResult>(ValidationResult.Initial) }
     var confirmPasswordValidationResult by remember { mutableStateOf<ValidationResult>(ValidationResult.Initial) }
 
-    // 이메일 중복 확인 함수 (동일)
-    val checkEmailDuplicate: () -> Unit = {
-        if (email == "duplicate@example.com") {
-            emailValidationResult = ValidationResult.Invalid("중복된 이메일 주소입니다.")
-            isEmailChecked = false
+    // ViewModel 상태 관찰
+    val uiState by viewModel.uiState.collectAsState()
+
+    // 이메일 중복 확인 결과에 따른 validation 업데이트
+    LaunchedEffect(uiState.emailCheckResult) {
+        val checkResult = uiState.emailCheckResult
+        when (checkResult) {
+            is com.luckydut97.lighton.feature_auth.signup.viewmodel.EmailCheckResult.Available -> {
+                emailValidationResult = ValidationResult.Valid
+                isEmailChecked = true
+            }
+
+            is com.luckydut97.lighton.feature_auth.signup.viewmodel.EmailCheckResult.Duplicated -> {
+                emailValidationResult = ValidationResult.Invalid("이미 사용 중인 이메일입니다.")
+                isEmailChecked = false
+            }
+
+            is com.luckydut97.lighton.feature_auth.signup.viewmodel.EmailCheckResult.Error -> {
+                val errorMessage =
+                    (checkResult as com.luckydut97.lighton.feature_auth.signup.viewmodel.EmailCheckResult.Error).message
+                emailValidationResult = ValidationResult.Invalid(errorMessage)
+                isEmailChecked = false
+            }
+
+            null -> {
+                // 초기 상태 또는 리셋 상태
+            }
         }
-        else if (!email.contains('@') || !email.lowercase().contains(".com")) {
-            emailValidationResult = ValidationResult.Invalid("올바른 메일주소를 입력하세요.")
-            isEmailChecked = false
+    }
+
+    // 회원가입 성공시 다음 화면으로 이동
+    LaunchedEffect(uiState.isSuccess) {
+        if (uiState.isSuccess) {
+            onNextClick()
+        }
+    }
+
+    // 에러 메시지 표시 (Toast나 SnackBar 대신 간단히 로그로)
+    LaunchedEffect(uiState.errorMessage) {
+        uiState.errorMessage?.let { error ->
+            println("🔴 회원가입 오류: $error")
+        }
+    }
+
+    // 이메일 유효성 검사 함수
+    fun validateEmail(email: String): ValidationResult {
+        return when {
+            email.isEmpty() -> ValidationResult.Initial
+            !android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches() ->
+                ValidationResult.Invalid("올바른 이메일 형식을 입력해주세요.")
+
+            else -> ValidationResult.Valid
+        }
+    }
+
+    // 이메일 중복 확인 함수
+    val checkEmailDuplicate: () -> Unit = {
+        val emailValidation = validateEmail(email)
+        if (emailValidation is ValidationResult.Valid) {
+            // 이메일 형식이 올바를 때만 중복 확인 API 호출
+            viewModel.checkEmailDuplicate(email)
         } else {
-            emailValidationResult = ValidationResult.Valid
-            isEmailChecked = true
+            // 이메일 형식이 잘못된 경우
+            emailValidationResult = emailValidation
+            isEmailChecked = false
         }
     }
 
@@ -103,7 +159,7 @@ fun SignUpScreen(
         confirmPasswordValidationResult = validateConfirmPasswordValue(password, newConfirm)
     }
 
-    // 전체 제출 가능 체크 (동일)
+    // 전체 제출 가능 체크
     val isFormValid = isEmailChecked &&
             emailValidationResult is ValidationResult.Valid &&
             passwordValidationResult is ValidationResult.Valid &&
@@ -121,28 +177,12 @@ fun SignUpScreen(
                         .fillMaxSize()
                         .padding(paddingValues)
                 ) {
-                    // 뒤로가기 버튼과 제목
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(vertical = 12.dp)
-                    ) {
-                        LightonBackButton(
-                            onClick = onBackClick,
-                            modifier = Modifier
-                                .align(Alignment.CenterStart)
-                                .padding(start = 17.dp)
-                        )
-
-                        Text(
-                            text = "회원가입",
-                            fontFamily = PretendardFamily,
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 18.sp,
-                            color = Color.Black,
-                            modifier = Modifier.align(Alignment.Center)
-                        )
-                    }
+                    // CommonTopBar 추가
+                    CommonTopBar(
+                        title = "회원가입",
+                        onBackClick = onBackClick,
+                        modifier = Modifier.padding(top = 12.dp)
+                    )
 
                     // 메인 콘텐츠를 스크롤 가능하게
                     Column(
@@ -163,6 +203,7 @@ fun SignUpScreen(
                                 email = it
                                 isEmailChecked = false
                                 emailValidationResult = ValidationResult.Initial
+                                viewModel.resetEmailCheck() // 중복 확인 상태 초기화
                             },
                             isRequired = true,
                             placeholder = "이메일 주소를 입력해주세요",
@@ -204,6 +245,18 @@ fun SignUpScreen(
                             validationResult = confirmPasswordValidationResult
                         )
 
+                        // 에러 메시지 표시
+                        uiState.errorMessage?.let { error ->
+                            Spacer(modifier = Modifier.height(16.dp))
+                            Text(
+                                text = error,
+                                color = Color.Red,
+                                fontSize = 14.sp,
+                                fontFamily = PretendardFamily,
+                                modifier = Modifier.padding(horizontal = 16.dp)
+                            )
+                        }
+
                         // 하단 여백
                         Spacer(modifier = Modifier.height(80.dp))
                     }
@@ -218,8 +271,8 @@ fun SignUpScreen(
                             text = "다음",
                             isEnabled = isFormValid,
                             onClick = {
-                                // 다음 화면(PersonalInfoScreen)으로 이동
-                                onNextClick() // 네비게이션 핸들러를 통해 PersonalInfoScreen으로 이동
+                                println("🚀 회원가입 API 호출 - 이메일: $email")
+                                viewModel.signUp(email, password)
                             }
                         )
                     }

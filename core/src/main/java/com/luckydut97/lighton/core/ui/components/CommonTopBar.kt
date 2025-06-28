@@ -14,45 +14,41 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.luckydut97.lighton.core.R
+import com.luckydut97.lighton.core.ui.theme.PretendardFamily
 
+/**
+ * 공통 상단바 컴포넌트
+ *
+ * @param title 중앙에 표시할 타이틀 텍스트
+ * @param onBackClick 뒤로가기 버튼 클릭 콜백
+ * @param modifier Modifier
+ */
 @Composable
 fun CommonTopBar(
-    modifier: Modifier = Modifier,
-    title: String = "공연 목록",
-    onBackClick: () -> Unit = {}
+    title: String,
+    onBackClick: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
     Box(
         modifier = modifier
             .fillMaxWidth()
             .height(50.dp)
-            .background(Color.White),
-        contentAlignment = Alignment.Center
+            .background(Color.White)
     ) {
-        Row(
-            modifier = Modifier.fillMaxSize(),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Spacer(modifier = Modifier.width(17.dp))
-            Box(
-                modifier = Modifier
-                    .size(40.dp)  // 클릭 영역 확대
-                    .clickable { onBackClick() },
-                contentAlignment = Alignment.Center
-            ) {
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_arrow_back),
-                    contentDescription = "Back",
-                    modifier = Modifier
-                        .width(10.dp)
-                        .height(18.dp),
-                    tint = Color.Unspecified
-                )
-            }
-        }
+        // 뒤로가기 버튼 - 좌측 18dp 여백
+        LightonBackButton(
+            onClick = onBackClick,
+            modifier = Modifier
+                .align(Alignment.CenterStart)
+                .padding(start = 18.dp)
+        )
+
+        // 중앙 타이틀 텍스트
         Text(
             text = title,
-            fontSize = 19.sp,
-            fontWeight = FontWeight.SemiBold,
+            fontFamily = PretendardFamily,
+            fontWeight = FontWeight.Bold,
+            fontSize = 18.sp,
             color = Color.Black,
             modifier = Modifier.align(Alignment.Center)
         )

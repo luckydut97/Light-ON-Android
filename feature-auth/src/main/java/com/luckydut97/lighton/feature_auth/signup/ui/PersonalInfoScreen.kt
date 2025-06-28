@@ -1,5 +1,6 @@
 package com.luckydut97.lighton.feature_auth.signup.ui
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -8,86 +9,94 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.luckydut97.domain.usecase.PersonalInfoData
+import com.luckydut97.lighton.core.ui.components.CommonTopBar
 import com.luckydut97.lighton.core.ui.components.LightonAgreementCheckbox
-import com.luckydut97.lighton.core.ui.components.LightonBackButton
 import com.luckydut97.lighton.core.ui.components.LightonCheckbox
 import com.luckydut97.lighton.core.ui.components.LightonDropdown
 import com.luckydut97.lighton.core.ui.components.LightonInputField
 import com.luckydut97.lighton.core.ui.components.LightonNextButton
+import com.luckydut97.lighton.core.ui.components.PhoneVerificationField
 import com.luckydut97.lighton.core.ui.components.ValidationResult
+import com.luckydut97.lighton.core.ui.theme.CaptionColor
 import com.luckydut97.lighton.core.ui.theme.LightonTheme
 import com.luckydut97.lighton.core.ui.theme.PretendardFamily
+import com.luckydut97.lighton.data.repository.PhoneVerificationRepository
+import com.luckydut97.lighton.feature_auth.signup.viewmodel.PersonalInfoViewModel
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 @Composable
 fun PersonalInfoScreen(
+    temporaryUserId: Int? = null,
     onBackClick: () -> Unit = {},
-    onNextClick: () -> Unit = {}
+    onNextClick: () -> Unit = {},
+    onCompleteClick: () -> Unit = {},
+    viewModel: PersonalInfoViewModel = viewModel()
 ) {
-    // 상태 관리
+    val uiState by viewModel.uiState.collectAsState()
+
     var name by remember { mutableStateOf("") }
     var phoneNumber by remember { mutableStateOf("") }
+    var verificationCode by remember { mutableStateOf("") }
     var isPhoneVerified by remember { mutableStateOf(false) }
     var phoneValidationResult by remember { mutableStateOf<ValidationResult>(ValidationResult.Initial) }
+    var showVerificationCodeField by remember { mutableStateOf(false) }
+    var timerSeconds by remember { mutableIntStateOf(180) }
+    var resendButtonDelay by remember { mutableIntStateOf(10) }
 
-    // 지역 선택 상태
     var selectedRegion by remember { mutableStateOf("") }
     var selectedDistrict by remember { mutableStateOf("") }
 
-    // 전체 동의 상태
     var agreeAll by remember { mutableStateOf(false) }
-
-    // 마케팅 수신 동의 상태
     var agreeEntrance by remember { mutableStateOf(false) }
     var agreeSMS by remember { mutableStateOf(false) }
     var agreeAppPush by remember { mutableStateOf(false) }
     var agreeEmail by remember { mutableStateOf(false) }
-
-    // 약관 동의 상태
     var agreeTerms by remember { mutableStateOf(false) }
     var agreePrivacyTerms by remember { mutableStateOf(false) }
     var agreeAgeTerms by remember { mutableStateOf(false) }
 
-    // 모든 필수 입력이 유효한지 확인
-    val isFormValid = name.isNotEmpty() &&
-            isPhoneVerified &&
-            selectedRegion.isNotEmpty() &&
-            selectedDistrict.isNotEmpty() &&
-            agreeTerms &&
-            agreePrivacyTerms &&
-            agreeAgeTerms
+    val regionCodeMap = mapOf(
+        "서울시" to 212,
+        "부산광역시" to 213,
+        "인천광역시" to 214,
+        "대구광역시" to 215,
+        "광주광역시" to 216,
+        "대전광역시" to 217,
+        "울산광역시" to 218
+    )
 
-    // 인증받기 함수
-    val verifyPhone: () -> Unit = {
-        // 실제로는 SMS 인증 등 구현
-        isPhoneVerified = true
-        phoneValidationResult = ValidationResult.Valid
-    }
-
-    // 도시 목록 샘플
-    val cities = listOf("서울시", "부산광역시", "인천광역시", "대구광역시", "광주광역시", "대전광역시", "울산광역시")
-
-    // 읍면동 목록 샘플
+    val cities = regionCodeMap.keys.toList()
     val districts = listOf("중구", "서구", "동구", "남구", "북구", "영도구", "부산진구")
 
-    // 전체 동의 기능
     fun updateAllAgreements(checked: Boolean) {
         agreeAll = checked
         agreeEntrance = checked
@@ -99,9 +108,121 @@ fun PersonalInfoScreen(
         agreeAgeTerms = checked
     }
 
+    val coroutineScope = rememberCoroutineScope()
+
+    fun startTimer() {
+        timerSeconds = 180
+        resendButtonDelay = 10
+        coroutineScope.launch {
+            while (timerSeconds > 0) {
+                delay(1000)
+                timerSeconds -= 1
+            }
+        }
+        coroutineScope.launch {
+            while (resendButtonDelay > 0) {
+                delay(1000)
+                resendButtonDelay -= 1
+            }
+        }
+    }
+
+    val verifyPhone: () -> Unit = {
+        if (phoneNumber.isNotEmpty()) {
+            showVerificationCodeField = true
+            startTimer()
+            coroutineScope.launch {
+                val phoneRepository = PhoneVerificationRepository()
+                val result = phoneRepository.requestVerificationCode(phoneNumber)
+                if (result.success) {
+                    phoneValidationResult = ValidationResult.Initial
+                } else {
+                    phoneValidationResult = ValidationResult.Invalid(
+                        result.error?.message ?: "인증번호 발송에 실패했습니다."
+                    )
+                    showVerificationCodeField = false
+                }
+            }
+        } else {
+            phoneValidationResult = ValidationResult.Invalid("휴대폰 번호를 입력해주세요.")
+        }
+    }
+
+    val verifyCode: () -> Unit = {
+        if (verificationCode.isNotEmpty()) {
+            coroutineScope.launch {
+                val phoneRepository = PhoneVerificationRepository()
+                val result = phoneRepository.verifyPhoneCode(phoneNumber, verificationCode)
+                if (result.success) {
+                    isPhoneVerified = true
+                    phoneValidationResult = ValidationResult.Valid
+                    showVerificationCodeField = false
+                } else {
+                    phoneValidationResult = ValidationResult.Invalid(
+                        result.error?.message ?: "인증번호가 올바르지 않습니다."
+                    )
+                }
+            }
+        } else {
+            phoneValidationResult = ValidationResult.Invalid("")
+        }
+    }
+
+    val resendCode: () -> Unit = {
+        phoneValidationResult = ValidationResult.Initial
+        verificationCode = ""
+        startTimer()
+        coroutineScope.launch {
+            val phoneRepository = PhoneVerificationRepository()
+            val result = phoneRepository.requestVerificationCode(phoneNumber)
+            if (!result.success) {
+                phoneValidationResult = ValidationResult.Invalid(
+                    result.error?.message ?: "재전송에 실패했습니다."
+                )
+            }
+        }
+    }
+
+    val isFormValid = name.isNotEmpty() &&
+            isPhoneVerified &&
+            selectedRegion.isNotEmpty() &&
+            selectedDistrict.isNotEmpty() &&
+            agreeTerms &&
+            agreePrivacyTerms &&
+            agreeAgeTerms
+
+    fun completePersonalInfo() {
+        val regionCode = regionCodeMap[selectedRegion] ?: return
+
+        val personalInfo = PersonalInfoData(
+            name = name,
+            phone = phoneNumber,
+            regionCode = regionCode,
+            agreeTerms = agreeTerms,
+            agreePrivacy = agreePrivacyTerms,
+            agreeOver14 = agreeAgeTerms,
+            agreeSMS = agreeSMS,
+            agreePush = agreeAppPush,
+            agreeEmail = agreeEmail
+        )
+
+        temporaryUserId?.let { userId ->
+            viewModel.completePersonalInfo(userId, personalInfo)
+        }
+    }
+
+    LaunchedEffect(uiState.isSuccess) {
+        if (uiState.isSuccess) {
+            onCompleteClick()
+        }
+    }
+
+    DisposableEffect(Unit) {
+        onDispose {}
+    }
+
     LightonTheme {
         Scaffold { paddingValues ->
-            // 메인 콘텐츠
             Surface(
                 modifier = Modifier.fillMaxSize(),
                 color = Color.White
@@ -111,38 +232,27 @@ fun PersonalInfoScreen(
                         .fillMaxSize()
                         .padding(paddingValues)
                 ) {
-                    // 뒤로가기 버튼과 제목
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(vertical = 12.dp)
-                    ) {
-                        LightonBackButton(
-                            onClick = onBackClick,
-                            modifier = Modifier
-                                .align(Alignment.CenterStart)
-                                .padding(start = 17.dp)
-                        )
+                    CommonTopBar(
+                        title = if (temporaryUserId != null) "개인정보 입력" else "회원가입",
+                        onBackClick = onBackClick
+                    )
 
+                    uiState.errorMessage?.let { errorMessage ->
                         Text(
-                            text = "회원가입",
-                            fontFamily = PretendardFamily,
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 18.sp,
-                            color = Color.Black,
-                            modifier = Modifier.align(Alignment.Center)
+                            text = errorMessage,
+                            color = Color.Red,
+                            fontSize = 14.sp,
+                            modifier = Modifier.padding(horizontal = 17.dp, vertical = 8.dp)
                         )
                     }
 
-                    // 메인 콘텐츠를 스크롤 가능하게
                     Column(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .weight(1f) // 스크롤 영역을 지정하기 위해 weight 사용
+                            .weight(1f)
                             .padding(horizontal = 17.dp)
                             .verticalScroll(rememberScrollState())
                     ) {
-                        // 개인정보 입력 타이틀
                         Text(
                             text = "개인정보 입력",
                             fontFamily = PretendardFamily,
@@ -152,7 +262,6 @@ fun PersonalInfoScreen(
                             modifier = Modifier.padding(top = 24.dp, bottom = 20.dp)
                         )
 
-                        // 이름 입력 필드 - LightonInputField 컴포넌트 사용
                         LightonInputField(
                             label = "이름",
                             value = name,
@@ -164,37 +273,53 @@ fun PersonalInfoScreen(
 
                         Spacer(modifier = Modifier.height(20.dp))
 
-                        // 휴대폰 번호 입력 필드 - LightonInputField 컴포넌트 사용
-                        LightonInputField(
-                            label = "휴대폰 번호",
-                            value = phoneNumber,
-                            onValueChange = { phoneNumber = it },
-                            isRequired = true,
-                            placeholder = "휴대폰 번호를 입력해주세요.",
-                            keyboardType = KeyboardType.Phone,
-                            validationResult = phoneValidationResult,
-                            enableVerifyButton = !isPhoneVerified,
-                            onVerifyClick = verifyPhone
+                        PhoneVerificationField(
+                            phone = phoneNumber,
+                            onPhoneChange = { phoneNumber = it },
+                            verificationCode = verificationCode,
+                            onVerificationCodeChange = { verificationCode = it },
+                            onSendClick = verifyPhone,
+                            onVerifyClick = verifyCode,
+                            onResendClick = resendCode,
+                            codeTimerSec = timerSeconds,
+                            resendEnabled = resendButtonDelay <= 0,
+                            resendCooldownSec = resendButtonDelay,
+                            phoneFieldEnabled = !isPhoneVerified,
+                            showCodeField = showVerificationCodeField,
+                            isVerified = isPhoneVerified,
+                            errorMsg = if (phoneValidationResult is ValidationResult.Invalid) (phoneValidationResult as ValidationResult.Invalid).message else null
                         )
 
                         Spacer(modifier = Modifier.height(20.dp))
 
-                        // 선호 지역 선택
-                        Text(
-                            text = "선호 지역 *",
-                            color = Color.Black,
-                            fontSize = 14.sp,
-                            fontWeight = FontWeight.Medium,
-                            fontFamily = PretendardFamily,
-                            modifier = Modifier.padding(bottom = 8.dp)
-                        )
+                        Row(
+                            modifier = Modifier
+                                .height(18.dp)
+                                .padding(start = 16.dp)
+                        ) {
+                            Text(
+                                text = "선호 지역",
+                                color = CaptionColor,
+                                fontSize = 14.sp,
+                                fontWeight = FontWeight.SemiBold,
+                                fontFamily = PretendardFamily
+                            )
+
+                            Text(
+                                text = " *",
+                                color = Color.Red,
+                                fontSize = 14.sp,
+                                fontWeight = FontWeight.Medium,
+                                fontFamily = PretendardFamily
+                            )
+                        }
+                        Spacer(modifier = Modifier.height(6.dp))
 
                         Row(
                             modifier = Modifier.fillMaxWidth()
                         ) {
-                            // 도/시/군 선택
                             LightonDropdown(
-                                label = "", // 빈 문자열로 설정하여 라벨 영역을 표시하지 않음
+                                label = "",
                                 selectedItem = selectedRegion,
                                 items = cities,
                                 onItemSelected = { selectedRegion = it },
@@ -205,9 +330,8 @@ fun PersonalInfoScreen(
                                     .padding(end = 4.dp)
                             )
 
-                            // 읍/면/동 선택
                             LightonDropdown(
-                                label = "", // 빈 문자열로 설정하여 라벨 영역을 표시하지 않음
+                                label = "",
                                 selectedItem = selectedDistrict,
                                 items = districts,
                                 onItemSelected = { selectedDistrict = it },
@@ -221,7 +345,6 @@ fun PersonalInfoScreen(
 
                         Spacer(modifier = Modifier.height(32.dp))
 
-                        // 마케팅 정보 수신 섹션
                         Text(
                             text = "마케팅 정보 수신 (선택)",
                             fontFamily = PretendardFamily,
@@ -231,19 +354,16 @@ fun PersonalInfoScreen(
                             modifier = Modifier.padding(bottom = 12.dp)
                         )
 
-                        // 출입 방법 저장 체크박스 - LightonCheckbox 컴포넌트 사용
                         LightonCheckbox(
                             text = "출입 방법 저장",
                             checked = agreeEntrance,
                             onCheckedChange = { agreeEntrance = it }
                         )
 
-                        // SMS, 앱 푸시, 이메일 체크박스 (가로 정렬)
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
                             modifier = Modifier.padding(vertical = 4.dp)
                         ) {
-                            // SMS 체크박스
                             LightonCheckbox(
                                 text = "SMS",
                                 checked = agreeSMS,
@@ -251,7 +371,6 @@ fun PersonalInfoScreen(
                                 modifier = Modifier.weight(1f)
                             )
 
-                            // 앱 푸시 체크박스
                             LightonCheckbox(
                                 text = "앱 푸시",
                                 checked = agreeAppPush,
@@ -259,7 +378,6 @@ fun PersonalInfoScreen(
                                 modifier = Modifier.weight(1f)
                             )
 
-                            // 이메일 체크박스
                             LightonCheckbox(
                                 text = "이메일",
                                 checked = agreeEmail,
@@ -268,7 +386,6 @@ fun PersonalInfoScreen(
                             )
                         }
 
-                        // 회색 설명 텍스트
                         Text(
                             text = "* 수신 동의 상태는 개인 설정에서 별도로 변경할 수 있습니다.",
                             fontFamily = PretendardFamily,
@@ -279,7 +396,6 @@ fun PersonalInfoScreen(
 
                         Spacer(modifier = Modifier.height(16.dp))
 
-                        // 약관 동의 섹션
                         Text(
                             text = "약관 동의",
                             fontFamily = PretendardFamily,
@@ -289,14 +405,6 @@ fun PersonalInfoScreen(
                             modifier = Modifier.padding(bottom = 12.dp)
                         )
 
-                        // 전체 동의 체크박스
-                        LightonCheckbox(
-                            text = "전체 동의합니다.",
-                            checked = agreeAll,
-                            onCheckedChange = { updateAllAgreements(it) }
-                        )
-
-                        // 이용약관 동의 체크박스 - LightonAgreementCheckbox 컴포넌트 사용
                         LightonAgreementCheckbox(
                             title = "이용약관에 동의합니다. (필수)",
                             checked = agreeTerms,
@@ -305,7 +413,6 @@ fun PersonalInfoScreen(
                             onDetailClick = { /* 약관 내용 보기 */ }
                         )
 
-                        // 개인정보 수집 및 이용 동의 체크박스
                         LightonAgreementCheckbox(
                             title = "개인정보 수집 및 이용에 동의합니다. (필수)",
                             checked = agreePrivacyTerms,
@@ -314,7 +421,6 @@ fun PersonalInfoScreen(
                             onDetailClick = { /* 약관 내용 보기 */ }
                         )
 
-                        // 14세 이상 동의 체크박스
                         LightonAgreementCheckbox(
                             title = "만 14세 이상입니다. (필수)",
                             checked = agreeAgeTerms,
@@ -322,21 +428,31 @@ fun PersonalInfoScreen(
                             showDetailButton = false
                         )
 
-                        // 하단 여백
                         Spacer(modifier = Modifier.height(80.dp))
                     }
 
-                    // 하단 버튼 영역 - LightonNextButton 컴포넌트 사용
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(horizontal = 17.dp, vertical = 16.dp)
                     ) {
-                        LightonNextButton(
-                            text = "다음",
-                            isEnabled = isFormValid,
-                            onClick = onNextClick
-                        )
+                        if (uiState.isLoading) {
+                            CircularProgressIndicator(
+                                modifier = Modifier.align(Alignment.Center)
+                            )
+                        } else {
+                            LightonNextButton(
+                                text = if (temporaryUserId != null) "완료" else "다음",
+                                isEnabled = isFormValid,
+                                onClick = {
+                                    if (temporaryUserId != null) {
+                                        completePersonalInfo()
+                                    } else {
+                                        onNextClick()
+                                    }
+                                }
+                            )
+                        }
                     }
                 }
             }
@@ -349,5 +465,13 @@ fun PersonalInfoScreen(
 fun PersonalInfoScreenPreview() {
     LightonTheme {
         PersonalInfoScreen()
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun PersonalInfoScreenSocialPreview() {
+    LightonTheme {
+        PersonalInfoScreen(temporaryUserId = 123)
     }
 }

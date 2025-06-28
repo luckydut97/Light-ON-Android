@@ -78,13 +78,13 @@ fun LightonDropdown(
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(56.dp)
-                .clip(RoundedCornerShape(8.dp))
+                .height(47.dp)
+                .clip(RoundedCornerShape(6.dp))
                 .background(TextFieldBackgroundColor)
                 .border(
                     width = 1.dp,
                     color = TextFieldBorderColor,
-                    shape = RoundedCornerShape(8.dp)
+                    shape = RoundedCornerShape(6.dp)
                 )
                 .clickable { expanded = true }
         ) {

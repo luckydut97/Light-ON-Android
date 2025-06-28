@@ -1,14 +1,19 @@
 package com.luckydut97.lighton.core.ui.components
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -85,8 +90,8 @@ fun LightonNextButton(
         enabled = isEnabled,
         modifier = modifier
             .fillMaxWidth()
-            .height(46.dp),
-        shape = RoundedCornerShape(8.dp),
+            .height(47.dp),
+        shape = RoundedCornerShape(6.dp),
         colors = ButtonDefaults.buttonColors(
             containerColor = BrandColor,
             contentColor = Color.White,
@@ -162,10 +167,79 @@ fun LightonOutlinedButton(
         Text(
             text = text,
             fontSize = 16.sp,
+            color = BrandColor,
             fontWeight = FontWeight.Bold,
             fontFamily = PretendardFamily,
             textAlign = TextAlign.Center,
-            color = BrandColor
+            maxLines = 1
         )
+    }
+}
+
+/**
+ * 전화 인증, 재전송, 확인 등에 사용할 작은 액션 버튼 컴포넌트
+ * 높이: 47px, 라운드 모서리, 다양한 스타일 지원
+ */
+@Composable
+fun SmallActionButton(
+    text: String,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true,
+    backgroundColor: Color = BrandColor,
+    contentColor: Color = Color.White,
+    borderColor: Color? = null,
+    textColor: Color? = null,
+    fontSize: Int = 16,
+    fontWeight: FontWeight = FontWeight.SemiBold
+) {
+    val finalTextColor =
+        textColor ?: if (backgroundColor == Color.White) contentColor else Color.White
+
+    if (borderColor != null && backgroundColor == Color.White) {
+        OutlinedButton(
+            onClick = onClick,
+            modifier = modifier.height(47.dp),
+            enabled = enabled,
+            shape = RoundedCornerShape(6.dp),
+            border = BorderStroke(1.dp, borderColor),
+            colors = ButtonDefaults.outlinedButtonColors(
+                containerColor = backgroundColor,
+                contentColor = contentColor
+            ),
+            contentPadding = PaddingValues(horizontal = 8.dp, vertical = 8.dp)
+        ) {
+            Text(
+                text = text,
+                fontSize = fontSize.sp,
+                color = finalTextColor,
+                fontWeight = fontWeight,
+                fontFamily = PretendardFamily,
+                maxLines = 1
+            )
+        }
+    } else {
+        Button(
+            onClick = onClick,
+            modifier = modifier.height(47.dp),
+            enabled = enabled,
+            shape = RoundedCornerShape(6.dp),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = backgroundColor,
+                contentColor = contentColor,
+                disabledContainerColor = backgroundColor,
+                disabledContentColor = contentColor
+            ),
+            contentPadding = PaddingValues(horizontal = 8.dp, vertical = 8.dp)
+        ) {
+            Text(
+                text = text,
+                fontSize = fontSize.sp,
+                color = finalTextColor,
+                fontWeight = fontWeight,
+                fontFamily = PretendardFamily,
+                maxLines = 1
+            )
+        }
     }
 }

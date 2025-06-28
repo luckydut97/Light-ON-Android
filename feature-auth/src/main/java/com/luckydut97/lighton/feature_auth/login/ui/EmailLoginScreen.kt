@@ -13,8 +13,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
@@ -23,6 +23,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -32,6 +34,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -41,8 +44,14 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.luckydut97.lighton.core.ui.components.LightonBackButton
+import androidx.core.view.WindowInsetsCompat
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.systemBars
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.luckydut97.lighton.core.ui.components.LightonButton
+import com.luckydut97.lighton.core.ui.components.LoginInputField
+import com.luckydut97.lighton.core.ui.components.CommonTopBar
 import com.luckydut97.lighton.core.ui.theme.AssistiveColor
 import com.luckydut97.lighton.core.ui.theme.BrandColor
 import com.luckydut97.lighton.core.ui.theme.ClickableColor
@@ -50,6 +59,7 @@ import com.luckydut97.lighton.core.ui.theme.InfoTextColor
 import com.luckydut97.lighton.core.ui.theme.LightonTheme
 import com.luckydut97.lighton.core.ui.theme.PretendardFamily
 import com.luckydut97.lighton.feature.auth.R
+import com.luckydut97.lighton.feature_auth.login.viewmodel.LoginViewModel
 import kotlin.math.min
 
 @Composable
@@ -60,12 +70,30 @@ fun EmailLoginScreen(
     onGoogleLoginClick: () -> Unit = {},
     onSignUpClick: () -> Unit = {},
     onFindIdClick: () -> Unit = {},
-    onFindPasswordClick: () -> Unit = {}
+    onFindPasswordClick: () -> Unit = {},
+    viewModel: LoginViewModel = viewModel()
 ) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var isEmailFocused by remember { mutableStateOf(false) }
     var isPasswordFocused by remember { mutableStateOf(false) }
+
+    // ViewModel 상태 관찰
+    val uiState by viewModel.uiState.collectAsState()
+
+    // 로그인 성공 시 메인 화면으로 이동
+    LaunchedEffect(uiState.isSuccess) {
+        if (uiState.isSuccess) {
+            onLoginClick()
+        }
+    }
+
+    // 에러 메시지 로깅 (디버깅용)
+    LaunchedEffect(uiState.errorMessage) {
+        uiState.errorMessage?.let { error ->
+            println("🔴 로그인 오류: $error")
+        }
+    }
 
     // 반응형 디자인을 위한 스케일 팩터 계산
     val screenWidth = LocalConfiguration.current.screenWidthDp.dp
@@ -81,15 +109,23 @@ fun EmailLoginScreen(
             modifier = Modifier.fillMaxSize(),
             color = Color.White
         ) {
-            Box(modifier = Modifier.fillMaxSize()) {
+            Column(modifier = Modifier.fillMaxSize()) {
+                // CommonTopBar - 시스템바 바로 아래에 위치
+                CommonTopBar(
+                    title = "",
+                    onBackClick = onBackClick,
+                    modifier = Modifier.windowInsetsPadding(WindowInsets.systemBars)
+                )
 
-                // 전체 콘텐츠 - 상하 중앙 정렬
+                // TopBar와 로고 사이 11dp 간격
+                Spacer(modifier = Modifier.height((40 * scaleFactor).dp))
+
+                // 메인 콘텐츠 - 위쪽에 위치
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(horizontal = (20 * scaleFactor).dp),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center
+                    horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     // 로고 - 140*44.7
                     Image(
@@ -100,165 +136,56 @@ fun EmailLoginScreen(
                             .height((44.7 * scaleFactor).dp)
                     )
 
-                    // 로고 아래 70dp 여백
-                    Spacer(modifier = Modifier.height((70 * scaleFactor).dp))
+                    // 로고와 아이디 입력 필드 사이 11dp 간격
+                    Spacer(modifier = Modifier.height((100 * scaleFactor).dp))
 
                     // 입력 필드 섹션
                     Column(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        // 아이디 섹션
-                        Column {
-                            // 아이디 타이틀 - 69*23 박스를 입력 필드 위 좌측에 위치
-                            Box(
-                                modifier = Modifier
-                                    .width((334 * scaleFactor).dp)
-                                    .height((23 * scaleFactor).dp)
-                            ) {
-                                Box(
-                                    modifier = Modifier
-                                        .width((69 * scaleFactor).dp)
-                                        .height((23 * scaleFactor).dp)
-                                        .align(Alignment.CenterStart),
-                                    contentAlignment = Alignment.Center
-                                ) {
-                                    Text(
-                                        text = "아이디",
-                                        color = if (isEmailFocused && email.isNotEmpty()) BrandColor else InfoTextColor,
-                                        fontSize = (14 * scaleFactor).sp,
-                                        fontWeight = FontWeight.Bold,
-                                        fontFamily = PretendardFamily
-                                    )
-                                }
-                            }
-
-                            // 6dp 간격
-                            Spacer(modifier = Modifier.height((6 * scaleFactor).dp))
-
-                            // 아이디 입력 필드 - 334*47
-                            BasicTextField(
-                                value = email,
-                                onValueChange = { email = it },
-                                modifier = Modifier
-                                    .width((334 * scaleFactor).dp)
-                                    .height((47 * scaleFactor).dp)
-                                    .background(
-                                        Color.White,
-                                        RoundedCornerShape((8 * scaleFactor).dp)
-                                    )
-                                    .border(
-                                        width = (1 * scaleFactor).dp,
-                                        color = if (isEmailFocused && email.isNotEmpty()) BrandColor else Color(
-                                            0xFFEEEEEE
-                                        ),
-                                        shape = RoundedCornerShape((8 * scaleFactor).dp)
-                                    )
-                                    .padding(horizontal = (16 * scaleFactor).dp, vertical = 0.dp)
-                                    .onFocusChanged { isEmailFocused = it.isFocused },
-                                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
-                                singleLine = true,
-                                textStyle = androidx.compose.ui.text.TextStyle(
-                                    fontSize = (16 * scaleFactor).sp,
-                                    fontFamily = PretendardFamily,
-                                    color = Color.Black
-                                ),
-                                decorationBox = { innerTextField ->
-                                    Box(
-                                        modifier = Modifier.fillMaxSize(),
-                                        contentAlignment = Alignment.CenterStart
-                                    ) {
-                                        if (email.isEmpty()) {
-                                            Text(
-                                                text = "아이디 (이메일 주소)",
-                                                color = AssistiveColor,
-                                                fontSize = (16 * scaleFactor).sp,
-                                                fontFamily = PretendardFamily
-                                            )
-                                        }
-                                        innerTextField()
-                                    }
-                                }
-                            )
-                        }
+                        // 아이디 입력 필드
+                        LoginInputField(
+                            label = "아이디",
+                            value = email,
+                            onValueChange = { email = it },
+                            modifier = Modifier
+                                .width((334 * scaleFactor).dp),
+                            placeholder = "아이디 (이메일 주소)",
+                            isFocused = isEmailFocused,
+                            onFocusChanged = { isEmailFocused = it },
+                            keyboardType = KeyboardType.Email
+                        )
 
                         // 24dp 간격
                         Spacer(modifier = Modifier.height((24 * scaleFactor).dp))
 
-                        // 비밀번호 섹션
-                        Column {
-                            // 비밀번호 타이틀 - 69*23 박스를 입력 필드 위 좌측에 위치
-                            Box(
-                                modifier = Modifier
-                                    .width((334 * scaleFactor).dp)
-                                    .height((23 * scaleFactor).dp)
-                            ) {
-                                Box(
-                                    modifier = Modifier
-                                        .width((69 * scaleFactor).dp)
-                                        .height((23 * scaleFactor).dp)
-                                        .align(Alignment.CenterStart),
-                                    contentAlignment = Alignment.Center
-                                ) {
-                                    Text(
-                                        text = "비밀번호",
-                                        color = if (isPasswordFocused && password.isNotEmpty()) BrandColor else InfoTextColor,
-                                        fontSize = (14 * scaleFactor).sp,
-                                        fontWeight = FontWeight.Bold,
-                                        fontFamily = PretendardFamily
-                                    )
-                                }
-                            }
+                        // 비밀번호 입력 필드
+                        LoginInputField(
+                            label = "비밀번호",
+                            value = password,
+                            onValueChange = { password = it },
+                            modifier = Modifier
+                                .width((334 * scaleFactor).dp),
+                            placeholder = "비밀번호",
+                            isFocused = isPasswordFocused,
+                            onFocusChanged = { isPasswordFocused = it },
+                            keyboardType = KeyboardType.Password,
+                            isPassword = true
+                        )
+                    }
 
-                            // 6dp 간격
-                            Spacer(modifier = Modifier.height((6 * scaleFactor).dp))
-
-                            // 비밀번호 입력 필드 - 334*47
-                            BasicTextField(
-                                value = password,
-                                onValueChange = { password = it },
-                                modifier = Modifier
-                                    .width((334 * scaleFactor).dp)
-                                    .height((47 * scaleFactor).dp)
-                                    .background(
-                                        Color.White,
-                                        RoundedCornerShape((8 * scaleFactor).dp)
-                                    )
-                                    .border(
-                                        width = (1 * scaleFactor).dp,
-                                        color = if (isPasswordFocused && password.isNotEmpty()) BrandColor else Color(
-                                            0xFFEEEEEE
-                                        ),
-                                        shape = RoundedCornerShape((8 * scaleFactor).dp)
-                                    )
-                                    .padding(horizontal = (16 * scaleFactor).dp, vertical = 0.dp)
-                                    .onFocusChanged { isPasswordFocused = it.isFocused },
-                                visualTransformation = PasswordVisualTransformation(),
-                                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-                                singleLine = true,
-                                textStyle = androidx.compose.ui.text.TextStyle(
-                                    fontSize = (16 * scaleFactor).sp,
-                                    fontFamily = PretendardFamily,
-                                    color = Color.Black
-                                ),
-                                decorationBox = { innerTextField ->
-                                    Box(
-                                        modifier = Modifier.fillMaxSize(),
-                                        contentAlignment = Alignment.CenterStart
-                                    ) {
-                                        if (password.isEmpty()) {
-                                            Text(
-                                                text = "비밀번호",
-                                                color = AssistiveColor,
-                                                fontSize = (16 * scaleFactor).sp,
-                                                fontFamily = PretendardFamily
-                                            )
-                                        }
-                                        innerTextField()
-                                    }
-                                }
-                            )
-                        }
+                    // 에러 메시지 표시
+                    uiState.errorMessage?.let { error ->
+                        Spacer(modifier = Modifier.height((8 * scaleFactor).dp))
+                        Text(
+                            text = error,
+                            color = Color.Red,
+                            fontSize = (14 * scaleFactor).sp,
+                            fontFamily = PretendardFamily,
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier.width((334 * scaleFactor).dp)
+                        )
                     }
 
                     // 23dp 간격
@@ -270,7 +197,14 @@ fun EmailLoginScreen(
                         modifier = Modifier
                             .width((334 * scaleFactor).dp)
                             .height((47 * scaleFactor).dp),
-                        onClick = onLoginClick,
+                        onClick = {
+                            if (email.isNotEmpty() && password.isNotEmpty()) {
+                                println("🚀 로그인 버튼 클릭 - 이메일: $email")
+                                viewModel.login(email, password)
+                            } else {
+                                println("⚠️ 이메일 또는 비밀번호가 비어있음")
+                            }
+                        },
                         borderWidth = -1.dp  // border 제거
                     )
 
@@ -298,7 +232,8 @@ fun EmailLoginScreen(
                             text = "또는",
                             color = AssistiveColor,
                             fontSize = (14 * scaleFactor).sp,
-                            fontFamily = PretendardFamily
+                            fontFamily = PretendardFamily,
+                            fontWeight = FontWeight.SemiBold,
                         )
 
                         // 17dp 여백
@@ -351,11 +286,14 @@ fun EmailLoginScreen(
                             text = "회원가입",
                             color = ClickableColor,
                             modifier = Modifier
-                                .clickable { onSignUpClick() }
-                                .padding(horizontal = (8 * scaleFactor).dp),
+                                .clickable { onSignUpClick() },
                             fontSize = (14 * scaleFactor).sp,
-                            fontFamily = PretendardFamily
+                            fontFamily = PretendardFamily,
+                            fontWeight = FontWeight.SemiBold
                         )
+
+                        // 18dp 여백
+                        Spacer(modifier = Modifier.width((18 * scaleFactor).dp))
 
                         Text(
                             text = "|",
@@ -363,16 +301,24 @@ fun EmailLoginScreen(
                             fontSize = (14 * scaleFactor).sp,
                             fontFamily = PretendardFamily
                         )
+
+                        // 18dp 여백
+                        Spacer(modifier = Modifier.width((18 * scaleFactor).dp))
 
                         Text(
                             text = "아이디 찾기",
                             color = ClickableColor,
                             modifier = Modifier
-                                .clickable {  }
-                                .padding(horizontal = (8 * scaleFactor).dp),
+                                .clickable {
+                                    // 아무일도 안일어나게 함
+                                },
                             fontSize = (14 * scaleFactor).sp,
-                            fontFamily = PretendardFamily
+                            fontFamily = PretendardFamily,
+                            fontWeight = FontWeight.SemiBold
                         )
+
+                        // 18dp 여백
+                        Spacer(modifier = Modifier.width((18 * scaleFactor).dp))
 
                         Text(
                             text = "|",
@@ -381,14 +327,19 @@ fun EmailLoginScreen(
                             fontFamily = PretendardFamily
                         )
 
+                        // 18dp 여백
+                        Spacer(modifier = Modifier.width((18 * scaleFactor).dp))
+
                         Text(
                             text = "비밀번호 찾기",
                             color = ClickableColor,
                             modifier = Modifier
-                                .clickable {  }
-                                .padding(horizontal = (8 * scaleFactor).dp),
+                                .clickable {
+                                    // 아무일도 안일어나게 함
+                                },
                             fontSize = (14 * scaleFactor).sp,
-                            fontFamily = PretendardFamily
+                            fontFamily = PretendardFamily,
+                            fontWeight = FontWeight.SemiBold
                         )
                     }
                 }

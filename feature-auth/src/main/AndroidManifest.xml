@@ -1,12 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.luckydut97.lighton.feature.auth">
-
-    <application>
-        <activity
-            android:name="com.luckydut97.lighton.feature.auth.login.LoginActivity"
-            android:exported="false"
-            android:screenOrientation="portrait"
-            android:windowSoftInputMode="adjustResize" />
-    </application>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- 이 모듈은 Compose 기반으로 개발되어 별도의 Activity가 필요하지 않음 -->
 </manifest>
