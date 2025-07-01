@@ -21,6 +21,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.luckydut97.feature_home.component.FeaturedArtistPerformanceSection
 import com.luckydut97.feature_home.component.HeroImageSection
+import com.luckydut97.feature_home.component.PopularPerformanceSection
 import com.luckydut97.feature_home.component.RecommendationSection
 import com.luckydut97.feature_home.component.TopBar
 import com.luckydut97.lighton.feature_home.main.viewmodel.HomeViewModel
@@ -36,6 +37,7 @@ fun HomeScreen(
 ) {
     val recommendedPerformances by viewModel.recommendedPerformances.collectAsState()
     val featuredArtistPerformances by viewModel.featuredArtistPerformances.collectAsState()
+    val popularPerformances by viewModel.popularPerformances.collectAsState()
     val scrollState = rememberScrollState()
 
     Column(
@@ -78,8 +80,16 @@ fun HomeScreen(
                 }
             )
 
+            // Popular Performance Section
+            PopularPerformanceSection(
+                performances = popularPerformances,
+                onMoreClick = { /* TODO: 더보기 클릭 처리 */ },
+                onPerformanceClick = { /* TODO: 개별 공연 상세 페이지로 이동 */ },
+                modifier = Modifier.fillMaxWidth()
+            )
+
             // 향후 추가될 섹션들을 위한 공간
-            // 예: FeaturedEventSection(), PopularArtistSection() 등
+            Spacer(modifier = Modifier.height(30.dp))
         }
     }
 }

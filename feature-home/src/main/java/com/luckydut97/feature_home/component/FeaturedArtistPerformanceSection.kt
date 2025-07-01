@@ -14,10 +14,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.luckydut97.feature_home.component.FeaturedArtistPerformanceItem
+import com.luckydut97.lighton.core.ui.theme.AssistiveColor
+import com.luckydut97.lighton.feature.home.R
 import com.luckydut97.lighton.feature_home.main.viewmodel.ArtistPerformance
 
 @Composable
@@ -56,16 +59,16 @@ fun FeaturedArtistPerformanceSection(
                         .padding(start = horizontalPadding)
                 )
                 Icon(
-                    imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
+                    painter = painterResource(id = R.drawable.ic_right_arrow),
                     contentDescription = "더보기",
                     modifier = Modifier
                         .align(Alignment.CenterEnd)
                         .padding(end = horizontalPadding)
-                        .size(24.dp),
-                    tint = Color.Gray
+                        .size(15.dp),
+                            tint = AssistiveColor
                 )
             }
-            Spacer(modifier = Modifier.height(9.dp))
+            Spacer(modifier = Modifier.height(3.dp))
             // Item List Row
             Box(
                 modifier = Modifier

@@ -16,6 +16,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.luckydut97.lighton.core.ui.theme.DisabledColor
 import com.luckydut97.lighton.feature_home.main.viewmodel.ArtistPerformance
 import com.luckydut97.lighton.feature.home.R
 
@@ -74,7 +75,7 @@ fun FeaturedArtistPerformanceItem(
                                     shape = RoundedCornerShape(2.dp)
                                 )
                                 .height(19.dp)
-                                .padding(horizontal = 4.dp, vertical = 1.dp),
+                                .padding(horizontal = 4.dp, vertical = 0.dp),
                             contentAlignment = Alignment.Center // 이 부분을 추가!
                         ) {
                             Text(
@@ -108,7 +109,7 @@ fun FeaturedArtistPerformanceItem(
                             modifier = Modifier
                                 .width(1.dp)
                                 .height(12.dp)
-                                .background(Color(0xFFBBBBBB))
+                                .background(DisabledColor)
                         )
                         Spacer(modifier = Modifier.width(4.dp))
                         Text(

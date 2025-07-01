@@ -10,12 +10,15 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.delay
@@ -27,7 +30,7 @@ fun HeroImageSection(
 ) {
     val pages = listOf(
         Pair("메인 텍스트는 최대 2줄까지 허용합니다. 추천음악 1", "서브텍스트 최대 1줄 허용 1"),
-        Pair("메인 텍스트는 최대 2줄까지 허용합니다. 추천음악 2", "서브텍스트 최대 1줄 허용 2"),
+        Pair("1줄일 경우입니다.", "서브텍스트 최대 1줄 허용 2"),
         Pair("메인 텍스트는 최대 2줄까지 허용합니다. 추천음악 3", "서브텍스트 최대 1줄 허용 3")
     )
 
@@ -47,6 +50,9 @@ fun HeroImageSection(
             state = pagerState,
             modifier = Modifier
         ) { page ->
+            val isOneLine = remember(pages[page].first) {
+                !pages[page].first.contains("\n") && pages[page].first.length <= 18 // rough single line
+            }
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -68,45 +74,61 @@ fun HeroImageSection(
                             )
                         )
                 )
-                Column(
+                Box(
                     modifier = Modifier
                         .align(Alignment.BottomCenter)
-                        .size(width = 402.dp, height = 167.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
+                        .size(width = 402.dp, height = 167.dp)
                 ) {
-                    Box(
+                    Column(
                         modifier = Modifier
-                            .size(width = 310.dp, height = 72.dp)
+                            .fillMaxSize(),
+                        verticalArrangement = Arrangement.Bottom,
+                        horizontalAlignment = Alignment.Start
                     ) {
-                        Text(
-                            text = pages[page].first,
-                            fontSize = 28.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = Color.White,
-                            lineHeight = 36.sp,
-                            letterSpacing = (-1).sp,
-                            maxLines = 2,
-                            modifier = Modifier.fillMaxSize()
-                        )
+                        if (isOneLine) {
+                            Spacer(modifier = Modifier.weight(1f))
+                        }
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 30.dp)
+                                .height(if (isOneLine) 36.dp else 72.dp)
+                        ) {
+                            Text(
+                                text = pages[page].first,
+                                fontSize = 28.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = Color.White,
+                                lineHeight = 36.sp,
+                                letterSpacing = (-1).sp,
+                                maxLines = 2,
+                                textAlign = TextAlign.Start,
+                                overflow = TextOverflow.Ellipsis,
+                                modifier = Modifier.fillMaxSize()
+                            )
+                        }
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 30.dp)
+                                .height(27.dp)
+                        ) {
+                            Text(
+                                text = pages[page].second,
+                                fontSize = 18.sp,
+                                color = Color.White,
+                                lineHeight = 36.sp,
+                                letterSpacing = (-1).sp,
+                                maxLines = 1,
+                                textAlign = TextAlign.Start,
+                                overflow = TextOverflow.Ellipsis,
+                                modifier = Modifier.fillMaxSize()
+                            )
+                        }
+                        Spacer(modifier = Modifier.height(30.dp))
+                        Box(modifier = Modifier.height(18.dp))
                     }
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Box(
-                        modifier = Modifier
-                            .size(width = 310.dp, height = 27.dp)
-                    ) {
-                        Text(
-                            text = pages[page].second,
-                            fontSize = 18.sp,
-                            color = Color.White,
-                            lineHeight = 36.sp,
-                            letterSpacing = (-1).sp,
-                            maxLines = 1,
-                            modifier = Modifier.fillMaxSize()
-                        )
-                    }
-                    Spacer(modifier = Modifier.height(30.dp))
-                    // 인디케이터를 위한 공간만 확보 (실제 인디케이터는 밖에서 렌더링)
-                    Box(modifier = Modifier.height(18.dp))
                 }
             }
         }

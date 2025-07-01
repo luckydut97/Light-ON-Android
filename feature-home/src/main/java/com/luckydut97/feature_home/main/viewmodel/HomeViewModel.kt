@@ -23,6 +23,15 @@ data class ArtistPerformance(
     val place: String
 )
 
+data class PopularPerformance(
+    val id: String,
+    val imageResId: Int,
+    val title: String,
+    val date: String,    // ex: 2025.05.01
+    val time: String,    // ex: 17:00
+    val place: String
+)
+
 class HomeViewModel : ViewModel() {
 
     private val _recommendedPerformances =
@@ -32,9 +41,13 @@ class HomeViewModel : ViewModel() {
     private val _featuredArtistPerformances = MutableStateFlow<List<ArtistPerformance>>(emptyList())
     val featuredArtistPerformances: StateFlow<List<ArtistPerformance>> = _featuredArtistPerformances
 
+    private val _popularPerformances = MutableStateFlow<List<PopularPerformance>>(emptyList())
+    val popularPerformances: StateFlow<List<PopularPerformance>> = _popularPerformances
+
     init {
         loadRecommendedPerformances()
         loadFeaturedArtistPerformances() // 주목 아티스트 데이터 불러오기
+        loadPopularPerformances() // 인기 공연 데이터 불러오기
     }
 
     private fun loadRecommendedPerformances() {
@@ -107,6 +120,27 @@ class HomeViewModel : ViewModel() {
                 date = "2025.08.14",
                 time = "20:00",
                 place = "경기 고양시 일산동구 정발산로 35"
+            )
+        )
+    }
+
+    private fun loadPopularPerformances() {
+        _popularPerformances.value = listOf(
+            PopularPerformance(
+                id = "1",
+                imageResId = com.luckydut97.lighton.feature.home.R.drawable.popular_test_img1,
+                title = "[세종] 두둠칫 버스킹 거리공연",
+                date = "2025.05.01",
+                time = "17:00",
+                place = "서울 영등포구 여의도동 81-8"
+            ),
+            PopularPerformance(
+                id = "2",
+                imageResId = com.luckydut97.lighton.feature.home.R.drawable.popular_test_img2,
+                title = "[여의도] Light ON 홀리데이 버스킹",
+                date = "2025.05.01",
+                time = "17:00",
+                place = "서울 영등포구 여의도동 81-8"
             )
         )
     }
