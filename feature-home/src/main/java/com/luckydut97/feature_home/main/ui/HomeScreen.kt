@@ -80,9 +80,6 @@ fun HomeScreen(
 
             // 향후 추가될 섹션들을 위한 공간
             // 예: FeaturedEventSection(), PopularArtistSection() 등
-
-            // BottomNav를 위한 여백 (바텀 네비게이션이 컨텐츠를 가리지 않도록)
-            Spacer(modifier = Modifier.height(60.dp)) // 72dp(nav bar) + 36dp(bottom padding)
         }
     }
 }

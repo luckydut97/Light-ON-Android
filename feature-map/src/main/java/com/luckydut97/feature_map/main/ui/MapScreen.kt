@@ -31,7 +31,6 @@ fun MapScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .windowInsetsPadding(WindowInsets.statusBars)
-                .padding(bottom = 108.dp) // 72dp(nav bar) + 36dp(bottom padding)
         ) {
             // Map content
             Box(

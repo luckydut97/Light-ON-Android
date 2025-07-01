@@ -116,9 +116,6 @@ fun MyPageScreen(
                 text = "회원 탈퇴",
                 onClick = onWithdrawClick
             )
-
-            // 하단 여백 (BottomNavigationBar 공간)
-            Spacer(modifier = Modifier.height(20.dp))
         }
     }
 }
