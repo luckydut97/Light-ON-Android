@@ -28,7 +28,7 @@ data class ErrorResponse(
     fun toErrorType(): ErrorType = ErrorType.fromStatus(status)
 
     /**
-     * 사용자에게 표시할 친화적인 에러 메시지
+     * 사용자에게 표시할 에러 메시지
      */
     fun getUserFriendlyMessage(): String = when {
         // 인증 관련 에러 (401)

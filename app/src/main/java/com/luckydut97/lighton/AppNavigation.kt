@@ -51,7 +51,7 @@ fun AppNavigation(
     val showLoginScreen = false   // 로그인 화면으로 바로 이동
     val showSignupScreen = false   // 회원가입 화면으로 바로 이동
     val showPersonalInfoScreen = false  // 개인정보 입력 화면으로 바로 이동
-    val showMusicPreferenceScreen = false  // 음악 취향 선택 화면으로 바로 이동
+    val showMusicPreferenceScreen = true  // 음악 취향 선택 화면으로 바로 이동
     val showMainScreen = false     // 메인 화면으로 바로 이동
 
     // 개발용 시작 화면 결정

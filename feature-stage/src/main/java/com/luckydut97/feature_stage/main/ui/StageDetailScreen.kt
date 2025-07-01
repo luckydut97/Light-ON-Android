@@ -52,7 +52,7 @@ fun StageDetailScreen(
             address = "서울 영등포구 여의도동 81-8",
             price = 10000,
             isPaid = true,
-            description = "압도적인 라이브 실력과 폭발적인 히트곡 퍼레이드로 '무대장인'이라 호평받은 신인 인디밴드 단독 콘서트\n네번째 미니앨범 [HOLIDAY]를 기반으로 사랑받은 곡들만 뽑아 공연을 진행합니다.",
+            description = "압도적인 라이브 실력과 폭발적인 히트곡 퍼레이드로 '무대장인'이라 호평받은 신인 인디밴드 단독 콘서트\n\n네번째 미니앨범 [HOLIDAY]를 기반으로 사랑받은 곡들만 뽑아 공연을 진행합니다.",
             artistInfo = ArtistInfo(
                 name = "Light ON (라이트 온)",
                 description = "라이트 온은 홍익대학교 동아리 출신으로 이루어진 2022년 대뷔한 신입 밴드로 '일탈'이라는 곡을 통해 많은 팬덤을 보유한 4인조 밴드 그룹입니다."
@@ -69,7 +69,7 @@ fun StageDetailScreen(
     }
 
     val brand = Color(0xFF6137DD)
-    val caption = Color(0xFF888888)
+    val caption = Color(0xFF555555)
     val assistive = Color(0xFFC4C4C4)
     val backgroundGray = Color(0xFFF5F5F5)
     val tagBackground = Color(0xFFEEE7FB)
@@ -174,11 +174,12 @@ fun StageDetailScreen(
                     Spacer(modifier = Modifier.height(8.dp))
 
                     Text(
-                        text = "${performanceDetail.date} | ${performanceDetail.time}",
+                        text = "${performanceDetail.date}  |  ${performanceDetail.time}",
                         fontSize = 14.sp,
                         fontWeight = FontWeight.Normal,
                         color = caption,
-                        fontFamily = PretendardFamily
+                        fontFamily = PretendardFamily,
+                        letterSpacing = (-1).sp
                     )
 
                     Spacer(modifier = Modifier.height(8.dp))
@@ -198,7 +199,8 @@ fun StageDetailScreen(
                             fontSize = 16.sp,
                             fontWeight = FontWeight.Normal,
                             color = caption,
-                            fontFamily = PretendardFamily
+                            fontFamily = PretendardFamily,
+                            letterSpacing = (-1).sp
                         )
                         Spacer(modifier = Modifier.width(8.dp))
                         Text(
@@ -229,7 +231,8 @@ fun StageDetailScreen(
                             fontSize = 16.sp,
                             fontWeight = FontWeight.Normal,
                             color = caption,
-                            fontFamily = PretendardFamily
+                            fontFamily = PretendardFamily,
+                            letterSpacing = (-1).sp
                         )
                     }
                 }
@@ -270,7 +273,8 @@ fun StageDetailScreen(
                             fontSize = 16.sp,
                             fontWeight = FontWeight.Normal,
                             color = Color.Black,
-                            fontFamily = PretendardFamily
+                            fontFamily = PretendardFamily,
+                            letterSpacing = (-1).sp
                         )
                     }
                 }
@@ -314,6 +318,7 @@ fun StageDetailScreen(
                             color = brand,
                             fontFamily = PretendardFamily,
                             textDecoration = TextDecoration.Underline,
+                            letterSpacing = (-1).sp,
                             modifier = Modifier.clickable { /* 아티스트 정보 */ }
                         )
                     }

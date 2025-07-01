@@ -48,6 +48,7 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBars
+import androidx.compose.material3.Scaffold
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.luckydut97.lighton.core.ui.components.LightonButton
 import com.luckydut97.lighton.core.ui.components.LoginInputField
@@ -105,242 +106,248 @@ fun EmailLoginScreen(
     val scaleFactor = min(widthRatio, heightRatio)
 
     LightonTheme {
-        Surface(
-            modifier = Modifier.fillMaxSize(),
-            color = Color.White
-        ) {
-            Column(modifier = Modifier.fillMaxSize()) {
-                // CommonTopBar - 시스템바 바로 아래에 위치
-                CommonTopBar(
-                    title = "",
-                    onBackClick = onBackClick,
-                    modifier = Modifier.windowInsetsPadding(WindowInsets.systemBars)
-                )
-
-                // TopBar와 로고 사이 11dp 간격
-                Spacer(modifier = Modifier.height((40 * scaleFactor).dp))
-
-                // 메인 콘텐츠 - 위쪽에 위치
+        Scaffold { paddingValues ->
+            Surface(
+                modifier = Modifier.fillMaxSize(),
+                color = Color.White
+            ) {
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(horizontal = (20 * scaleFactor).dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
+                        .padding(paddingValues)
                 ) {
-                    // 로고 - 140*44.7
-                    Image(
-                        painter = painterResource(id = R.drawable.ic_type_purple),
-                        contentDescription = "Light On 로고",
-                        modifier = Modifier
-                            .width((140 * scaleFactor).dp)
-                            .height((44.7 * scaleFactor).dp)
+                    // CommonTopBar 추가
+                    CommonTopBar(
+                        title = "",
+                        onBackClick = onBackClick,
+                        modifier = Modifier.padding(top = 12.dp)
                     )
 
-                    // 로고와 아이디 입력 필드 사이 11dp 간격
-                    Spacer(modifier = Modifier.height((100 * scaleFactor).dp))
+                    // TopBar와 로고 사이 11dp 간격
+                    Spacer(modifier = Modifier.height((80 * scaleFactor).dp))
 
-                    // 입력 필드 섹션
+                    // 메인 콘텐츠 - 위쪽에 위치
                     Column(
-                        modifier = Modifier.fillMaxWidth(),
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(horizontal = (20 * scaleFactor).dp),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        // 아이디 입력 필드
-                        LoginInputField(
-                            label = "아이디",
-                            value = email,
-                            onValueChange = { email = it },
-                            modifier = Modifier
-                                .width((334 * scaleFactor).dp),
-                            placeholder = "아이디 (이메일 주소)",
-                            isFocused = isEmailFocused,
-                            onFocusChanged = { isEmailFocused = it },
-                            keyboardType = KeyboardType.Email
-                        )
-
-                        // 24dp 간격
-                        Spacer(modifier = Modifier.height((24 * scaleFactor).dp))
-
-                        // 비밀번호 입력 필드
-                        LoginInputField(
-                            label = "비밀번호",
-                            value = password,
-                            onValueChange = { password = it },
-                            modifier = Modifier
-                                .width((334 * scaleFactor).dp),
-                            placeholder = "비밀번호",
-                            isFocused = isPasswordFocused,
-                            onFocusChanged = { isPasswordFocused = it },
-                            keyboardType = KeyboardType.Password,
-                            isPassword = true
-                        )
-                    }
-
-                    // 에러 메시지 표시
-                    uiState.errorMessage?.let { error ->
-                        Spacer(modifier = Modifier.height((8 * scaleFactor).dp))
-                        Text(
-                            text = error,
-                            color = Color.Red,
-                            fontSize = (14 * scaleFactor).sp,
-                            fontFamily = PretendardFamily,
-                            textAlign = TextAlign.Center,
-                            modifier = Modifier.width((334 * scaleFactor).dp)
-                        )
-                    }
-
-                    // 23dp 간격
-                    Spacer(modifier = Modifier.height((23 * scaleFactor).dp))
-
-                    // 로그인 버튼
-                    LightonButton(
-                        text = "로그인",
-                        modifier = Modifier
-                            .width((334 * scaleFactor).dp)
-                            .height((47 * scaleFactor).dp),
-                        onClick = {
-                            if (email.isNotEmpty() && password.isNotEmpty()) {
-                                println("🚀 로그인 버튼 클릭 - 이메일: $email")
-                                viewModel.login(email, password)
-                            } else {
-                                println("⚠️ 이메일 또는 비밀번호가 비어있음")
-                            }
-                        },
-                        borderWidth = -1.dp  // border 제거
-                    )
-
-                    // 23dp 간격
-                    Spacer(modifier = Modifier.height((23 * scaleFactor).dp))
-
-                    // 또는 텍스트와 선
-                    Row(
-                        modifier = Modifier.width((334 * scaleFactor).dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        // 왼쪽 선
-                        Box(
-                            modifier = Modifier
-                                .weight(1f)
-                                .height((1 * scaleFactor).dp)
-                                .background(Color(0xFFF5F5F5))
-                        )
-
-                        // 17dp 여백
-                        Spacer(modifier = Modifier.width((17 * scaleFactor).dp))
-
-                        // 또는 텍스트
-                        Text(
-                            text = "또는",
-                            color = AssistiveColor,
-                            fontSize = (14 * scaleFactor).sp,
-                            fontFamily = PretendardFamily,
-                            fontWeight = FontWeight.SemiBold,
-                        )
-
-                        // 17dp 여백
-                        Spacer(modifier = Modifier.width((17 * scaleFactor).dp))
-
-                        // 오른쪽 선
-                        Box(
-                            modifier = Modifier
-                                .weight(1f)
-                                .height((1 * scaleFactor).dp)
-                                .background(Color(0xFFF5F5F5))
-                        )
-                    }
-
-                    // 23dp 간격
-                    Spacer(modifier = Modifier.height((23 * scaleFactor).dp))
-
-                    // 소셜 로그인 버튼들 - 37*37
-                    Row(
-                        horizontalArrangement = Arrangement.spacedBy((24 * scaleFactor).dp)
-                    ) {
-                        // 카카오 로그인 버튼
+                        // 로고 - 140*44.7
                         Image(
-                            painter = painterResource(id = R.drawable.ic_kakao_logo),
-                            contentDescription = "카카오 로그인",
+                            painter = painterResource(id = R.drawable.ic_type_purple),
+                            contentDescription = "Light On 로고",
                             modifier = Modifier
-                                .size((37 * scaleFactor).dp)
-                                .clickable { onKakaoLoginClick() }
+                                .width((140 * scaleFactor).dp)
+                                .height((44.7 * scaleFactor).dp)
                         )
 
-                        // 구글 로그인 버튼
-                        Image(
-                            painter = painterResource(id = R.drawable.ic_google_logo),
-                            contentDescription = "구글 로그인",
+                        // 로고와 아이디 입력 필드 사이 11dp 간격
+                        Spacer(modifier = Modifier.height((100 * scaleFactor).dp))
+
+                        // 입력 필드 섹션
+                        Column(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            // 아이디 입력 필드
+                            LoginInputField(
+                                label = "아이디",
+                                value = email,
+                                onValueChange = { email = it },
+                                modifier = Modifier
+                                    .width((334 * scaleFactor).dp),
+                                placeholder = "아이디 (이메일 주소)",
+                                isFocused = isEmailFocused,
+                                onFocusChanged = { isEmailFocused = it },
+                                keyboardType = KeyboardType.Email
+                            )
+
+                            // 24dp 간격
+                            Spacer(modifier = Modifier.height((24 * scaleFactor).dp))
+
+                            // 비밀번호 입력 필드
+                            LoginInputField(
+                                label = "비밀번호",
+                                value = password,
+                                onValueChange = { password = it },
+                                modifier = Modifier
+                                    .width((334 * scaleFactor).dp),
+                                placeholder = "비밀번호",
+                                isFocused = isPasswordFocused,
+                                onFocusChanged = { isPasswordFocused = it },
+                                keyboardType = KeyboardType.Password,
+                                isPassword = true
+                            )
+                        }
+
+                        // 에러 메시지 표시
+                        uiState.errorMessage?.let { error ->
+                            Spacer(modifier = Modifier.height((8 * scaleFactor).dp))
+                            Text(
+                                text = error,
+                                color = Color.Red,
+                                fontSize = (14 * scaleFactor).sp,
+                                fontFamily = PretendardFamily,
+                                textAlign = TextAlign.Center,
+                                modifier = Modifier.width((334 * scaleFactor).dp)
+                            )
+                        }
+
+                        // 23dp 간격
+                        Spacer(modifier = Modifier.height((23 * scaleFactor).dp))
+
+                        // 로그인 버튼
+                        LightonButton(
+                            text = "로그인",
                             modifier = Modifier
-                                .size((37 * scaleFactor).dp)
-                                .clickable { onGoogleLoginClick() }
-                        )
-                    }
-
-                    // 23dp 간격
-                    Spacer(modifier = Modifier.height((23 * scaleFactor).dp))
-
-                    // 하단 링크들
-                    Row(
-                        horizontalArrangement = Arrangement.Center,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(
-                            text = "회원가입",
-                            color = ClickableColor,
-                            modifier = Modifier
-                                .clickable { onSignUpClick() },
-                            fontSize = (14 * scaleFactor).sp,
-                            fontFamily = PretendardFamily,
-                            fontWeight = FontWeight.SemiBold
+                                .width((334 * scaleFactor).dp)
+                                .height(47.dp),
+                            onClick = {
+                                if (email.isNotEmpty() && password.isNotEmpty()) {
+                                    println("🚀 로그인 버튼 클릭 - 이메일: $email")
+                                    viewModel.login(email, password)
+                                } else {
+                                    println("⚠️ 이메일 또는 비밀번호가 비어있음")
+                                }
+                            },
+                            borderWidth = -1.dp  // border 제거
                         )
 
-                        // 18dp 여백
-                        Spacer(modifier = Modifier.width((18 * scaleFactor).dp))
+                        // 23dp 간격
+                        Spacer(modifier = Modifier.height((23 * scaleFactor).dp))
 
-                        Text(
-                            text = "|",
-                            color = ClickableColor,
-                            fontSize = (14 * scaleFactor).sp,
-                            fontFamily = PretendardFamily
-                        )
+                        // 또는 텍스트와 선
+                        Row(
+                            modifier = Modifier.width((334 * scaleFactor).dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            // 왼쪽 선
+                            Box(
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .height((1 * scaleFactor).dp)
+                                    .background(Color(0xFFF5F5F5))
+                            )
 
-                        // 18dp 여백
-                        Spacer(modifier = Modifier.width((18 * scaleFactor).dp))
+                            // 17dp 여백
+                            Spacer(modifier = Modifier.width((17 * scaleFactor).dp))
 
-                        Text(
-                            text = "아이디 찾기",
-                            color = ClickableColor,
-                            modifier = Modifier
-                                .clickable {
-                                    // 아무일도 안일어나게 함
-                                },
-                            fontSize = (14 * scaleFactor).sp,
-                            fontFamily = PretendardFamily,
-                            fontWeight = FontWeight.SemiBold
-                        )
+                            // 또는 텍스트
+                            Text(
+                                text = "또는",
+                                color = AssistiveColor,
+                                fontSize = (14 * scaleFactor).sp,
+                                fontFamily = PretendardFamily,
+                                fontWeight = FontWeight.SemiBold,
+                            )
 
-                        // 18dp 여백
-                        Spacer(modifier = Modifier.width((18 * scaleFactor).dp))
+                            // 17dp 여백
+                            Spacer(modifier = Modifier.width((17 * scaleFactor).dp))
 
-                        Text(
-                            text = "|",
-                            color = ClickableColor,
-                            fontSize = (14 * scaleFactor).sp,
-                            fontFamily = PretendardFamily
-                        )
+                            // 오른쪽 선
+                            Box(
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .height((1 * scaleFactor).dp)
+                                    .background(Color(0xFFF5F5F5))
+                            )
+                        }
 
-                        // 18dp 여백
-                        Spacer(modifier = Modifier.width((18 * scaleFactor).dp))
+                        // 23dp 간격
+                        Spacer(modifier = Modifier.height((23 * scaleFactor).dp))
 
-                        Text(
-                            text = "비밀번호 찾기",
-                            color = ClickableColor,
-                            modifier = Modifier
-                                .clickable {
-                                    // 아무일도 안일어나게 함
-                                },
-                            fontSize = (14 * scaleFactor).sp,
-                            fontFamily = PretendardFamily,
-                            fontWeight = FontWeight.SemiBold
-                        )
+                        // 소셜 로그인 버튼들 - 37*37
+                        Row(
+                            horizontalArrangement = Arrangement.spacedBy((24 * scaleFactor).dp)
+                        ) {
+                            // 카카오 로그인 버튼
+                            Image(
+                                painter = painterResource(id = R.drawable.ic_kakao_logo),
+                                contentDescription = "카카오 로그인",
+                                modifier = Modifier
+                                    .size((37 * scaleFactor).dp)
+                                    .clickable { onKakaoLoginClick() }
+                            )
+
+                            // 구글 로그인 버튼
+                            Image(
+                                painter = painterResource(id = R.drawable.ic_google_logo),
+                                contentDescription = "구글 로그인",
+                                modifier = Modifier
+                                    .size((37 * scaleFactor).dp)
+                                    .clickable { onGoogleLoginClick() }
+                            )
+                        }
+
+                        // 23dp 간격
+                        Spacer(modifier = Modifier.height((23 * scaleFactor).dp))
+
+                        // 하단 링크들
+                        Row(
+                            horizontalArrangement = Arrangement.Center,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(
+                                text = "회원가입",
+                                color = ClickableColor,
+                                modifier = Modifier
+                                    .clickable { onSignUpClick() },
+                                fontSize = (14 * scaleFactor).sp,
+                                fontFamily = PretendardFamily,
+                                fontWeight = FontWeight.SemiBold
+                            )
+
+                            // 18dp 여백
+                            Spacer(modifier = Modifier.width((18 * scaleFactor).dp))
+
+                            Text(
+                                text = "|",
+                                color = ClickableColor,
+                                fontSize = (14 * scaleFactor).sp,
+                                fontFamily = PretendardFamily
+                            )
+
+                            // 18dp 여백
+                            Spacer(modifier = Modifier.width((18 * scaleFactor).dp))
+
+                            Text(
+                                text = "아이디 찾기",
+                                color = ClickableColor,
+                                modifier = Modifier
+                                    .clickable {
+                                        // 아무일도 안일어나게 함
+                                    },
+                                fontSize = (14 * scaleFactor).sp,
+                                fontFamily = PretendardFamily,
+                                fontWeight = FontWeight.SemiBold
+                            )
+
+                            // 18dp 여백
+                            Spacer(modifier = Modifier.width((18 * scaleFactor).dp))
+
+                            Text(
+                                text = "|",
+                                color = ClickableColor,
+                                fontSize = (14 * scaleFactor).sp,
+                                fontFamily = PretendardFamily
+                            )
+
+                            // 18dp 여백
+                            Spacer(modifier = Modifier.width((18 * scaleFactor).dp))
+
+                            Text(
+                                text = "비밀번호 찾기",
+                                color = ClickableColor,
+                                modifier = Modifier
+                                    .clickable {
+                                        // 아무일도 안일어나게 함
+                                    },
+                                fontSize = (14 * scaleFactor).sp,
+                                fontFamily = PretendardFamily,
+                                fontWeight = FontWeight.SemiBold
+                            )
+                        }
                     }
                 }
             }

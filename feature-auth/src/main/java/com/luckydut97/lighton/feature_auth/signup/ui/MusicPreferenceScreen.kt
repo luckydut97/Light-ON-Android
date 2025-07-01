@@ -46,6 +46,9 @@ import com.luckydut97.lighton.core.ui.components.LightonOutlinedButton
 import com.luckydut97.lighton.core.ui.theme.BrandColor
 import com.luckydut97.lighton.core.ui.theme.LightonTheme
 import com.luckydut97.lighton.core.ui.theme.PretendardFamily
+import com.luckydut97.lighton.core.ui.theme.PressedColor
+import com.luckydut97.lighton.core.ui.theme.PressedStrokeColor
+import com.luckydut97.lighton.core.ui.theme.unPressedColor
 import com.luckydut97.lighton.feature.auth.R
 import kotlin.math.ceil
 
@@ -130,8 +133,7 @@ fun MusicPreferenceScreen(
                         modifier = Modifier
                             .weight(1f)
                             .fillMaxWidth()
-                            .padding(horizontal = 16.dp)
-                            .verticalScroll(rememberScrollState()),
+                            .padding(horizontal = 16.dp),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Spacer(modifier = Modifier.height(24.dp))
@@ -161,17 +163,23 @@ fun MusicPreferenceScreen(
                         Spacer(modifier = Modifier.height(32.dp))
 
                         // 장르 그리드 (3열 그리드)
-                        MusicGenreGrid(
-                            genres = allGenres,
-                            selectedGenreIds = selectedGenreIds,
-                            onGenreClicked = { genreId ->
-                                if (selectedGenreIds.contains(genreId)) {
-                                    selectedGenreIds.remove(genreId)
-                                } else {
-                                    selectedGenreIds.add(genreId)
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .verticalScroll(rememberScrollState())
+                        ) {
+                            MusicGenreGrid(
+                                genres = allGenres,
+                                selectedGenreIds = selectedGenreIds,
+                                onGenreClicked = { genreId ->
+                                    if (selectedGenreIds.contains(genreId)) {
+                                        selectedGenreIds.remove(genreId)
+                                    } else {
+                                        selectedGenreIds.add(genreId)
+                                    }
                                 }
-                            }
-                        )
+                            )
+                        }
 
                         Spacer(modifier = Modifier.height(24.dp))
                     }
@@ -261,66 +269,59 @@ fun GenreItem(
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val unPressedColor = unPressedColor.copy(alpha = 0.5f)
+    val pressedStrokeColor = PressedStrokeColor
+    val pressedColor = PressedColor.copy(alpha = 0.5f)
+    val brandColor = PressedStrokeColor
+
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = modifier.padding(horizontal = 4.dp)
     ) {
-        // 장르 이미지와 이름
+        // 장르 이미지와 상태 오버레이, 텍스트
         Box(
             contentAlignment = Alignment.Center,
             modifier = Modifier
-                .size(101.dp) // 101x101 크기
+                .size(101.dp)
                 .clip(CircleShape)
-                .background(Color.LightGray) // 기본 배경색
-                .border(
-                    width = if (isSelected) 2.dp else 0.dp,
-                    color = if (isSelected) BrandColor else Color.Transparent,
-                    shape = CircleShape
+                .then(
+                    if (isSelected) Modifier.border(
+                        width = 4.dp,
+                        color = pressedStrokeColor,
+                        shape = CircleShape
+                    ) else Modifier
                 )
                 .clickable(onClick = onClick)
         ) {
-            // 장르 이미지
+            // 1. 장르 이미지 (맨 아래)
             Image(
                 painter = painterResource(id = genre.imageResId),
                 contentDescription = genre.name,
                 contentScale = ContentScale.Crop,
                 modifier = Modifier.fillMaxSize()
             )
-
-            // 선택된 상태일 때 반투명 오버레이 및 텍스트
-            if (isSelected) {
-                Box(
-                    contentAlignment = Alignment.Center,
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .background(Color(0x66000000)) // 반투명 검정색
-                ) {
-                    // 장르 이름
-                    Text(
-                        text = genre.name,
-                        color = Color.White,
-                        fontFamily = PretendardFamily,
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 20.sp,
-                        textAlign = TextAlign.Center
+            // 2. 상태에 따라 원형 반투명 오버레이
+            Box(
+                modifier = Modifier
+                    .matchParentSize()
+                    .background(
+                        if (isSelected) pressedColor else unPressedColor,
+                        shape = CircleShape
                     )
-                }
-            } else {
-                // 선택되지 않은 상태에서 텍스트
-                Box(
-                    contentAlignment = Alignment.Center,
-                    modifier = Modifier.fillMaxSize()
-                ) {
-                    // 장르 이름
-                    Text(
-                        text = genre.name,
-                        color = Color.White,
-                        fontFamily = PretendardFamily,
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 20.sp,
-                        textAlign = TextAlign.Center
-                    )
-                }
+            )
+            // 3. 텍스트 (항상 맨 위)
+            Box(
+                modifier = Modifier.matchParentSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = genre.name,
+                    color = if (isSelected) brandColor else Color.White,
+                    fontFamily = PretendardFamily,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 20.sp,
+                    textAlign = TextAlign.Center
+                )
             }
         }
     }
