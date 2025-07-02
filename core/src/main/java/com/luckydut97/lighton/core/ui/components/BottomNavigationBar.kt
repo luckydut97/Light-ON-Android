@@ -43,7 +43,7 @@ fun BottomNavigationBar(
             .windowInsetsPadding(WindowInsets.navigationBars)
             .height(72.dp)
             .shadow(
-                elevation = 16.dp,
+                elevation = 8.dp,
                 shape = RoundedCornerShape(topStart = 0.dp, topEnd = 0.dp)
             )
             .background(Color.White)

@@ -6,9 +6,16 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -28,18 +35,24 @@ import com.luckydut97.lighton.core.ui.theme.PretendardFamily
 import com.luckydut97.lighton.feature.mypage.R
 import com.luckydut97.lighton.feature_mypage.model.UserProfile
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProfileSection(
     userProfile: UserProfile,
     onSettingClick: () -> Unit,
     onActivityClick: () -> Unit,
     onRegisterClick: () -> Unit,
+    onNormalStageRegisterClick: () -> Unit = {},
+    onBuskingRegisterClick: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     val profileBackground = Color(0xFFF5F0FF)
     val assistive = Color(0xFFC4C4C4)
     val loginIdColor = Color(0xFFA9A9A9)
     val clickableColor = Color(0xFFABABAB)
+
+    var isRegisterSheetVisible by remember { mutableStateOf(false) }
+    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
 
     Box(
         modifier = modifier
@@ -140,10 +153,36 @@ fun ProfileSection(
 
                 LightonButton(
                     text = "공연 등록",
-                    onClick = onRegisterClick,
+                    onClick = {
+                        onRegisterClick()
+                        isRegisterSheetVisible = true
+                    },
                     modifier = Modifier.weight(1f)
                 )
             }
+        }
+    }
+
+    // BottomSheet for Register Stage Type Selection
+    if (isRegisterSheetVisible) {
+        ModalBottomSheet(
+            onDismissRequest = { isRegisterSheetVisible = false },
+            sheetState = sheetState,
+            dragHandle = null,
+            containerColor = Color.White,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            RegisterStageTypeSheetContent(
+                onNormalStageClick = {
+                    isRegisterSheetVisible = false
+                    onNormalStageRegisterClick()
+                },
+                onBuskingClick = {
+                    isRegisterSheetVisible = false
+                    onBuskingRegisterClick()
+                },
+                modifier = Modifier.padding(bottom = 28.dp)
+            )
         }
     }
 }

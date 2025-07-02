@@ -28,10 +28,23 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.luckydut97.feature_stage.model.ArtistInfo
 import com.luckydut97.feature_stage.model.PerformanceDetail
+import com.luckydut97.feature_stage.main.ui.sheet.StageApplyInfoSheetContent
+import com.luckydut97.feature_stage.main.ui.sheet.StageApplyPeopleSheetContent
+import com.luckydut97.feature_stage.main.ui.sheet.StageApplyAccountSheetContent
+import com.luckydut97.feature_stage.viewmodel.StageApplyInfoSheetViewModel
+import com.luckydut97.feature_stage.viewmodel.StageApplyPeopleSheetViewModel
+import com.luckydut97.feature_stage.viewmodel.StageApplyAccountSheetViewModel
 import com.luckydut97.lighton.core.ui.components.CommonTopBar
 import com.luckydut97.lighton.core.ui.theme.PretendardFamily
 import com.luckydut97.lighton.feature.stage.R
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.rememberModalBottomSheetState
+import com.luckydut97.lighton.core.ui.components.LightonButton
+import com.luckydut97.lighton.core.ui.components.SmallActionButton
+import androidx.compose.runtime.collectAsState
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun StageDetailScreen(
     performanceId: String,
@@ -73,6 +86,18 @@ fun StageDetailScreen(
     val assistive = Color(0xFFC4C4C4)
     val backgroundGray = Color(0xFFF5F5F5)
     val tagBackground = Color(0xFFEEE7FB)
+
+    val sheetStepList = listOf("INFO", "PEOPLE", "ACCOUNT")
+    var currentStep by remember { mutableStateOf("INFO") }
+    var isBottomSheetVisible by remember { mutableStateOf(false) }
+
+    val infoViewModel = remember { StageApplyInfoSheetViewModel() }
+    val peopleViewModel = remember { StageApplyPeopleSheetViewModel() }
+    val accountViewModel = remember { StageApplyAccountSheetViewModel() }
+
+    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+
+    val peopleCount by peopleViewModel.peopleCount.collectAsState()
 
     Box(modifier = Modifier.fillMaxSize()) {
         Column(
@@ -476,21 +501,60 @@ fun StageDetailScreen(
 
                 Spacer(modifier = Modifier.width(8.dp))
 
-                Button(
-                    onClick = { /* 신청하기 */ },
+                // 신청하기 버튼 → 하단 시트 열기
+                LightonButton(
+                    text = "신청하기",
+                    onClick = {
+                        currentStep = "INFO"
+                        isBottomSheetVisible = true
+                    },
                     modifier = Modifier
                         .weight(1f)
-                        .height(48.dp),
-                    colors = ButtonDefaults.buttonColors(containerColor = brand),
-                    shape = RoundedCornerShape(6.dp)
+                        .height(48.dp)
+                )
+            }
+        }
+        // 신규: BottomSheetDialog
+        if (isBottomSheetVisible) {
+            ModalBottomSheet(
+                onDismissRequest = { isBottomSheetVisible = false },
+                sheetState = sheetState,
+                dragHandle = null,
+                containerColor = Color.White,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Box(
+                    Modifier
+                        .fillMaxWidth()
+                        .then(
+                            if (currentStep == "ACCOUNT") Modifier.height(412.dp)
+                            else Modifier.height(283.dp)
+                        )
                 ) {
-                    Text(
-                        text = "신청하기",
-                        color = Color.White,
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.Bold,
-                        fontFamily = PretendardFamily
-                    )
+                    when (currentStep) {
+                        "INFO" -> {
+                            StageApplyInfoSheetContent(
+                                viewModel = infoViewModel,
+                                onNext = { currentStep = "PEOPLE" },
+                                onCancel = { isBottomSheetVisible = false }
+                            )
+                        }
+                        "PEOPLE" -> {
+                            StageApplyPeopleSheetContent(
+                                viewModel = peopleViewModel,
+                                onNext = { currentStep = "ACCOUNT" },
+                                onCancel = { isBottomSheetVisible = false }
+                            )
+                        }
+                        "ACCOUNT" -> {
+                            StageApplyAccountSheetContent(
+                                viewModel = accountViewModel,
+                                onConfirm = { isBottomSheetVisible = false },
+                                onCancel = { isBottomSheetVisible = false },
+                                peopleCount = peopleCount
+                            )
+                        }
+                    }
                 }
             }
         }
