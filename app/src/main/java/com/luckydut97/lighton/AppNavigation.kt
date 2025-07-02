@@ -256,6 +256,7 @@ fun MainScreenWithBottomNav() {
             .fillMaxSize()
             .background(androidx.compose.ui.graphics.Color.White),
         containerColor = androidx.compose.ui.graphics.Color.White,
+        contentColor = androidx.compose.ui.graphics.Color.Black,
         bottomBar = {
             if (shouldShowBottomBar) {
                 BottomNavigationBar(

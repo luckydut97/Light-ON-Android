@@ -16,6 +16,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.windowInsetsPadding
+import androidx.compose.foundation.layout.navigationBars
 import com.luckydut97.lighton.core.ui.theme.AssistiveColor
 import com.luckydut97.lighton.core.ui.theme.BrandColor
 import com.luckydut97.lighton.core.R
@@ -37,56 +39,62 @@ fun BottomNavigationBar(
     onItemSelected: (NavigationItem) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Box(
+    Column(
         modifier = modifier
             .fillMaxWidth()
-            .windowInsetsPadding(WindowInsets.navigationBars)
-            .height(72.dp)
-            .shadow(
-                elevation = 8.dp,
-                shape = RoundedCornerShape(topStart = 0.dp, topEnd = 0.dp)
-            )
             .background(Color.White)
+            .windowInsetsPadding(WindowInsets.navigationBars)
     ) {
-        Row(
+        Box(
             modifier = Modifier
-                .fillMaxSize()
-                .padding(horizontal = 17.dp),
-            horizontalArrangement = Arrangement.SpaceEvenly
+                .fillMaxWidth()
+                .height(72.dp)
+                .shadow(
+                    elevation = 8.dp,
+                    shape = RoundedCornerShape(topStart = 0.dp, topEnd = 0.dp)
+                )
+                .background(Color.White)
         ) {
-            NavigationItem.values().forEach { item ->
-                val isSelected = item == selectedItem
-                val iconRes = if (isSelected) item.activeIcon else item.inactiveIcon
-                val textColor = if (isSelected) BrandColor else AssistiveColor
+            Row(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(horizontal = 17.dp),
+                horizontalArrangement = Arrangement.SpaceEvenly
+            ) {
+                NavigationItem.values().forEach { item ->
+                    val isSelected = item == selectedItem
+                    val iconRes = if (isSelected) item.activeIcon else item.inactiveIcon
+                    val textColor = if (isSelected) BrandColor else AssistiveColor
 
-                Box(
-                    modifier = Modifier
-                        .weight(1f)
-                        .fillMaxHeight()
-                        .clickable { onItemSelected(item) },
-                    contentAlignment = Alignment.Center
-                ) {
-                    Column(
+                    Box(
                         modifier = Modifier
-                            .height(45.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.Center
+                            .weight(1f)
+                            .fillMaxHeight()
+                            .clickable { onItemSelected(item) },
+                        contentAlignment = Alignment.Center
                     ) {
-                        Icon(
-                            painter = painterResource(id = iconRes),
-                            contentDescription = item.title,
-                            modifier = Modifier.size(20.dp),
-                            tint = Color.Unspecified
-                        )
-                        Spacer(modifier = Modifier.height(6.dp))
-                        Text(
-                            text = item.title,
-                            fontSize = 13.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = textColor,
-                            fontFamily = androidx.compose.ui.text.font.FontFamily.Default,
-                            maxLines = 1
-                        )
+                        Column(
+                            modifier = Modifier
+                                .height(45.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.Center
+                        ) {
+                            Icon(
+                                painter = painterResource(id = iconRes),
+                                contentDescription = item.title,
+                                modifier = Modifier.size(20.dp),
+                                tint = Color.Unspecified
+                            )
+                            Spacer(modifier = Modifier.height(6.dp))
+                            Text(
+                                text = item.title,
+                                fontSize = 13.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = textColor,
+                                fontFamily = androidx.compose.ui.text.font.FontFamily.Default,
+                                maxLines = 1
+                            )
+                        }
                     }
                 }
             }
