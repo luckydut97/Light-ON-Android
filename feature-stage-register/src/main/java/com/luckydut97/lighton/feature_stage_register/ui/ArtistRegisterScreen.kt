@@ -1,5 +1,7 @@
 package com.luckydut97.lighton.feature_stage_register.ui
 
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -10,6 +12,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -18,6 +21,8 @@ import com.luckydut97.lighton.core.ui.components.*
 import com.luckydut97.lighton.core.ui.theme.CaptionColor
 import com.luckydut97.lighton.core.ui.theme.LightonTheme
 import com.luckydut97.lighton.core.ui.theme.PretendardFamily
+import com.luckydut97.lighton.core.ui.utils.FilePickerUtil
+import com.luckydut97.lighton.core.ui.utils.PermissionUtil
 import com.luckydut97.lighton.feature_stage_register.component.*
 import com.luckydut97.lighton.core.ui.components.LightonDropdown
 
@@ -26,6 +31,8 @@ fun ArtistRegisterScreen(
     onBackClick: () -> Unit = {},
     onRegisterClick: () -> Unit = {}
 ) {
+    val context = LocalContext.current
+
     // 입력 상태들
     var profileImageFileName by remember { mutableStateOf("") }
     var artistName by remember { mutableStateOf("") }
@@ -36,6 +43,85 @@ fun ArtistRegisterScreen(
     var activityHistory by remember { mutableStateOf("") }
     var activityPhotosFileName by remember { mutableStateOf("") }
     var evidenceDocumentFileName by remember { mutableStateOf("") }
+
+    // 파일 정보 상태들
+    var profileImageFileInfo by remember { mutableStateOf<FilePickerUtil.FileInfo?>(null) }
+    var activityPhotosFileInfo by remember { mutableStateOf<FilePickerUtil.FileInfo?>(null) }
+    var evidenceDocumentFileInfo by remember { mutableStateOf<FilePickerUtil.FileInfo?>(null) }
+
+    // 파일 선택 런처들
+    val profileImageLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.GetContent()
+    ) { uri ->
+        uri?.let { selectedUri ->
+            val fileInfo = FilePickerUtil.getFileInfo(context, selectedUri)
+            FilePickerUtil.logFileSelection(fileInfo)
+
+            if (fileInfo.isValid) {
+                profileImageFileInfo = fileInfo
+                profileImageFileName = fileInfo.displayName
+            } else {
+                println("프로필 이미지 선택 실패: ${fileInfo.errorMessage}")
+            }
+        }
+    }
+
+    val activityPhotosLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.GetContent()
+    ) { uri ->
+        uri?.let { selectedUri ->
+            val fileInfo = FilePickerUtil.getFileInfo(context, selectedUri)
+            FilePickerUtil.logFileSelection(fileInfo)
+
+            if (fileInfo.isValid) {
+                activityPhotosFileInfo = fileInfo
+                activityPhotosFileName = fileInfo.displayName
+            } else {
+                println("활동 사진 선택 실패: ${fileInfo.errorMessage}")
+            }
+        }
+    }
+
+    val evidenceDocumentLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.GetContent()
+    ) { uri ->
+        uri?.let { selectedUri ->
+            val fileInfo = FilePickerUtil.getFileInfo(context, selectedUri)
+            FilePickerUtil.logFileSelection(fileInfo)
+
+            if (fileInfo.isValid) {
+                evidenceDocumentFileInfo = fileInfo
+                evidenceDocumentFileName = fileInfo.displayName
+            } else {
+                println("증빙자료 선택 실패: ${fileInfo.errorMessage}")
+            }
+        }
+    }
+
+    // 권한 요청 런처
+    val permissionLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestMultiplePermissions()
+    ) { permissions ->
+        val allGranted = permissions.all { it.value }
+        if (allGranted) {
+            println("파일 접근 권한이 허용되었습니다.")
+        } else {
+            println("파일 접근 권한이 거부되었습니다.")
+        }
+    }
+
+    // 파일 선택 핸들러
+    fun handleFileSelection(fileType: String) {
+        if (PermissionUtil.hasFileAccessPermission(context)) {
+            when (fileType) {
+                "profile" -> profileImageLauncher.launch("*/*")
+                "photos" -> activityPhotosLauncher.launch("*/*")
+                "evidence" -> evidenceDocumentLauncher.launch("*/*")
+            }
+        } else {
+            permissionLauncher.launch(PermissionUtil.getRequiredPermissions())
+        }
+    }
 
     // 전체 지역 데이터 
     val regionData = mapOf(
@@ -344,7 +430,7 @@ fun ArtistRegisterScreen(
                     FileUploadField(
                         fileName = profileImageFileName,
                         placeholder = "공연 포스터 및 사진 업로드",
-                        onUploadClick = { /* TODO: 파일 업로드 */ }
+                        onUploadClick = { handleFileSelection("profile") }
                     )
 
                     Spacer(modifier = Modifier.height(6.dp))
@@ -545,7 +631,7 @@ fun ArtistRegisterScreen(
                     FileUploadField(
                         fileName = activityPhotosFileName,
                         placeholder = "공연 포스터 및 사진 업로드",
-                        onUploadClick = { /* TODO: 파일 업로드 */ }
+                        onUploadClick = { handleFileSelection("photos") }
                     )
 
                     Spacer(modifier = Modifier.height(6.dp))
@@ -589,7 +675,7 @@ fun ArtistRegisterScreen(
                     FileUploadField(
                         fileName = evidenceDocumentFileName,
                         placeholder = "공연 포스터 및 사진 업로드",
-                        onUploadClick = { /* TODO: 파일 업로드 */ }
+                        onUploadClick = { handleFileSelection("evidence") }
                     )
 
                     Spacer(modifier = Modifier.height(6.dp))

@@ -1,5 +1,7 @@
 package com.luckydut97.lighton.feature_stage_register.ui
 
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -10,6 +12,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
@@ -19,6 +22,8 @@ import com.luckydut97.lighton.core.ui.components.*
 import com.luckydut97.lighton.core.ui.theme.CaptionColor
 import com.luckydut97.lighton.core.ui.theme.LightonTheme
 import com.luckydut97.lighton.core.ui.theme.PretendardFamily
+import com.luckydut97.lighton.core.ui.utils.FilePickerUtil
+import com.luckydut97.lighton.core.ui.utils.PermissionUtil
 import com.luckydut97.lighton.feature_stage_register.component.*
 import com.luckydut97.lighton.feature_stage_register.component.calendar.CalendarBottomSheet
 import com.luckydut97.lighton.feature_stage_register.component.time.TimeBottomSheet
@@ -31,6 +36,8 @@ fun NormalStageRegisterScreen(
     onBackClick: () -> Unit = {},
     onRegisterClick: () -> Unit = {}
 ) {
+    val context = LocalContext.current
+
     // 입력 상태들
     var performanceName by remember { mutableStateOf("") }
     var performanceDescription by remember { mutableStateOf("") }
@@ -52,6 +59,72 @@ fun NormalStageRegisterScreen(
     // 파일 업로드 상태들
     var promotionImageFileName by remember { mutableStateOf("") }
     var evidenceFileName by remember { mutableStateOf("") }
+    var promotionImageFileInfo by remember { mutableStateOf<FilePickerUtil.FileInfo?>(null) }
+    var evidenceFileInfo by remember { mutableStateOf<FilePickerUtil.FileInfo?>(null) }
+
+    // 파일 선택 런처들
+    val promotionImageLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.GetContent()
+    ) { uri ->
+        uri?.let { selectedUri ->
+            val fileInfo = FilePickerUtil.getFileInfo(context, selectedUri)
+            FilePickerUtil.logFileSelection(fileInfo)
+
+            if (fileInfo.isValid) {
+                promotionImageFileInfo = fileInfo
+                promotionImageFileName = fileInfo.displayName
+            } else {
+                // TODO: 에러 토스트 표시
+                println("파일 선택 실패: ${fileInfo.errorMessage}")
+            }
+        }
+    }
+
+    val evidenceFileLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.GetContent()
+    ) { uri ->
+        uri?.let { selectedUri ->
+            val fileInfo = FilePickerUtil.getFileInfo(context, selectedUri)
+            FilePickerUtil.logFileSelection(fileInfo)
+
+            if (fileInfo.isValid) {
+                evidenceFileInfo = fileInfo
+                evidenceFileName = fileInfo.displayName
+            } else {
+                // TODO: 에러 토스트 표시
+                println("파일 선택 실패: ${fileInfo.errorMessage}")
+            }
+        }
+    }
+
+    // 권한 요청 런처
+    val permissionLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestMultiplePermissions()
+    ) { permissions ->
+        val allGranted = permissions.all { it.value }
+        if (allGranted) {
+            // 권한 허용 시 파일 선택기 실행은 별도로 처리
+            println("파일 접근 권한이 허용되었습니다.")
+        } else {
+            // TODO: 권한 거부 안내 표시
+            println("파일 접근 권한이 거부되었습니다.")
+        }
+    }
+
+    // 파일 선택 핸들러
+    fun handleFileSelection(isPromotionImage: Boolean) {
+        if (PermissionUtil.hasFileAccessPermission(context)) {
+            // 권한이 있으면 바로 파일 선택기 열기
+            if (isPromotionImage) {
+                promotionImageLauncher.launch("*/*")
+            } else {
+                evidenceFileLauncher.launch("*/*")
+            }
+        } else {
+            // 권한이 없으면 권한 요청
+            permissionLauncher.launch(PermissionUtil.getRequiredPermissions())
+        }
+    }
 
     // 체크박스 상태들
     var isStandingSeat by remember { mutableStateOf(false) }
@@ -685,7 +758,7 @@ fun NormalStageRegisterScreen(
                     FileUploadField(
                         fileName = promotionImageFileName,
                         placeholder = "공연 포스터 및 사진 업로드",
-                        onUploadClick = { /* TODO: 파일 업로드 */ }
+                        onUploadClick = { handleFileSelection(true) }
                     )
 
                     Spacer(modifier = Modifier.height(6.dp))
@@ -847,7 +920,7 @@ fun NormalStageRegisterScreen(
                     FileUploadField(
                         fileName = evidenceFileName,
                         placeholder = "파일을 업로드 해주세요",
-                        onUploadClick = { /* TODO: 파일 업로드 */ }
+                        onUploadClick = { handleFileSelection(false) }
                     )
 
                     Spacer(modifier = Modifier.height(6.dp))
