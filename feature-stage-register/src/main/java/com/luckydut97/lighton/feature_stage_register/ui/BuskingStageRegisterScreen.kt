@@ -805,23 +805,15 @@ fun BuskingStageRegisterScreen(
             onTimeSelected = { selectedTime ->
                 if (selectingTimeType == "start") {
                     performanceStartTime = selectedTime
-                    // 시작 시간 설정 후 자동으로 종료 시간 선택으로 이동
-                    selectingTimeType = "end"
                 } else {
                     performanceEndTime = selectedTime
-                    showTimeBottomSheet = false
-                    selectingTimeType = null
                 }
+                showTimeBottomSheet = false
+                selectingTimeType = null
             },
             onConfirm = {
-                if (selectingTimeType == "start") {
-                    // 시작 시간 확인 후 자동으로 종료 시간 선택으로 이동
-                    selectingTimeType = "end"
-                } else {
-                    // 종료 시간 확인 후 완전히 종료
-                    showTimeBottomSheet = false
-                    selectingTimeType = null
-                }
+                showTimeBottomSheet = false
+                selectingTimeType = null
             }
         )
     }

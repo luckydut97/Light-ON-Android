@@ -92,10 +92,10 @@ fun TimeBottomSheet(
                     TimePickerColumn(
                         value = selectedAmPm,
                         onIncrease = {
-                        selectedAmPm = if (selectedAmPm == "오전") "오후" else "오전"
+                            selectedAmPm = if (selectedAmPm == "오전") "오후" else "오전"
                         },
                         onDecrease = {
-                        selectedAmPm = if (selectedAmPm == "오전") "오후" else "오전"
+                            selectedAmPm = if (selectedAmPm == "오전") "오후" else "오전"
                         }
                     )
 
@@ -103,10 +103,10 @@ fun TimeBottomSheet(
                     TimePickerColumn(
                         value = "${selectedHour}시",
                         onIncrease = {
-                        selectedHour = if (selectedHour == 12) 1 else selectedHour + 1
+                            selectedHour = if (selectedHour == 12) 1 else selectedHour + 1
                         },
                         onDecrease = {
-                        selectedHour = if (selectedHour == 1) 12 else selectedHour - 1
+                            selectedHour = if (selectedHour == 1) 12 else selectedHour - 1
                         }
                     )
 
@@ -114,10 +114,10 @@ fun TimeBottomSheet(
                     TimePickerColumn(
                         value = "${String.format("%02d", selectedMinute)}분",
                         onIncrease = {
-                        selectedMinute = if (selectedMinute == 30) 0 else 30
+                            selectedMinute = if (selectedMinute == 30) 0 else 30
                         },
                         onDecrease = {
-                        selectedMinute = if (selectedMinute == 0) 30 else 0
+                            selectedMinute = if (selectedMinute == 0) 30 else 0
                         }
                     )
                 }

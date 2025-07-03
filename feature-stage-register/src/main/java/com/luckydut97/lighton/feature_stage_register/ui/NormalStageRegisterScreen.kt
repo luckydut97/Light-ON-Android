@@ -906,25 +906,19 @@ fun NormalStageRegisterScreen(
                 else -> ""
             },
             onTimeSelected = { time ->
-                if (selectedTimeField == "start") {
-                    performanceStartTime = time
-                    // 시작 시간 설정 후 자동으로 종료 시간 선택으로 이동
-                    selectedTimeField = "end"
-                } else if (selectedTimeField == "end") {
-                    performanceEndTime = time
-                    showTimeBottomSheet = false
-                    selectedTimeField = null
+                when (selectedTimeField) {
+                    "start" -> {
+                        performanceStartTime = time
+                    }
+
+                    "end" -> {
+                        performanceEndTime = time
+                    }
                 }
             },
             onConfirm = {
-                if (selectedTimeField == "start") {
-                    // 시작 시간 확인 후 자동으로 종료 시간 선택으로 이동
-                    selectedTimeField = "end"
-                } else {
-                    // 종료 시간 확인 후 완전히 종료
-                    showTimeBottomSheet = false
-                    selectedTimeField = null
-                }
+                showTimeBottomSheet = false
+                selectedTimeField = null
             }
         )
     }
