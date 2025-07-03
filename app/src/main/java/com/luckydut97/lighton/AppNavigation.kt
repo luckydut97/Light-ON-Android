@@ -53,13 +53,17 @@ fun AppNavigation(
     val showPersonalInfoScreen = false  // 개인정보 입력 화면으로 바로 이동
     val showMusicPreferenceScreen = false  // 음악 취향 선택 화면으로 바로 이동
     val showMainScreen = false     // 메인 화면으로 바로 이동
-    val showNormalStageRegisterScreen = true  // 일반공연 등록 화면으로 바로 이동
+    val showNormalStageRegisterScreen = false  // 일반공연 등록 화면으로 바로 이동
+    val showBuskingStageRegisterScreen = true  // 버스킹 등록 화면으로 바로 이동
+    val showArtistRegisterScreen = false  // 아티스트 등록 화면으로 바로 이동
 
     // 개발용 시작 화면 결정
     var startDestination by remember {
         mutableStateOf(
             when {
                 showNormalStageRegisterScreen -> "normal_stage_register"
+                showBuskingStageRegisterScreen -> "busking_stage_register"
+                showArtistRegisterScreen -> "artist_register"
                 showMainScreen -> "main"
                 showMusicPreferenceScreen -> "music_preference"
                 showPersonalInfoScreen -> "personal_info/999"
@@ -241,6 +245,40 @@ fun AppNavigation(
                     // TODO: 등록 완료 후 처리
                     navController.navigate("main") {
                         popUpTo("normal_stage_register") { inclusive = true }
+                    }
+                }
+            )
+        }
+
+        // 버스킹 공연 등록 화면
+        composable("busking_stage_register") {
+            com.luckydut97.lighton.feature_stage_register.ui.BuskingStageRegisterScreen(
+                onBackClick = {
+                    navController.navigate("main") {
+                        popUpTo("busking_stage_register") { inclusive = true }
+                    }
+                },
+                onRegisterClick = {
+                    // TODO: 등록 완료 후 처리
+                    navController.navigate("main") {
+                        popUpTo("busking_stage_register") { inclusive = true }
+                    }
+                }
+            )
+        }
+
+        // 아티스트 등록 화면
+        composable("artist_register") {
+            com.luckydut97.lighton.feature_stage_register.ui.ArtistRegisterScreen(
+                onBackClick = {
+                    navController.navigate("main") {
+                        popUpTo("artist_register") { inclusive = true }
+                    }
+                },
+                onRegisterClick = {
+                    // TODO: 등록 완료 후 처리
+                    navController.navigate("main") {
+                        popUpTo("artist_register") { inclusive = true }
                     }
                 }
             )

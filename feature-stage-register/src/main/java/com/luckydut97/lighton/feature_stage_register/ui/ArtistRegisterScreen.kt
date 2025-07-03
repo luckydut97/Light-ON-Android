@@ -11,7 +11,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -23,38 +22,22 @@ import com.luckydut97.lighton.feature_stage_register.component.*
 import com.luckydut97.lighton.core.ui.components.LightonDropdown
 
 @Composable
-fun NormalStageRegisterScreen(
+fun ArtistRegisterScreen(
     onBackClick: () -> Unit = {},
     onRegisterClick: () -> Unit = {}
 ) {
     // 입력 상태들
-    var performanceName by remember { mutableStateOf("") }
-    var performanceDescription by remember { mutableStateOf("") }
+    var profileImageFileName by remember { mutableStateOf("") }
     var artistName by remember { mutableStateOf("") }
     var artistDescription by remember { mutableStateOf("") }
-    var performanceDate by remember { mutableStateOf("") }
-    var performanceEndDate by remember { mutableStateOf("") }
-    var performanceStartTime by remember { mutableStateOf("") }
-    var performanceEndTime by remember { mutableStateOf("") }
-    var performanceLocation by remember { mutableStateOf("") }
-    var performanceDistrict by remember { mutableStateOf("") }
-    var performanceDetailAddress by remember { mutableStateOf("") }
-    var performanceGenre by remember { mutableStateOf("") }
-    var performanceCost by remember { mutableStateOf("") }
-    var seatCount by remember { mutableStateOf("") }
-    var performanceNotes by remember { mutableStateOf("") }
-    var entryNotes by remember { mutableStateOf("") }
+    var activityLocation by remember { mutableStateOf("") }
+    var activityDistrict by remember { mutableStateOf("") }
+    var activityGenre by remember { mutableStateOf("") }
+    var activityHistory by remember { mutableStateOf("") }
+    var activityPhotosFileName by remember { mutableStateOf("") }
+    var evidenceDocumentFileName by remember { mutableStateOf("") }
 
-    // 파일 업로드 상태들
-    var promotionImageFileName by remember { mutableStateOf("") }
-    var evidenceFileName by remember { mutableStateOf("") }
-
-    // 체크박스 상태들
-    var isStandingSeat by remember { mutableStateOf(false) }
-    var isFreeSeating by remember { mutableStateOf(false) }
-    var isAssignedSeating by remember { mutableStateOf(false) }
-
-    // 전체 지역 데이터 - PersonalInfoScreen과 동일
+    // 전체 지역 데이터 
     val regionData = mapOf(
         101 to ("서울특별시" to "종로구"),
         102 to ("서울특별시" to "중구"),
@@ -288,8 +271,8 @@ fun NormalStageRegisterScreen(
     val cities = regionData.values.map { it.first }.distinct().sorted()
 
     // 중분류 목록 (선택된 시/도에 해당하는 구/군)
-    val districts = if (performanceLocation.isNotEmpty()) {
-        regionData.values.filter { it.first == performanceLocation }.map { it.second }.sorted()
+    val districts = if (activityLocation.isNotEmpty()) {
+        regionData.values.filter { it.first == activityLocation }.map { it.second }.sorted()
     } else {
         emptyList()
     }
@@ -304,9 +287,10 @@ fun NormalStageRegisterScreen(
             ) {
                 // 상단바
                 CommonTopBar(
-                    title = "공연 등록",
+                    title = "아티스트 등록",
                     onBackClick = onBackClick,
                     modifier = Modifier.padding(top = WindowInsets.statusBars.asPaddingValues().calculateTopPadding())
+
                 )
 
                 // 메인 콘텐츠를 스크롤 가능하게
@@ -320,9 +304,9 @@ fun NormalStageRegisterScreen(
                     // 상단 여백
                     Spacer(modifier = Modifier.height(24.dp))
 
-                    // 공연 정보 섹션
+                    // 아티스트 정보 섹션
                     Text(
-                        text = "공연 정보",
+                        text = "아티스트 정보",
                         fontSize = 16.sp,
                         fontWeight = FontWeight.SemiBold,
                         fontFamily = PretendardFamily,
@@ -331,19 +315,7 @@ fun NormalStageRegisterScreen(
 
                     Spacer(modifier = Modifier.height(16.dp))
 
-                    // 공연명
-                    CountingInputField(
-                        label = "공연명",
-                        value = performanceName,
-                        onValueChange = { performanceName = it },
-                        maxLength = 50,
-                        isRequired = true,
-                        placeholder = "공연명을 입력해주세요 (50자 이내)"
-                    )
-
-                    Spacer(modifier = Modifier.height(24.dp))
-
-                    // 공연일시 라벨
+                    // 프로필 이미지
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
                         modifier = Modifier
@@ -351,248 +323,7 @@ fun NormalStageRegisterScreen(
                             .padding(start = 16.dp)
                     ) {
                         Text(
-                            text = "공연일시",
-                            color = CaptionColor,
-                            fontSize = 14.sp,
-                            fontWeight = FontWeight.SemiBold,
-                            fontFamily = PretendardFamily
-                        )
-
-                        Text(
-                            text = " *",
-                            color = Color.Red,
-                            fontSize = 14.sp,
-                            fontWeight = FontWeight.Medium,
-                            fontFamily = PretendardFamily
-                        )
-                    }
-
-                    Spacer(modifier = Modifier.height(6.dp))
-
-                    // 공연일시 입력 필드들
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(8.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        CalendarInputField(
-                            value = performanceDate,
-                            onValueChange = { performanceDate = it },
-                            placeholder = "00/00/00",
-                            modifier = Modifier.weight(1f),
-                            onClick = { /* TODO: 달력 선택 */ }
-                        )
-
-                        Text(
-                            text = "~",
-                            color = Color.Black,
-                            fontSize = 16.sp,
-                            fontWeight = FontWeight.Medium
-                        )
-
-                        CalendarInputField(
-                            value = performanceEndDate,
-                            onValueChange = { performanceEndDate = it },
-                            placeholder = "00/00/00",
-                            modifier = Modifier.weight(1f),
-                            onClick = { /* TODO: 달력 선택 */ }
-                        )
-                    }
-
-                    Spacer(modifier = Modifier.height(6.dp))
-
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(8.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        TimeInputField(
-                            value = performanceStartTime,
-                            onValueChange = { performanceStartTime = it },
-                            placeholder = "00:00",
-                            modifier = Modifier.weight(1f),
-                            onClick = { /* TODO: 시간 선택 */ }
-                        )
-
-                        Text(
-                            text = "~",
-                            color = Color.Black,
-                            fontSize = 16.sp,
-                            fontWeight = FontWeight.Medium
-                        )
-
-                        TimeInputField(
-                            value = performanceEndTime,
-                            onValueChange = { performanceEndTime = it },
-                            placeholder = "00:00",
-                            modifier = Modifier.weight(1f),
-                            onClick = { /* TODO: 시간 선택 */ }
-                        )
-                    }
-
-                    Spacer(modifier = Modifier.height(24.dp))
-
-                    // 공연장소 라벨
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier
-                            .height(18.dp)
-                            .padding(start = 16.dp)
-                    ) {
-                        Text(
-                            text = "공연 장소",
-                            color = CaptionColor,
-                            fontSize = 14.sp,
-                            fontWeight = FontWeight.SemiBold,
-                            fontFamily = PretendardFamily
-                        )
-
-                        Text(
-                            text = " *",
-                            color = Color.Red,
-                            fontSize = 14.sp,
-                            fontWeight = FontWeight.Medium,
-                            fontFamily = PretendardFamily
-                        )
-                    }
-
-                    Spacer(modifier = Modifier.height(6.dp))
-
-                    // 공연장소 드롭다운 (대분류/중분류)
-                    Row(modifier = Modifier.fillMaxWidth()) {
-                        LightonDropdown(
-                            label = "",
-                            selectedItem = performanceLocation,
-                            items = cities,
-                            onItemSelected = {
-                                performanceLocation = it
-                                performanceDistrict = "" // 대분류 변경시 중분류 리셋
-                            },
-                            placeholder = "대분류",
-                            isRequired = false,
-                            modifier = Modifier
-                                .weight(1f)
-                                .padding(end = 4.dp)
-                        )
-
-                        LightonDropdown(
-                            label = "",
-                            selectedItem = performanceDistrict,
-                            items = districts,
-                            onItemSelected = { performanceDistrict = it },
-                            placeholder = "중분류",
-                            isRequired = false,
-                            modifier = Modifier
-                                .weight(1f)
-                                .padding(start = 4.dp)
-                        )
-                    }
-
-                    Spacer(modifier = Modifier.height(6.dp))
-
-                    // 상세주소
-                    SimpleInputField(
-                        value = performanceDetailAddress,
-                        onValueChange = { performanceDetailAddress = it },
-                        placeholder = "상세주소"
-                    )
-
-                    Spacer(modifier = Modifier.height(24.dp))
-
-                    // 공연 장르
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier
-                            .height(18.dp)
-                            .padding(start = 16.dp)
-                    ) {
-                        Text(
-                            text = "공연 장르",
-                            color = CaptionColor,
-                            fontSize = 14.sp,
-                            fontWeight = FontWeight.SemiBold,
-                            fontFamily = PretendardFamily
-                        )
-
-                        Text(
-                            text = " *",
-                            color = Color.Red,
-                            fontSize = 14.sp,
-                            fontWeight = FontWeight.Medium,
-                            fontFamily = PretendardFamily
-                        )
-                    }
-
-                    Spacer(modifier = Modifier.height(6.dp))
-
-                    SimpleDropdownField(
-                        value = performanceGenre,
-                        onValueChange = { performanceGenre = it },
-                        items = listOf("음악", "연극", "댄스", "뮤지컬", "기타"), // 나중에 실제 데이터로 교체
-                        placeholder = "장르를 선택해 주세요",
-                        onClick = { /* TODO: 드롭다운 메뉴 표시 */ }
-                    )
-
-                    Spacer(modifier = Modifier.height(24.dp))
-
-                    // 공연 소개
-                    CountingInputField(
-                        label = "공연 소개",
-                        value = performanceDescription,
-                        onValueChange = { performanceDescription = it },
-                        maxLength = 500,
-                        isRequired = true,
-                        placeholder = "공연 소개 내용을 작성해 주세요 (500자 이내)",
-                        singleLine = false
-                    )
-
-                    Spacer(modifier = Modifier.height(24.dp))
-
-                    // 공연 비용
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier
-                            .height(18.dp)
-                            .padding(start = 16.dp)
-                    ) {
-                        Text(
-                            text = "공연 비용",
-                            color = CaptionColor,
-                            fontSize = 14.sp,
-                            fontWeight = FontWeight.SemiBold,
-                            fontFamily = PretendardFamily
-                        )
-
-                        Text(
-                            text = " *",
-                            color = Color.Red,
-                            fontSize = 14.sp,
-                            fontWeight = FontWeight.Medium,
-                            fontFamily = PretendardFamily
-                        )
-                    }
-
-                    Spacer(modifier = Modifier.height(6.dp))
-
-                    SimpleDropdownField(
-                        value = performanceCost,
-                        onValueChange = { performanceCost = it },
-                        items = listOf("유형"), // 나중에 실제 데이터로 교체
-                        placeholder = "유형을 선택해주세요",
-                        onClick = { /* TODO: 드롭다운 메뉴 표시 */ }
-                    )
-
-                    Spacer(modifier = Modifier.height(24.dp))
-
-                    // 공연 홍보 이미지
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier
-                            .height(18.dp)
-                            .padding(start = 16.dp)
-                    ) {
-                        Text(
-                            text = "공연 홍보 이미지",
+                            text = "프로필 이미지",
                             color = CaptionColor,
                             fontSize = 14.sp,
                             fontWeight = FontWeight.SemiBold,
@@ -611,7 +342,7 @@ fun NormalStageRegisterScreen(
                     Spacer(modifier = Modifier.height(6.dp))
 
                     FileUploadField(
-                        fileName = promotionImageFileName,
+                        fileName = profileImageFileName,
                         placeholder = "공연 포스터 및 사진 업로드",
                         onUploadClick = { /* TODO: 파일 업로드 */ }
                     )
@@ -626,18 +357,7 @@ fun NormalStageRegisterScreen(
                         modifier = Modifier.padding(start = 4.dp)
                     )
 
-                    Spacer(modifier = Modifier.height(32.dp))
-
-                    // 아티스트 정보 섹션
-                    Text(
-                        text = "아티스트 정보",
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.SemiBold,
-                        fontFamily = PretendardFamily,
-                        color = Color.Black
-                    )
-
-                    Spacer(modifier = Modifier.height(16.dp))
+                    Spacer(modifier = Modifier.height(24.dp))
 
                     // 아티스트명
                     CountingInputField(
@@ -662,91 +382,9 @@ fun NormalStageRegisterScreen(
                         singleLine = false
                     )
 
-                    Spacer(modifier = Modifier.height(32.dp))
-
-                    // 좌석 정보 섹션
-                    Text(
-                        text = "좌석 정보",
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.SemiBold,
-                        fontFamily = PretendardFamily,
-                        color = Color.Black
-                    )
-
-                    Spacer(modifier = Modifier.height(16.dp))
-
-                    // 좌석수
-                    LightonInputField(
-                        label = "좌석수",
-                        value = seatCount,
-                        onValueChange = { seatCount = it },
-                        isRequired = true,
-                        placeholder = "80",
-                        keyboardType = KeyboardType.Number
-                    )
-
-                    Spacer(modifier = Modifier.height(16.dp))
-
-                    // 좌석 타입 체크박스
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(16.dp)
-                    ) {
-                        LightonCheckbox(
-                            text = "스탠딩석",
-                            isChecked = isStandingSeat,
-                            onCheckedChange = { isStandingSeat = it }
-                        )
-
-                        LightonCheckbox(
-                            text = "자율좌석",
-                            isChecked = isFreeSeating,
-                            onCheckedChange = { isFreeSeating = it }
-                        )
-
-                        LightonCheckbox(
-                            text = "지정좌석",
-                            isChecked = isAssignedSeating,
-                            onCheckedChange = { isAssignedSeating = it }
-                        )
-                    }
-
-                    Spacer(modifier = Modifier.height(32.dp))
-
-                    // 입장 시 유의사항 섹션
-                    Text(
-                        text = "입장 시 유의사항",
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.SemiBold,
-                        fontFamily = PretendardFamily,
-                        color = Color.Black
-                    )
-
-                    Spacer(modifier = Modifier.height(16.dp))
-
-                    // 공연 유의사항
-                    LightonInputField(
-                        label = "공연 유의사항",
-                        value = performanceNotes,
-                        onValueChange = { performanceNotes = it },
-                        isRequired = true,
-                        placeholder = "ex. 슬리퍼, 운동복, 등산복, 입장 불가"
-                    )
-
                     Spacer(modifier = Modifier.height(24.dp))
 
-                    // 입장 시 유의사항 섹션
-                    Text(
-                        text = "공연 관련 증빙자료",
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.SemiBold,
-                        fontFamily = PretendardFamily,
-                        color = Color.Black
-                    )
-
-                    Spacer(modifier = Modifier.height(24.dp))
-
-                    // 공연 진행 증빙자료
+                    // 주요 활동 장소
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
                         modifier = Modifier
@@ -754,7 +392,139 @@ fun NormalStageRegisterScreen(
                             .padding(start = 16.dp)
                     ) {
                         Text(
-                            text = "공연 진행 증빙자료",
+                            text = "주요 활동 장소",
+                            color = CaptionColor,
+                            fontSize = 14.sp,
+                            fontWeight = FontWeight.SemiBold,
+                            fontFamily = PretendardFamily
+                        )
+
+                        Text(
+                            text = " *",
+                            color = Color.Red,
+                            fontSize = 14.sp,
+                            fontWeight = FontWeight.Medium,
+                            fontFamily = PretendardFamily
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.height(6.dp))
+
+                    // 주요 활동 장소 드롭다운 (대분류/중분류)
+                    Row(modifier = Modifier.fillMaxWidth()) {
+                        LightonDropdown(
+                            label = "",
+                            selectedItem = activityLocation,
+                            items = cities,
+                            onItemSelected = {
+                                activityLocation = it
+                                activityDistrict = "" // 대분류 변경시 중분류 리셋
+                            },
+                            placeholder = "대분류",
+                            isRequired = false,
+                            modifier = Modifier
+                                .weight(1f)
+                                .padding(end = 4.dp)
+                        )
+
+                        LightonDropdown(
+                            label = "",
+                            selectedItem = activityDistrict,
+                            items = districts,
+                            onItemSelected = { activityDistrict = it },
+                            placeholder = "중분류",
+                            isRequired = false,
+                            modifier = Modifier
+                                .weight(1f)
+                                .padding(start = 4.dp)
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.height(24.dp))
+
+                    // 주요 활동 장르
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier
+                            .height(18.dp)
+                            .padding(start = 16.dp)
+                    ) {
+                        Text(
+                            text = "주요 활동 장르",
+                            color = CaptionColor,
+                            fontSize = 14.sp,
+                            fontWeight = FontWeight.SemiBold,
+                            fontFamily = PretendardFamily
+                        )
+
+                        Text(
+                            text = " *",
+                            color = Color.Red,
+                            fontSize = 14.sp,
+                            fontWeight = FontWeight.Medium,
+                            fontFamily = PretendardFamily
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.height(6.dp))
+
+                    SimpleDropdownField(
+                        value = activityGenre,
+                        onValueChange = { activityGenre = it },
+                        items = listOf("음악", "연극", "댄스", "뮤지컬", "기타"),
+                        placeholder = "장르를 선택해주세요",
+                        onClick = { /* TODO: 드롭다운 메뉴 표시 */ }
+                    )
+
+                    Spacer(modifier = Modifier.height(24.dp))
+
+                    // 주요 활동 이력
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier
+                            .height(18.dp)
+                            .padding(start = 16.dp)
+                    ) {
+                        Text(
+                            text = "주요 활동 이력",
+                            color = CaptionColor,
+                            fontSize = 14.sp,
+                            fontWeight = FontWeight.SemiBold,
+                            fontFamily = PretendardFamily
+                        )
+
+                        Text(
+                            text = " *",
+                            color = Color.Red,
+                            fontSize = 14.sp,
+                            fontWeight = FontWeight.Medium,
+                            fontFamily = PretendardFamily
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.height(6.dp))
+
+                    CountingInputField(
+                        label = "",
+                        value = activityHistory,
+                        onValueChange = { activityHistory = it },
+                        maxLength = 500,
+                        isRequired = false,
+                        placeholder = "주요 활동 이력을 작성해 주세요 (500자 이내)",
+                        singleLine = false
+                    )
+
+                    Spacer(modifier = Modifier.height(24.dp))
+
+                    // 활동 사진 업로드
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier
+                            .height(18.dp)
+                            .padding(start = 16.dp)
+                    ) {
+                        Text(
+                            text = "활동 사진 업로드",
                             color = CaptionColor,
                             fontSize = 14.sp,
                             fontWeight = FontWeight.SemiBold,
@@ -773,8 +543,52 @@ fun NormalStageRegisterScreen(
                     Spacer(modifier = Modifier.height(6.dp))
 
                     FileUploadField(
-                        fileName = evidenceFileName,
-                        placeholder = "파일을 업로드 해주세요",
+                        fileName = activityPhotosFileName,
+                        placeholder = "공연 포스터 및 사진 업로드",
+                        onUploadClick = { /* TODO: 파일 업로드 */ }
+                    )
+
+                    Spacer(modifier = Modifier.height(6.dp))
+
+                    Text(
+                        text = "* 10mb 이하 PDF, png, jpeg, jpg, 파일만 업로드 가능합니다.",
+                        fontSize = 12.sp,
+                        fontFamily = PretendardFamily,
+                        color = Color.Gray,
+                        modifier = Modifier.padding(start = 4.dp)
+                    )
+
+                    Spacer(modifier = Modifier.height(24.dp))
+
+                    // 아티스트 증빙자료
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier
+                            .height(18.dp)
+                            .padding(start = 16.dp)
+                    ) {
+                        Text(
+                            text = "아티스트 증빙자료",
+                            color = CaptionColor,
+                            fontSize = 14.sp,
+                            fontWeight = FontWeight.SemiBold,
+                            fontFamily = PretendardFamily
+                        )
+
+                        Text(
+                            text = " *",
+                            color = Color.Red,
+                            fontSize = 14.sp,
+                            fontWeight = FontWeight.Medium,
+                            fontFamily = PretendardFamily
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.height(6.dp))
+
+                    FileUploadField(
+                        fileName = evidenceDocumentFileName,
+                        placeholder = "공연 포스터 및 사진 업로드",
                         onUploadClick = { /* TODO: 파일 업로드 */ }
                     )
 
@@ -810,8 +624,8 @@ fun NormalStageRegisterScreen(
 
 @Preview(showBackground = true)
 @Composable
-fun NormalStageRegisterScreenPreview() {
+fun ArtistRegisterScreenPreview() {
     LightonTheme {
-        NormalStageRegisterScreen()
+        ArtistRegisterScreen()
     }
 }

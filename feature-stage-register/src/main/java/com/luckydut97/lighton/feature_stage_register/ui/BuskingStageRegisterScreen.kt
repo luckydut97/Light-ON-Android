@@ -23,7 +23,7 @@ import com.luckydut97.lighton.feature_stage_register.component.*
 import com.luckydut97.lighton.core.ui.components.LightonDropdown
 
 @Composable
-fun NormalStageRegisterScreen(
+fun BuskingStageRegisterScreen(
     onBackClick: () -> Unit = {},
     onRegisterClick: () -> Unit = {}
 ) {
@@ -40,21 +40,13 @@ fun NormalStageRegisterScreen(
     var performanceDistrict by remember { mutableStateOf("") }
     var performanceDetailAddress by remember { mutableStateOf("") }
     var performanceGenre by remember { mutableStateOf("") }
-    var performanceCost by remember { mutableStateOf("") }
-    var seatCount by remember { mutableStateOf("") }
     var performanceNotes by remember { mutableStateOf("") }
-    var entryNotes by remember { mutableStateOf("") }
 
     // 파일 업로드 상태들
     var promotionImageFileName by remember { mutableStateOf("") }
     var evidenceFileName by remember { mutableStateOf("") }
 
-    // 체크박스 상태들
-    var isStandingSeat by remember { mutableStateOf(false) }
-    var isFreeSeating by remember { mutableStateOf(false) }
-    var isAssignedSeating by remember { mutableStateOf(false) }
-
-    // 전체 지역 데이터 - PersonalInfoScreen과 동일
+    // 전체 지역 데이터
     val regionData = mapOf(
         101 to ("서울특별시" to "종로구"),
         102 to ("서울특별시" to "중구"),
@@ -528,7 +520,7 @@ fun NormalStageRegisterScreen(
                     SimpleDropdownField(
                         value = performanceGenre,
                         onValueChange = { performanceGenre = it },
-                        items = listOf("음악", "연극", "댄스", "뮤지컬", "기타"), // 나중에 실제 데이터로 교체
+                        items = listOf("음악", "연극", "댄스", "뮤지컬", "기타"),
                         placeholder = "장르를 선택해 주세요",
                         onClick = { /* TODO: 드롭다운 메뉴 표시 */ }
                     )
@@ -544,42 +536,6 @@ fun NormalStageRegisterScreen(
                         isRequired = true,
                         placeholder = "공연 소개 내용을 작성해 주세요 (500자 이내)",
                         singleLine = false
-                    )
-
-                    Spacer(modifier = Modifier.height(24.dp))
-
-                    // 공연 비용
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier
-                            .height(18.dp)
-                            .padding(start = 16.dp)
-                    ) {
-                        Text(
-                            text = "공연 비용",
-                            color = CaptionColor,
-                            fontSize = 14.sp,
-                            fontWeight = FontWeight.SemiBold,
-                            fontFamily = PretendardFamily
-                        )
-
-                        Text(
-                            text = " *",
-                            color = Color.Red,
-                            fontSize = 14.sp,
-                            fontWeight = FontWeight.Medium,
-                            fontFamily = PretendardFamily
-                        )
-                    }
-
-                    Spacer(modifier = Modifier.height(6.dp))
-
-                    SimpleDropdownField(
-                        value = performanceCost,
-                        onValueChange = { performanceCost = it },
-                        items = listOf("유형"), // 나중에 실제 데이터로 교체
-                        placeholder = "유형을 선택해주세요",
-                        onClick = { /* TODO: 드롭다운 메뉴 표시 */ }
                     )
 
                     Spacer(modifier = Modifier.height(24.dp))
@@ -664,55 +620,6 @@ fun NormalStageRegisterScreen(
 
                     Spacer(modifier = Modifier.height(32.dp))
 
-                    // 좌석 정보 섹션
-                    Text(
-                        text = "좌석 정보",
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.SemiBold,
-                        fontFamily = PretendardFamily,
-                        color = Color.Black
-                    )
-
-                    Spacer(modifier = Modifier.height(16.dp))
-
-                    // 좌석수
-                    LightonInputField(
-                        label = "좌석수",
-                        value = seatCount,
-                        onValueChange = { seatCount = it },
-                        isRequired = true,
-                        placeholder = "80",
-                        keyboardType = KeyboardType.Number
-                    )
-
-                    Spacer(modifier = Modifier.height(16.dp))
-
-                    // 좌석 타입 체크박스
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(16.dp)
-                    ) {
-                        LightonCheckbox(
-                            text = "스탠딩석",
-                            isChecked = isStandingSeat,
-                            onCheckedChange = { isStandingSeat = it }
-                        )
-
-                        LightonCheckbox(
-                            text = "자율좌석",
-                            isChecked = isFreeSeating,
-                            onCheckedChange = { isFreeSeating = it }
-                        )
-
-                        LightonCheckbox(
-                            text = "지정좌석",
-                            isChecked = isAssignedSeating,
-                            onCheckedChange = { isAssignedSeating = it }
-                        )
-                    }
-
-                    Spacer(modifier = Modifier.height(32.dp))
-
                     // 입장 시 유의사항 섹션
                     Text(
                         text = "입장 시 유의사항",
@@ -731,17 +638,6 @@ fun NormalStageRegisterScreen(
                         onValueChange = { performanceNotes = it },
                         isRequired = true,
                         placeholder = "ex. 슬리퍼, 운동복, 등산복, 입장 불가"
-                    )
-
-                    Spacer(modifier = Modifier.height(24.dp))
-
-                    // 입장 시 유의사항 섹션
-                    Text(
-                        text = "공연 관련 증빙자료",
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.SemiBold,
-                        fontFamily = PretendardFamily,
-                        color = Color.Black
                     )
 
                     Spacer(modifier = Modifier.height(24.dp))
@@ -810,8 +706,8 @@ fun NormalStageRegisterScreen(
 
 @Preview(showBackground = true)
 @Composable
-fun NormalStageRegisterScreenPreview() {
+fun BuskingStageRegisterScreenPreview() {
     LightonTheme {
-        NormalStageRegisterScreen()
+        BuskingStageRegisterScreen()
     }
 }

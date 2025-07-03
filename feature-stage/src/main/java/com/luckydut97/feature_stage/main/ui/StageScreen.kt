@@ -166,7 +166,10 @@ fun StageScreen(
             .fillMaxSize()
             .background(Color.White)
     ) {
-        CommonTopBar(title = "공연 목록", onBackClick = onBackClick)
+        CommonTopBar(
+            title = "공연 목록",
+            onBackClick = onBackClick
+        )
         StageTabBar(
             selectedTab = selectedTab,
             onTabSelected = { selectedTab = it }
