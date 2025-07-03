@@ -49,6 +49,9 @@ fun ArtistRegisterScreen(
     var activityPhotosFileInfo by remember { mutableStateOf<FilePickerUtil.FileInfo?>(null) }
     var evidenceDocumentFileInfo by remember { mutableStateOf<FilePickerUtil.FileInfo?>(null) }
 
+    // 파일 선택 후 실행할 파일 선택 타입 추적
+    var pendingFileSelection by remember { mutableStateOf<String?>(null) }
+
     // 파일 선택 런처들
     val profileImageLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()
@@ -105,8 +108,17 @@ fun ArtistRegisterScreen(
         val allGranted = permissions.all { it.value }
         if (allGranted) {
             println("파일 접근 권한이 허용되었습니다.")
+            pendingFileSelection?.let { fileType ->
+                when (fileType) {
+                    "profile" -> profileImageLauncher.launch("*/*")
+                    "photos" -> activityPhotosLauncher.launch("*/*")
+                    "evidence" -> evidenceDocumentLauncher.launch("*/*")
+                }
+                pendingFileSelection = null
+            }
         } else {
             println("파일 접근 권한이 거부되었습니다.")
+            pendingFileSelection = null
         }
     }
 
@@ -119,6 +131,7 @@ fun ArtistRegisterScreen(
                 "evidence" -> evidenceDocumentLauncher.launch("*/*")
             }
         } else {
+            pendingFileSelection = fileType
             permissionLauncher.launch(PermissionUtil.getRequiredPermissions())
         }
     }
@@ -697,6 +710,10 @@ fun ArtistRegisterScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(horizontal = 16.dp, vertical = 16.dp)
+                        .padding(
+                            bottom = WindowInsets.navigationBars.asPaddingValues()
+                                .calculateBottomPadding()
+                        )
                 ) {
                     LightonButton(
                         text = "등록하기",

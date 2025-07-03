@@ -334,6 +334,9 @@ fun BuskingStageRegisterScreen(
         }
     }
 
+    // 권한 요청 후 실행할 파일 선택 타입 추적
+    var pendingFileSelection by remember { mutableStateOf<String?>(null) }
+
     // 권한 요청 런처
     val permissionLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestMultiplePermissions()
@@ -341,13 +344,24 @@ fun BuskingStageRegisterScreen(
         val allGranted = permissions.all { it.value }
         if (allGranted) {
             println("파일 접근 권한이 허용되었습니다.")
+            // 권한 허용 후 대기 중인 파일 선택 실행
+            pendingFileSelection?.let { fileType ->
+                when (fileType) {
+                    "promotion" -> promotionImageLauncher.launch("*/*")
+                    "evidence" -> evidenceFileLauncher.launch("*/*")
+                }
+                pendingFileSelection = null
+            }
         } else {
             println("파일 접근 권한이 거부되었습니다.")
+            pendingFileSelection = null
         }
     }
 
     // 파일 선택 핸들러
     fun handleFileSelection(isPromotionImage: Boolean) {
+        val fileType = if (isPromotionImage) "promotion" else "evidence"
+
         if (PermissionUtil.hasFileAccessPermission(context)) {
             if (isPromotionImage) {
                 promotionImageLauncher.launch("*/*")
@@ -355,6 +369,8 @@ fun BuskingStageRegisterScreen(
                 evidenceFileLauncher.launch("*/*")
             }
         } else {
+            // 권한이 없으면 대기 상태로 설정하고 권한 요청
+            pendingFileSelection = fileType
             permissionLauncher.launch(PermissionUtil.getRequiredPermissions())
         }
     }
@@ -836,6 +852,10 @@ fun BuskingStageRegisterScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(horizontal = 16.dp, vertical = 16.dp)
+                        .padding(
+                            bottom = WindowInsets.navigationBars.asPaddingValues()
+                                .calculateBottomPadding()
+                        )
                 ) {
                     LightonButton(
                         text = "등록하기",

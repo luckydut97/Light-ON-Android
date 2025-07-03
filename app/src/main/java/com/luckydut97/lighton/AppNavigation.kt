@@ -54,7 +54,7 @@ fun AppNavigation(
     val showMusicPreferenceScreen = false  // 음악 취향 선택 화면으로 바로 이동
     val showMainScreen = false     // 메인 화면으로 바로 이동
     val showNormalStageRegisterScreen = false  // 일반공연 등록 화면으로 바로 이동
-    val showBuskingStageRegisterScreen = true  // 버스킹 등록 화면으로 바로 이동
+    val showBuskingStageRegisterScreen = false  // 버스킹 등록 화면으로 바로 이동
     val showArtistRegisterScreen = false  // 아티스트 등록 화면으로 바로 이동
 
     // 개발용 시작 화면 결정
