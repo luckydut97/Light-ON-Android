@@ -53,11 +53,13 @@ fun AppNavigation(
     val showPersonalInfoScreen = false  // 개인정보 입력 화면으로 바로 이동
     val showMusicPreferenceScreen = false  // 음악 취향 선택 화면으로 바로 이동
     val showMainScreen = false     // 메인 화면으로 바로 이동
+    val showNormalStageRegisterScreen = true  // 일반공연 등록 화면으로 바로 이동
 
     // 개발용 시작 화면 결정
     var startDestination by remember {
         mutableStateOf(
             when {
+                showNormalStageRegisterScreen -> "normal_stage_register"
                 showMainScreen -> "main"
                 showMusicPreferenceScreen -> "music_preference"
                 showPersonalInfoScreen -> "personal_info/999"
@@ -225,6 +227,23 @@ fun AppNavigation(
         // 메인 화면 (바텀 네비게이션 포함)
         composable("main") {
             MainScreenWithBottomNav()
+        }
+
+        // 일반 공연 등록 화면
+        composable("normal_stage_register") {
+            com.luckydut97.lighton.feature_stage_register.ui.NormalStageRegisterScreen(
+                onBackClick = {
+                    navController.navigate("main") {
+                        popUpTo("normal_stage_register") { inclusive = true }
+                    }
+                },
+                onRegisterClick = {
+                    // TODO: 등록 완료 후 처리
+                    navController.navigate("main") {
+                        popUpTo("normal_stage_register") { inclusive = true }
+                    }
+                }
+            )
         }
 
         // 아이디 찾기 화면

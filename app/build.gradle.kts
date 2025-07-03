@@ -74,4 +74,5 @@ dependencies {
     implementation(project(":feature-map"))
     implementation(project(":feature-stage"))
     implementation(project(":feature-mypage"))
+    implementation(project(":feature-stage-register"))
 }

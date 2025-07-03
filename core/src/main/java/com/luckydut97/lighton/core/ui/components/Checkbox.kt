@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -20,6 +21,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.luckydut97.lighton.core.ui.theme.BrandColor
+import com.luckydut97.lighton.core.ui.theme.CaptionColor
 import com.luckydut97.lighton.core.ui.theme.PretendardFamily
 
 /**
@@ -48,15 +50,15 @@ fun LightonCheckbox(
             modifier = Modifier.size(20.dp),
             tint = Color.Unspecified
         )
-
+        Spacer(modifier = Modifier.height(4.dp))
         if (text.isNotEmpty()) {
             Spacer(modifier = Modifier.width(2.dp))
 
             Text(
                 text = text,
                 fontSize = fontSize.sp,
-                fontWeight = if (isChecked) FontWeight.Bold else fontWeight,
-                color = if (isChecked) BrandColor else Color.Black,
+                fontWeight = FontWeight.Normal,
+                color = CaptionColor,
                 fontFamily = PretendardFamily,
                 letterSpacing = letterSpacing.sp
             )
