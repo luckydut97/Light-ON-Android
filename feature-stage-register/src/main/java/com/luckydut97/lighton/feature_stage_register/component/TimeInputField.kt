@@ -24,7 +24,7 @@ fun TimeInputField(
     onValueChange: (String) -> Unit,
     modifier: Modifier = Modifier,
     placeholder: String = "00:00",
-    onClick: () -> Unit = {}
+    onClick: () -> Unit
 ) {
     var isFocused by remember { mutableStateOf(false) }
 
@@ -37,7 +37,11 @@ fun TimeInputField(
             .background(Color.White)
             .border(
                 width = 1.dp,
-                color = if (isFocused) BrandColor else ThumbLineColor,
+                color = when {
+                    value.isNotEmpty() -> Color.Black // 시간 값이 있으면 Black
+                    isFocused -> BrandColor // 포커스 상태면 BrandColor
+                    else -> ThumbLineColor // 기본 상태
+                },
                 shape = RoundedCornerShape(6.dp)
             )
             .clickable {

@@ -20,7 +20,11 @@ import com.luckydut97.lighton.core.ui.theme.CaptionColor
 import com.luckydut97.lighton.core.ui.theme.LightonTheme
 import com.luckydut97.lighton.core.ui.theme.PretendardFamily
 import com.luckydut97.lighton.feature_stage_register.component.*
+import com.luckydut97.lighton.feature_stage_register.component.calendar.CalendarBottomSheet
+import com.luckydut97.lighton.feature_stage_register.component.time.TimeBottomSheet
 import com.luckydut97.lighton.core.ui.components.LightonDropdown
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
 @Composable
 fun BuskingStageRegisterScreen(
@@ -286,6 +290,66 @@ fun BuskingStageRegisterScreen(
         emptyList()
     }
 
+    // 달력 관련 상태들
+    var showCalendarBottomSheet by remember { mutableStateOf(false) }
+    var selectedStartDate by remember { mutableStateOf<LocalDate?>(null) }
+    var selectedEndDate by remember { mutableStateOf<LocalDate?>(null) }
+
+    // 시간 관련 상태들 (TimeBottomSheet 연동)
+    var showTimeBottomSheet by remember { mutableStateOf(false) }
+    // 선택 중인 시간 필드의 종류 (start, end)
+    var selectingTimeType by remember { mutableStateOf<String?>(null) }
+
+    // 달력 제목 동적 생성
+    val calendarTitle = when {
+        selectedStartDate == null -> "공연 시작일 선택"
+        selectedEndDate == null -> "공연 종료일 선택"
+        else -> "공연 시작일 선택"
+    }
+
+    // 날짜 포맷터
+    val dateFormatter = DateTimeFormatter.ofPattern("yy/MM/dd")
+
+    // 달력 날짜 선택 핸들러 (개선된 사용성)
+    fun onDateSelected(date: LocalDate) {
+        when {
+            // 1. 아무것도 선택되지 않은 상태 → 시작일 설정
+            selectedStartDate == null -> {
+                selectedStartDate = date
+                selectedEndDate = null
+            }
+
+            // 2. 시작일만 선택된 상태
+            selectedStartDate != null && selectedEndDate == null -> {
+                if (date.isAfter(selectedStartDate) || date.isEqual(selectedStartDate)) {
+                    // 시작일 이후 날짜 클릭 → 종료일로 설정
+                    selectedEndDate = date
+                } else {
+                    // 시작일 이전 날짜 클릭 → 새로운 시작일로 재설정
+                    selectedStartDate = date
+                    selectedEndDate = null
+                }
+            }
+
+            // 3. 시작일과 종료일 모두 선택된 상태 → 새로운 범위 시작
+            selectedStartDate != null && selectedEndDate != null -> {
+                selectedStartDate = date
+                selectedEndDate = null
+            }
+        }
+    }
+
+    // 달력 확인 버튼 핸들러
+    fun onCalendarConfirm() {
+        selectedStartDate?.let { start ->
+            performanceDate = start.format(dateFormatter)
+        }
+        selectedEndDate?.let { end ->
+            performanceEndDate = end.format(dateFormatter)
+        }
+        showCalendarBottomSheet = false
+    }
+
     LightonTheme {
         Surface(
             modifier = Modifier.fillMaxSize(),
@@ -372,7 +436,9 @@ fun BuskingStageRegisterScreen(
                             onValueChange = { performanceDate = it },
                             placeholder = "00/00/00",
                             modifier = Modifier.weight(1f),
-                            onClick = { /* TODO: 달력 선택 */ }
+                            onClick = {
+                                showCalendarBottomSheet = true
+                            }
                         )
 
                         Text(
@@ -387,7 +453,9 @@ fun BuskingStageRegisterScreen(
                             onValueChange = { performanceEndDate = it },
                             placeholder = "00/00/00",
                             modifier = Modifier.weight(1f),
-                            onClick = { /* TODO: 달력 선택 */ }
+                            onClick = {
+                                showCalendarBottomSheet = true
+                            }
                         )
                     }
 
@@ -403,7 +471,10 @@ fun BuskingStageRegisterScreen(
                             onValueChange = { performanceStartTime = it },
                             placeholder = "00:00",
                             modifier = Modifier.weight(1f),
-                            onClick = { /* TODO: 시간 선택 */ }
+                            onClick = {
+                                selectingTimeType = "start"
+                                showTimeBottomSheet = true
+                            }
                         )
 
                         Text(
@@ -418,7 +489,10 @@ fun BuskingStageRegisterScreen(
                             onValueChange = { performanceEndTime = it },
                             placeholder = "00:00",
                             modifier = Modifier.weight(1f),
-                            onClick = { /* TODO: 시간 선택 */ }
+                            onClick = {
+                                selectingTimeType = "end"
+                                showTimeBottomSheet = true
+                            }
                         )
                     }
 
@@ -701,6 +775,55 @@ fun BuskingStageRegisterScreen(
                 }
             }
         }
+    }
+
+    if (showCalendarBottomSheet) {
+        CalendarBottomSheet(
+            isVisible = showCalendarBottomSheet,
+            onDismiss = { showCalendarBottomSheet = false },
+            title = calendarTitle,
+            selectedStartDate = selectedStartDate,
+            selectedEndDate = selectedEndDate,
+            onDateSelected = ::onDateSelected,
+            onConfirm = ::onCalendarConfirm
+        )
+    }
+
+    if (showTimeBottomSheet && selectingTimeType != null) {
+        TimeBottomSheet(
+            isVisible = showTimeBottomSheet,
+            onDismiss = {
+                showTimeBottomSheet = false
+                selectingTimeType = null
+            },
+            title = if (selectingTimeType == "start") "공연 시작 시간" else "공연 종료 시간",
+            selectedTime = when (selectingTimeType) {
+                "start" -> performanceStartTime
+                "end" -> performanceEndTime
+                else -> ""
+            },
+            onTimeSelected = { selectedTime ->
+                if (selectingTimeType == "start") {
+                    performanceStartTime = selectedTime
+                    // 시작 시간 설정 후 자동으로 종료 시간 선택으로 이동
+                    selectingTimeType = "end"
+                } else {
+                    performanceEndTime = selectedTime
+                    showTimeBottomSheet = false
+                    selectingTimeType = null
+                }
+            },
+            onConfirm = {
+                if (selectingTimeType == "start") {
+                    // 시작 시간 확인 후 자동으로 종료 시간 선택으로 이동
+                    selectingTimeType = "end"
+                } else {
+                    // 종료 시간 확인 후 완전히 종료
+                    showTimeBottomSheet = false
+                    selectingTimeType = null
+                }
+            }
+        )
     }
 }
 
