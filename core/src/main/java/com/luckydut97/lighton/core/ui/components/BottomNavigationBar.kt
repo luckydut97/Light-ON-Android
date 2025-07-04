@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -45,57 +46,46 @@ fun BottomNavigationBar(
             .background(Color.White)
             .windowInsetsPadding(WindowInsets.navigationBars)
     ) {
-        Box(
+        Divider(
+            color = Color(0xFFEEEEEE),
+            thickness = 1.dp
+        )
+
+        Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(72.dp)
-                .shadow(
-                    elevation = 8.dp,
-                    shape = RoundedCornerShape(topStart = 0.dp, topEnd = 0.dp)
-                )
-                .background(Color.White)
+                .height(71.dp)
+                .padding(horizontal = 16.dp),
+            horizontalArrangement = Arrangement.SpaceEvenly,
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            Row(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(horizontal = 17.dp),
-                horizontalArrangement = Arrangement.SpaceEvenly
-            ) {
-                NavigationItem.values().forEach { item ->
-                    val isSelected = item == selectedItem
-                    val iconRes = if (isSelected) item.activeIcon else item.inactiveIcon
-                    val textColor = if (isSelected) BrandColor else AssistiveColor
+            NavigationItem.values().forEach { item ->
+                val isSelected = item == selectedItem
+                val iconRes = if (isSelected) item.activeIcon else item.inactiveIcon
+                val textColor = if (isSelected) BrandColor else AssistiveColor
 
-                    Box(
-                        modifier = Modifier
-                            .weight(1f)
-                            .fillMaxHeight()
-                            .clickable { onItemSelected(item) },
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Column(
-                            modifier = Modifier
-                                .height(45.dp),
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.Center
-                        ) {
-                            Icon(
-                                painter = painterResource(id = iconRes),
-                                contentDescription = item.title,
-                                modifier = Modifier.size(20.dp),
-                                tint = Color.Unspecified
-                            )
-                            Spacer(modifier = Modifier.height(6.dp))
-                            Text(
-                                text = item.title,
-                                fontSize = 13.sp,
-                                fontWeight = FontWeight.Bold,
-                                color = textColor,
-                                fontFamily = androidx.compose.ui.text.font.FontFamily.Default,
-                                maxLines = 1
-                            )
-                        }
-                    }
+                Column(
+                    modifier = Modifier
+                        .weight(1f)
+                        .clickable { onItemSelected(item) },
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
+                ) {
+                    Icon(
+                        painter = painterResource(id = iconRes),
+                        contentDescription = item.title,
+                        modifier = Modifier.size(20.dp),
+                        tint = Color.Unspecified
+                    )
+                    Spacer(modifier = Modifier.height(6.dp))
+                    Text(
+                        text = item.title,
+                        fontSize = 13.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = textColor,
+                        fontFamily = androidx.compose.ui.text.font.FontFamily.Default,
+                        maxLines = 1
+                    )
                 }
             }
         }

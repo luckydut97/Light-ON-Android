@@ -38,7 +38,7 @@ fun MapScreen(
                 contentAlignment = Alignment.Center
             ) {
                 Text(
-                    text = "지도 화면입니다.",
+                    text = "지도 화면",
                     fontSize = 24.sp,
                     fontWeight = FontWeight.Bold
                 )
