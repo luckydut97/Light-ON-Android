@@ -13,6 +13,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.luckydut97.feature_stage.viewmodel.StageApplyInfoSheetViewModel
 import com.luckydut97.lighton.core.ui.components.LightonButton
+import com.luckydut97.lighton.core.ui.components.LightonCancelOutlinedButton
 import com.luckydut97.lighton.core.ui.components.SmallActionButton
 import com.luckydut97.lighton.core.ui.theme.PretendardFamily
 
@@ -26,7 +27,7 @@ fun StageApplyInfoSheetContent(
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .height(283.dp)
+            .height(247.dp)
     ) {
         Column(
             modifier = Modifier
@@ -68,17 +69,12 @@ fun StageApplyInfoSheetContent(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(bottom = 24.dp)
+
             ) {
-                SmallActionButton(
+                LightonCancelOutlinedButton(
                     text = "취소",
                     onClick = onCancel,
-                    modifier = Modifier.weight(1f),
-                    backgroundColor = Color.White,
-                    contentColor = captionColor,
-                    borderColor = Color(0xFF6137DD),
-                    textColor = Color(0xFF6137DD),
-                    fontWeight = FontWeight.Bold
+                    modifier = Modifier.weight(1f)
                 )
                 Spacer(modifier = Modifier.width(8.dp))
                 LightonButton(
@@ -87,6 +83,22 @@ fun StageApplyInfoSheetContent(
                     modifier = Modifier.weight(1f),
                     backgroundColor = Color(0xFF6137DD)
                 )
+                /*
+                LightonOutlinedButton(
+                    text = "내 활동 내역",
+                    onClick = onActivityClick,
+                    modifier = Modifier.weight(1f)
+                )
+
+                LightonButton(
+                    text = "공연 등록",
+                    onClick = {
+                        onRegisterClick()
+                        isRegisterSheetVisible = true
+                    },
+                    modifier = Modifier.weight(1f)
+                )
+                 */
             }
         }
     }

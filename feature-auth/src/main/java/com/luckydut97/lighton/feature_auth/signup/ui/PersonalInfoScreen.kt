@@ -519,7 +519,7 @@ fun PersonalInfoScreen(
                     CommonTopBar(
                         title = "회원가입",
                         onBackClick = onBackClick,
-                        modifier = Modifier.padding(top = 12.dp)
+
                     )
 
                     uiState.errorMessage?.let { errorMessage ->

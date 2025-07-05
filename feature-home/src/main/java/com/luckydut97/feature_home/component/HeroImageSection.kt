@@ -2,6 +2,7 @@ package com.luckydut97.feature_home.component
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
@@ -10,18 +11,20 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.delay
+import com.luckydut97.lighton.feature.home.R
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -29,9 +32,15 @@ fun HeroImageSection(
     modifier: Modifier = Modifier
 ) {
     val pages = listOf(
-        Pair("메인 텍스트는 최대 2줄까지 허용합니다. 추천음악 1", "서브텍스트 최대 1줄 허용 1"),
-        Pair("1줄일 경우입니다.", "서브텍스트 최대 1줄 허용 2"),
-        Pair("메인 텍스트는 최대 2줄까지 허용합니다. 추천음악 3", "서브텍스트 최대 1줄 허용 3")
+        Pair("요즘 가장 핫한 아티스트 FiveDays 썸머 페스티벌", "파이브데이즈 공연 신청하기"),
+        Pair("[잠실] 한강 공원 Light ON 홀리데이 버스킹", "잠실동 프로그라피 2F"),
+        Pair("[여의도] 한강 공원 내 손안의 서울 페스티벌", "여의도동 프로그라피 3F")
+    )
+
+    val imageResources = listOf(
+        R.drawable.main_test_img,
+        R.drawable.main_test_img3,
+        R.drawable.main_test_img2
     )
 
     val pagerState = rememberPagerState(pageCount = { pages.size })
@@ -57,8 +66,13 @@ fun HeroImageSection(
                 modifier = Modifier
                     .fillMaxWidth()
                     .aspectRatio(1f)
-                    .background(Color(0xFFC5C5C5))
             ) {
+                Image(
+                    painter = painterResource(id = imageResources[page]),
+                    contentDescription = null,
+                    modifier = Modifier.fillMaxSize(),
+                    contentScale = ContentScale.Crop
+                )
                 // 그라데이션 오버레이 (하단에만 적용)
                 Box(
                     modifier = Modifier

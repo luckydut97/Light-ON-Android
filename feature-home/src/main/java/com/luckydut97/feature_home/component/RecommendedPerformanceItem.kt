@@ -32,7 +32,7 @@ fun RecommendedPerformanceItem(
     val screenWidth = configuration.screenWidthDp.dp
 
     // 이미지 크기 고정
-    val imageSize = 110.dp
+    val imageSize = 124.dp
 
     Column(
         modifier = modifier
@@ -51,7 +51,7 @@ fun RecommendedPerformanceItem(
             contentScale = ContentScale.Crop
         )
 
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(14.dp))
 
         // 텍스트 공간: width = 이미지 크기와 동일, height = 2줄(lineHeight × 2)
         Box(
@@ -68,7 +68,7 @@ fun RecommendedPerformanceItem(
                 letterSpacing = (-0.16).sp,
                 maxLines = 2,
                 overflow = TextOverflow.Ellipsis,
-                textAlign = TextAlign.Center,
+                textAlign = TextAlign.Left,
                 modifier = Modifier.fillMaxSize()
             )
         }

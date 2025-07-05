@@ -25,6 +25,7 @@ import com.luckydut97.lighton.core.ui.utils.FilePickerUtil
 import com.luckydut97.lighton.core.ui.utils.PermissionUtil
 import com.luckydut97.lighton.feature_stage_register.component.*
 import com.luckydut97.lighton.core.ui.components.LightonDropdown
+import com.luckydut97.lighton.core.ui.components.dialog.ArtistRegistrationConfirmDialog
 
 @Composable
 fun ArtistRegisterScreen(
@@ -51,6 +52,9 @@ fun ArtistRegisterScreen(
 
     // 파일 선택 후 실행할 파일 선택 타입 추적
     var pendingFileSelection by remember { mutableStateOf<String?>(null) }
+
+    // 아티스트 등록 확인 다이얼로그 상태
+    var showArtistRegistrationConfirmDialog by remember { mutableStateOf(false) }
 
     // 파일 선택 런처들
     val profileImageLauncher = rememberLauncherForActivityResult(
@@ -388,8 +392,9 @@ fun ArtistRegisterScreen(
                 CommonTopBar(
                     title = "아티스트 등록",
                     onBackClick = onBackClick,
-                    modifier = Modifier.padding(top = WindowInsets.statusBars.asPaddingValues().calculateTopPadding())
-
+                    modifier = Modifier.padding(
+                        top = WindowInsets.statusBars.asPaddingValues().calculateTopPadding()
+                    )
                 )
 
                 // 메인 콘텐츠를 스크롤 가능하게
@@ -717,11 +722,27 @@ fun ArtistRegisterScreen(
                 ) {
                     LightonButton(
                         text = "등록하기",
-                        onClick = onRegisterClick
+                        onClick = {
+                            // 아티스트 등록 확인 다이얼로그 표시
+                            showArtistRegistrationConfirmDialog = true
+                        }
                     )
                 }
             }
         }
+    }
+
+    // 아티스트 등록 확인 다이얼로그
+    if (showArtistRegistrationConfirmDialog) {
+        ArtistRegistrationConfirmDialog(
+            onDismiss = { showArtistRegistrationConfirmDialog = false },
+            onConfirm = {
+                showArtistRegistrationConfirmDialog = false
+                // 실제 등록 로직 (서버 API 호출)
+                // TODO: 아티스트 등록 API 호출
+                onRegisterClick()
+            }
+        )
     }
 }
 

@@ -28,13 +28,17 @@ import com.luckydut97.lighton.feature_stage_register.component.*
 import com.luckydut97.lighton.feature_stage_register.component.calendar.CalendarBottomSheet
 import com.luckydut97.lighton.feature_stage_register.component.time.TimeBottomSheet
 import com.luckydut97.lighton.core.ui.components.LightonDropdown
+import com.luckydut97.lighton.core.ui.components.dialog.NormalStageRegistrationDialog
+import com.luckydut97.lighton.core.ui.components.dialog.ArtistRegistrationDialog
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
 @Composable
 fun NormalStageRegisterScreen(
     onBackClick: () -> Unit = {},
-    onRegisterClick: () -> Unit = {}
+    onRegisterClick: () -> Unit = {},
+    onArtistRegisterClick: () -> Unit = {},
+    isArtistMember: Boolean = false
 ) {
     val context = LocalContext.current
 
@@ -64,6 +68,12 @@ fun NormalStageRegisterScreen(
 
     // 권한 요청 후 실행할 파일 선택 타입 추적
     var pendingFileSelection by remember { mutableStateOf<String?>(null) }
+
+    // 일반 공연 등록 확인 다이얼로그 상태
+    var showNormalStageRegistrationDialog by remember { mutableStateOf(false) }
+
+    // 아티스트 등록 확인 다이얼로그 상태
+    var showArtistRegistrationDialog by remember { mutableStateOf(false) }
 
     // 파일 선택 런처들
     val promotionImageLauncher = rememberLauncherForActivityResult(
@@ -454,7 +464,9 @@ fun NormalStageRegisterScreen(
                 CommonTopBar(
                     title = "공연 등록",
                     onBackClick = onBackClick,
-                    modifier = Modifier.padding(top = WindowInsets.statusBars.asPaddingValues().calculateTopPadding())
+                    modifier = Modifier.padding(
+                        top = WindowInsets.statusBars.asPaddingValues().calculateTopPadding()
+                    )
                 )
 
                 // 메인 콘텐츠를 스크롤 가능하게
@@ -962,11 +974,43 @@ fun NormalStageRegisterScreen(
                 ) {
                     LightonButton(
                         text = "등록하기",
-                        onClick = onRegisterClick
+                        onClick = {
+                            if (isArtistMember) {
+                                // 아티스트 회원이면 일반 공연 등록 확인 다이얼로그 표시
+                                showNormalStageRegistrationDialog = true
+                            } else {
+                                // 일반 회원이면 아티스트 등록 확인 다이얼로그 표시
+                                showArtistRegistrationDialog = true
+                            }
+                        }
                     )
                 }
             }
         }
+    }
+
+    // 아티스트 등록 확인 다이얼로그
+    if (showArtistRegistrationDialog) {
+        ArtistRegistrationDialog(
+            onDismiss = { showArtistRegistrationDialog = false },
+            onConfirm = {
+                showArtistRegistrationDialog = false
+                // 아티스트 등록 화면으로 이동
+                onArtistRegisterClick()
+            }
+        )
+    }
+
+    if (showNormalStageRegistrationDialog) {
+        NormalStageRegistrationDialog(
+            onDismiss = { showNormalStageRegistrationDialog = false },
+            onConfirm = {
+                showNormalStageRegistrationDialog = false
+                // 실제 등록 로직 (서버 API 호출)
+                // TODO: 일반 공연 등록 API 호출
+                onRegisterClick()
+            }
+        )
     }
 
     if (showCalendarBottomSheet) {

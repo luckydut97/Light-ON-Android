@@ -46,8 +46,16 @@ fun PerformanceItem(
                 .clip(RoundedCornerShape(10.dp))
         ) {
             // 실제 구현시에는 AsyncImage 사용
+            val imageResId = when (performance.imageUrl) {
+                "ic_test_img1" -> R.drawable.ic_test_img1
+                "ic_test_img2" -> R.drawable.ic_test_img2
+                "ic_test_img3" -> R.drawable.ic_test_img3
+                "ic_test_img4" -> R.drawable.ic_test_img4
+                else -> R.drawable.ic_test_img2 // 기본 이미지
+            }
+
             Image(
-                painter = painterResource(id = R.drawable.ic_test_img2),
+                painter = painterResource(id = imageResId),
                 contentDescription = performance.title,
                 modifier = Modifier.fillMaxSize(),
                 contentScale = ContentScale.Crop
@@ -99,7 +107,7 @@ fun PerformanceItem(
                     fontWeight = FontWeight.Bold,
                     fontFamily = PretendardFamily
                 )
-                Spacer(modifier = Modifier.height(9.dp))
+                Spacer(modifier = Modifier.height(6.dp))
             }
 
             // 공연명
@@ -113,7 +121,7 @@ fun PerformanceItem(
                 overflow = TextOverflow.Ellipsis
             )
 
-            Spacer(modifier = Modifier.height(6.dp))
+            /*Spacer(modifier = Modifier.height(6.dp))*/
 
             // 위치와 시간
             Row(

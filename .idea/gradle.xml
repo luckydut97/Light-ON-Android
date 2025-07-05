@@ -19,6 +19,7 @@
             <option value="$PROJECT_DIR$/feature-map" />
             <option value="$PROJECT_DIR$/feature-mypage" />
             <option value="$PROJECT_DIR$/feature-stage" />
+            <option value="$PROJECT_DIR$/feature-stage-register" />
           </set>
         </option>
       </GradleProjectSettings>

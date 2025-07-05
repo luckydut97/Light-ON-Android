@@ -48,7 +48,10 @@ import androidx.compose.runtime.collectAsState
 @Composable
 fun StageDetailScreen(
     performanceId: String,
-    onBackClick: () -> Unit
+    onBackClick: () -> Unit,
+    onLoginClick: () -> Unit = {}, // 로그인 화면으로 이동하는 콜백 추가
+    onSignUpClick: () -> Unit = {}, // 회원가입 화면으로 이동하는 콜백 추가
+    isLoggedIn: Boolean = false // 로그인 상태 파라미터 추가
 ) {
     var isLiked by remember { mutableStateOf(false) }
 
@@ -90,6 +93,7 @@ fun StageDetailScreen(
     val sheetStepList = listOf("INFO", "PEOPLE", "ACCOUNT")
     var currentStep by remember { mutableStateOf("INFO") }
     var isBottomSheetVisible by remember { mutableStateOf(false) }
+    var isLoginDialogVisible by remember { mutableStateOf(false) } // 로그인 다이얼로그 상태 추가
 
     val infoViewModel = remember { StageApplyInfoSheetViewModel() }
     val peopleViewModel = remember { StageApplyPeopleSheetViewModel() }
@@ -505,8 +509,12 @@ fun StageDetailScreen(
                 LightonButton(
                     text = "신청하기",
                     onClick = {
-                        currentStep = "INFO"
-                        isBottomSheetVisible = true
+                        if (!isLoggedIn) {
+                            isLoginDialogVisible = true
+                        } else {
+                            currentStep = "INFO"
+                            isBottomSheetVisible = true
+                        }
                     },
                     modifier = Modifier
                         .weight(1f)
@@ -557,6 +565,21 @@ fun StageDetailScreen(
                     }
                 }
             }
+        }
+
+        // 로그인 필요 다이얼로그
+        if (isLoginDialogVisible) {
+            com.luckydut97.lighton.core.ui.components.dialog.LoginRequiredDialog(
+                onDismiss = { isLoginDialogVisible = false },
+                onLoginClick = {
+                    isLoginDialogVisible = false
+                    onLoginClick()
+                },
+                onSignUpClick = {
+                    isLoginDialogVisible = false
+                    onSignUpClick()
+                }
+            )
         }
     }
 }

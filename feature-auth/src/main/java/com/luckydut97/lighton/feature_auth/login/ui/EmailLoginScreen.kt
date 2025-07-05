@@ -120,7 +120,7 @@ fun EmailLoginScreen(
                     CommonTopBar(
                         title = "",
                         onBackClick = onBackClick,
-                        modifier = Modifier.padding(top = 12.dp)
+
                     )
 
                     // TopBar와 로고 사이 11dp 간격

@@ -18,6 +18,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.luckydut97.feature_stage.viewmodel.StageApplyAccountSheetViewModel
 import com.luckydut97.lighton.core.ui.components.LightonButton
+import com.luckydut97.lighton.core.ui.components.LightonCancelOutlinedButton
 import com.luckydut97.lighton.core.ui.components.SmallActionButton
 import com.luckydut97.lighton.core.ui.theme.PretendardFamily
 import androidx.compose.ui.text.SpanStyle
@@ -34,7 +35,7 @@ fun StageApplyAccountSheetContent(
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .height(412.dp)
+            .height(402.dp)
     ) {
         Column(
             modifier = Modifier
@@ -206,17 +207,12 @@ fun StageApplyAccountSheetContent(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(bottom = 24.dp)
+                    .padding(bottom = 20.dp)
             ) {
-                SmallActionButton(
+                LightonCancelOutlinedButton(
                     text = "취소",
                     onClick = onCancel,
-                    modifier = Modifier.weight(1f),
-                    backgroundColor = Color.White,
-                    contentColor = captionColor,
-                    borderColor = Color(0xFF6137DD),
-                    textColor = Color(0xFF6137DD),
-                    fontWeight = FontWeight.Bold
+                    modifier = Modifier.weight(1f)
                 )
                 Spacer(modifier = Modifier.width(8.dp))
                 LightonButton(

@@ -243,3 +243,48 @@ fun SmallActionButton(
         }
     }
 }
+
+/**
+ * 취소 버튼 컴포넌트
+ * stroke: CECECE, 텍스트: Normal fontWeight, Black 색상
+ * SmallActionButton과 동일한 스타일이지만 취소 버튼 전용
+ */
+@Composable
+fun LightonCancelOutlinedButton(
+    text: String,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true,
+    borderColor: Color = Color(0xFFCECECE),  // 테두리 색상
+    borderWidth: Dp = 1.dp  // 테두리 두께
+) {
+    Button(
+        onClick = onClick,
+        enabled = enabled,
+        modifier = modifier
+            .fillMaxWidth()
+            .height(46.dp)
+            .border(
+                width = borderWidth,
+                color = if (enabled) borderColor else borderColor.copy(alpha = 0.5f),
+                shape = RoundedCornerShape(6.dp)
+            ),
+        shape = RoundedCornerShape(6.dp),
+        colors = ButtonDefaults.buttonColors(
+            containerColor = Color.Transparent,
+            contentColor = Color.Black,
+            disabledContainerColor = Color.Transparent,
+            disabledContentColor = Color.Gray
+        )
+    ) {
+        Text(
+            text = text,
+            fontSize = 16.sp,
+            color = Color.Black,
+            fontWeight = FontWeight.Normal,
+            fontFamily = PretendardFamily,
+            textAlign = TextAlign.Center,
+            maxLines = 1
+        )
+    }
+}

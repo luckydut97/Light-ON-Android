@@ -2,7 +2,10 @@
 <project version="4">
   <component name="CompilerConfiguration">
     <bytecodeTargetLevel target="21">
+      <module name="lighton.feat-stage-register.main" target="11" />
+      <module name="lighton.feat-stage-register.test" target="11" />
       <module name="lighton.feature-mypage.test" target="11" />
+      <module name="lighton.feature-stage-register.test" target="11" />
     </bytecodeTargetLevel>
   </component>
 </project>

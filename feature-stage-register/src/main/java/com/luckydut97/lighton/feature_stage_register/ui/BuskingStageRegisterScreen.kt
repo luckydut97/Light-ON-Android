@@ -28,6 +28,7 @@ import com.luckydut97.lighton.feature_stage_register.component.*
 import com.luckydut97.lighton.feature_stage_register.component.calendar.CalendarBottomSheet
 import com.luckydut97.lighton.feature_stage_register.component.time.TimeBottomSheet
 import com.luckydut97.lighton.core.ui.components.LightonDropdown
+import com.luckydut97.lighton.core.ui.components.dialog.BuskingStageRegistrationDialog
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
@@ -58,6 +59,9 @@ fun BuskingStageRegisterScreen(
     var evidenceFileName by remember { mutableStateOf("") }
     var promotionImageFileInfo by remember { mutableStateOf<FilePickerUtil.FileInfo?>(null) }
     var evidenceFileInfo by remember { mutableStateOf<FilePickerUtil.FileInfo?>(null) }
+
+    // 버스킹 공연 등록 확인 다이얼로그 상태
+    var showBuskingStageRegistrationDialog by remember { mutableStateOf(false) }
 
     // 전체 지역 데이터
     val regionData = mapOf(
@@ -447,7 +451,9 @@ fun BuskingStageRegisterScreen(
                 CommonTopBar(
                     title = "공연 등록",
                     onBackClick = onBackClick,
-                    modifier = Modifier.padding(top = WindowInsets.statusBars.asPaddingValues().calculateTopPadding())
+                    modifier = Modifier.padding(
+                        top = WindowInsets.statusBars.asPaddingValues().calculateTopPadding()
+                    )
                 )
 
                 // 메인 콘텐츠를 스크롤 가능하게
@@ -859,7 +865,10 @@ fun BuskingStageRegisterScreen(
                 ) {
                     LightonButton(
                         text = "등록하기",
-                        onClick = onRegisterClick
+                        onClick = {
+                            // 버스킹 공연 등록 확인 다이얼로그 표시
+                            showBuskingStageRegistrationDialog = true
+                        }
                     )
                 }
             }
@@ -903,6 +912,18 @@ fun BuskingStageRegisterScreen(
             onConfirm = {
                 showTimeBottomSheet = false
                 selectingTimeType = null
+            }
+        )
+    }
+
+    if (showBuskingStageRegistrationDialog) {
+        BuskingStageRegistrationDialog(
+            onDismiss = { showBuskingStageRegistrationDialog = false },
+            onConfirm = {
+                showBuskingStageRegistrationDialog = false
+                // 실제 등록 로직 (서버 API 호출)
+                // TODO: 버스킹 공연 등록 API 호출
+                onRegisterClick()
             }
         )
     }

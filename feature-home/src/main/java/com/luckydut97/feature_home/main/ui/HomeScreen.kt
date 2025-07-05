@@ -70,6 +70,7 @@ fun HomeScreen(
                 },
                 modifier = Modifier.fillMaxWidth()
             )
+            Spacer(modifier = Modifier.height(40.dp))
 
             // Featured Artist Performance Section
             FeaturedArtistPerformanceSection(
@@ -79,6 +80,8 @@ fun HomeScreen(
                     // TODO: 개별 공연 상세 페이지로 이동
                 }
             )
+
+            Spacer(modifier = Modifier.height(20.dp))
 
             // Popular Performance Section
             PopularPerformanceSection(

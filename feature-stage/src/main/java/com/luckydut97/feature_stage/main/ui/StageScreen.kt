@@ -55,51 +55,50 @@ fun StageScreen(
         listOf(
             Performance(
                 id = "1",
-                title = "공연명을 입력해주세요",
+                title = "여의도 Light ON 홀리데이 버스킹",
                 location = "여의도동",
-                date = "2025.05.01",
+                date = "2025.07.05",
                 time = "17:00",
-                imageUrl = "ic_test_img1",
-                tag = "힙합",
-                overlayTag = "무료공연"
-            ),
-            Performance(
-                id = "2",
-                title = "2025 여의도 불빛무대 녹음",
-                location = "여의도동",
-                date = "2025.05.01",
-                time = "17:00",
-                imageUrl = "ic_test_img2",
+                imageUrl = "ic_test_img",
                 tag = "어쿠스틱"
             ),
             Performance(
+                id = "2",
+                title = "까페골목 SSUM 타는 콘서트",
+                location = "방배동",
+                date = "2025.07.05",
+                time = "17:00",
+                imageUrl = "ic_test_img4",
+                tag = "밴드"
+            ),
+            Performance(
                 id = "3",
-                title = "공연명을 입력해주세요",
-                location = "여의도동",
-                date = "2025.05.01",
+                title = "광장동 Piano Class Concert",
+                location = "광장동",
+                date = "2025.07.08",
                 time = "17:00",
                 imageUrl = "ic_test_img3",
                 tag = "클래식"
             ),
             Performance(
                 id = "4",
-                title = "2025 여의도 불빛무대 녹음",
+                title = "2025 여의도 불빛무대 눕콘",
                 location = "여의도동",
-                date = "2025.05.01",
-                time = "17:00",
-                imageUrl = "ic_test_img4",
-                tag = "어쿠스틱",
-                overlayTag = "무료공연"
-            ),
-            Performance(
-                id = "5",
-                title = "공연명을 입력해주세요",
-                location = "여의도동",
-                date = "2025.05.01",
+                date = "2025.07.11",
                 time = "17:00",
                 imageUrl = "ic_test_img1",
+                tag = "어쿠스틱",
+                overlayTag = "무료공연"
+            )/*,
+            Performance(
+                id = "5",
+                title = "싸이키 비주얼 밴드",
+                location = "여의도동",
+                date = "2025.07.13",
+                time = "17:00",
+                imageUrl = "ic_test_img2",
                 tag = "밴드"
-            )
+            )*/
         )
     }
 

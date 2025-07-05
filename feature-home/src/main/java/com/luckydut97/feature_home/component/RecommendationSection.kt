@@ -33,9 +33,9 @@ fun RecommendationSection(
     val configuration = LocalConfiguration.current
     val screenWidth = configuration.screenWidthDp.dp
 
-    // 화면 크기에 따른 동적 값들
-    val horizontalPadding = (screenWidth * 0.043f).coerceAtLeast(16.dp) // 약 18dp for 414dp screen
-    val itemSpacing = (screenWidth * 0.039f).coerceAtLeast(12.dp) // 약 16dp for 414dp screen
+
+    val horizontalPadding = 18.dp
+    val itemSpacing = 14.dp
     val itemWidth = (screenWidth * 0.314f).coerceAtLeast(110.dp) // 약 130dp for 414dp screen
 
     Box(
@@ -89,17 +89,17 @@ fun RecommendationSection(
                 }
             }
 
-            // Row2: 가로 스크롤 아이템들 (166dp)
+            // Row2: 가로 스크롤 아이템들 (186dp)
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(166.dp),
+                    .height(186.dp),
                 contentAlignment = Alignment.Center
             ) {
                 LazyRow(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(166.dp), // 166dp - 상하 10dp 패딩
+                        .height(186.dp), // 186dp - 상하 10dp 패딩
                     horizontalArrangement = Arrangement.spacedBy(itemSpacing),
                     contentPadding = PaddingValues(horizontal = horizontalPadding)
                 ) {

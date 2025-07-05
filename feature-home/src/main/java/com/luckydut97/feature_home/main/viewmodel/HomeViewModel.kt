@@ -96,7 +96,7 @@ class HomeViewModel : ViewModel() {
                 artistName = "라이트온",
                 performanceTitle = "[홍대] 버스킹 나이트",
                 genre = "재즈",
-                imageResId = com.luckydut97.lighton.feature.home.R.drawable.reco_test_img2,
+                imageResId = com.luckydut97.lighton.feature.home.R.drawable.reco_test_img3,
                 date = "2025.06.12",
                 time = "19:00",
                 place = "서울 마포구 홍익로 20"

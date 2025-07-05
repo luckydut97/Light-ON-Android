@@ -13,7 +13,7 @@ import kotlinx.coroutines.launch
 data class LoginUiState(
     val isSuccess: Boolean = false,
     val errorMessage: String? = null,
-    val user: User? = null,
+    val user: com.luckydut97.domain.model.User? = null,
     val isNetworkError: Boolean = false,
     val isValidationError: Boolean = false
 )
@@ -79,6 +79,10 @@ class LoginViewModel : ViewModel() {
                         println("   - 사용자 ID: ${user.id}")
                         println("   - 이메일: ${user.email}")
                         println("   - 이름: ${user.name}")
+                        
+                        // TODO: UserState 업데이트 (임시 토큰과 사용자 정보 저장)
+                        // 모듈 의존성 문제로 여기서는 업데이트할 수 없음
+                        // 로그인 성공 후 AppNavigation에서 UserState 업데이트 필요
                         _uiState.value = LoginUiState(
                             isSuccess = true,
                             user = user

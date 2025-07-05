@@ -38,14 +38,14 @@ import kotlin.math.min
 @Composable
 fun SplashScreen(
     viewModel: SplashViewModel = viewModel(),
-    onNavigateToLogin: () -> Unit
+    onNavigateToMain: () -> Unit
 ) {
     val isLoading by viewModel.isLoading.collectAsState()
-    val navigateToLogin by viewModel.navigateToLogin.collectAsState()
+    val navigateToMain by viewModel.navigateToMain.collectAsState()
 
-    LaunchedEffect(navigateToLogin) {
-        if (navigateToLogin) {
-            onNavigateToLogin()
+    LaunchedEffect(navigateToMain) {
+        if (navigateToMain) {
+            onNavigateToMain()
         }
     }
 

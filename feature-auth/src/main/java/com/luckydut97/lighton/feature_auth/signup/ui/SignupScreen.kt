@@ -185,7 +185,7 @@ fun SignUpScreen(
                     CommonTopBar(
                         title = "회원가입",
                         onBackClick = onBackClick,
-                        modifier = Modifier.padding(top = 12.dp)
+
                     )
 
                     // 메인 콘텐츠를 스크롤 가능하게
