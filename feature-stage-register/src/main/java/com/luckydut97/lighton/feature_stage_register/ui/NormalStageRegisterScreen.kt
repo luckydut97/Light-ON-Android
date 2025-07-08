@@ -452,6 +452,7 @@ fun NormalStageRegisterScreen(
         emptyList()
     }
 
+
     LightonTheme {
         Surface(
             modifier = Modifier.fillMaxSize(),
@@ -1053,7 +1054,8 @@ fun NormalStageRegisterScreen(
             onConfirm = {
                 showTimeBottomSheet = false
                 selectedTimeField = null
-            }
+            },
+            startTime = if (selectedTimeField == "end") performanceStartTime else ""
         )
     }
 }
@@ -1065,3 +1067,4 @@ fun NormalStageRegisterScreenPreview() {
         NormalStageRegisterScreen()
     }
 }
+

@@ -96,7 +96,7 @@ fun AppNavigation(
     val showPersonalInfoScreen = false  // 개인정보 입력 화면으로 바로 이동
     val showMusicPreferenceScreen = false  // 음악 취향 선택 화면으로 바로 이동
     val showMainScreen = false    // 메인 화면으로 바로 이동
-    val showNormalStageRegisterScreen = false  // 일반공연 등록 화면으로 바로 이동
+    val showNormalStageRegisterScreen = true  // 일반공연 등록 화면으로 바로 이동
     val showBuskingStageRegisterScreen = false  // 버스킹 등록 화면으로 바로 이동
     val showArtistRegisterScreen = false  // 아티스트 등록 화면으로 바로 이동
 
