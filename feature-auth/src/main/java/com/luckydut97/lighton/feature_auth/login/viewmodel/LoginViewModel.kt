@@ -9,11 +9,12 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import android.util.Log
 
 data class LoginUiState(
     val isSuccess: Boolean = false,
     val errorMessage: String? = null,
-    val user: com.luckydut97.domain.model.User? = null,
+    val user: User? = null,
     val isNetworkError: Boolean = false,
     val isValidationError: Boolean = false
 )
@@ -24,6 +25,7 @@ data class ValidationResult(
 )
 
 class LoginViewModel : ViewModel() {
+    private val tag = "🔍 디버깅: LoginViewModel"
     // 임시: 직접 의존성 주입 (DI 없이)
     private val loginUseCase = LoginUseCase(AuthRepositoryImpl())
 
@@ -35,7 +37,6 @@ class LoginViewModel : ViewModel() {
             email.isBlank() -> ValidationResult(false, "이메일을 입력해주세요.")
             !android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches() ->
                 ValidationResult(false, "올바른 이메일 형식을 입력해주세요.")
-
             else -> ValidationResult(true)
         }
     }
@@ -69,32 +70,25 @@ class LoginViewModel : ViewModel() {
         }
 
         viewModelScope.launch {
-            println("🚀 로그인 API 호출 시작")
-            println("   - 이메일: $email")
-
+            Log.d(tag, "🚀 로그인 API 호출 시작")
+            Log.d(tag, "   - 이메일: $email")
             loginUseCase(email, password).collect { result ->
                 result.fold(
                     onSuccess = { user ->
-                        println("✅ 로그인 성공!")
-                        println("   - 사용자 ID: ${user.id}")
-                        println("   - 이메일: ${user.email}")
-                        println("   - 이름: ${user.name}")
-                        
-                        // TODO: UserState 업데이트 (임시 토큰과 사용자 정보 저장)
-                        // 모듈 의존성 문제로 여기서는 업데이트할 수 없음
-                        // 로그인 성공 후 AppNavigation에서 UserState 업데이트 필요
+                        Log.d(tag, "✅ 로그인 성공!")
+                        Log.d(tag, "   - 사용자 ID: ${user.id}")
+                        Log.d(tag, "   - 이메일: ${user.email}")
+                        Log.d(tag, "   - 이름: ${user.name}")
                         _uiState.value = LoginUiState(
                             isSuccess = true,
                             user = user
                         )
                     },
                     onFailure = { exception ->
-                        println("❌ 로그인 실패")
-                        println("   - 에러: ${exception.message}")
-
+                        Log.e(tag, "❌ 로그인 실패")
+                        Log.e(tag, "   - 에러: ${exception.message}")
                         val isNetworkError = exception.message?.contains("네트워크") == true ||
                                 exception.message?.contains("연결") == true
-
                         _uiState.value = LoginUiState(
                             errorMessage = exception.message ?: "로그인 중 오류가 발생했습니다.",
                             isNetworkError = isNetworkError

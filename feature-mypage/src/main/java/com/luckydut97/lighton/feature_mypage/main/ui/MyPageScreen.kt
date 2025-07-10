@@ -24,6 +24,7 @@ import com.luckydut97.lighton.feature_mypage.component.MenuDivider
 import com.luckydut97.lighton.feature_mypage.component.MenuItemButton
 import com.luckydut97.lighton.feature_mypage.component.ProfileSection
 import com.luckydut97.lighton.feature_mypage.model.UserProfile
+import android.util.Log
 
 enum class MemberType {
     REGULAR,    // 일반 회원
@@ -52,6 +53,15 @@ fun MyPageScreen(
     onLoginClick: () -> Unit = {}, // 로그인 버튼 클릭 콜백 추가
     onSignUpClick: () -> Unit = {} // 회원가입 버튼 클릭 콜백 추가
 ) {
+    val tag = "🔍 디버깅: MyPageScreen"
+
+    // 로그인 상태 체크 로그
+    LaunchedEffect(isLoggedIn) {
+        Log.d(tag, "=== 마이페이지 로그인 상태 체크 ===")
+        Log.d(tag, "isLoggedIn 파라미터: $isLoggedIn")
+        Log.d(tag, "분기 결과: ${if (isLoggedIn) "로그인된 사용자 UI" else "비로그인 사용자 UI"}")
+    }
+
     // 아티스트 등록 다이얼로그 상태
     var showArtistRegistrationDialog by remember { mutableStateOf(false) }
 
@@ -76,6 +86,8 @@ fun MyPageScreen(
         )
 
         if (!isLoggedIn) {
+            Log.d(tag, "🚫 비로그인 상태 - 로그인/회원가입 UI 표시")
+
             // 비로그인 시 UI
             Column(
                 modifier = Modifier
@@ -121,7 +133,10 @@ fun MyPageScreen(
                         // 로그인 버튼 - LightonOutlinedButton 사용
                         LightonOutlinedButton(
                             text = "로그인",
-                            onClick = onLoginClick,
+                            onClick = {
+                                Log.d(tag, "🔐 로그인 버튼 클릭")
+                                onLoginClick()
+                            },
                             modifier = Modifier
                                 .weight(1f)
                                 .height(48.dp)
@@ -130,7 +145,10 @@ fun MyPageScreen(
                         // 회원가입 버튼
                         LightonButton(
                             text = "회원가입",
-                            onClick = onSignUpClick,
+                            onClick = {
+                                Log.d(tag, "📝 회원가입 버튼 클릭")
+                                onSignUpClick()
+                            },
                             modifier = Modifier
                                 .weight(1f)
                                 .height(48.dp),
@@ -179,6 +197,8 @@ fun MyPageScreen(
                 }
             }
         } else {
+            Log.d(tag, "✅ 로그인 상태 - 프로필 섹션 및 전체 메뉴 표시")
+
             // 스크롤 가능한 컨텐츠 (로그인 시)
             Column(
                 modifier = Modifier
@@ -192,20 +212,25 @@ fun MyPageScreen(
                     onActivityClick = onActivityClick,
                     onRegisterClick = onRegisterClick,
                     onNormalStageRegisterClick = {
+                        Log.d(tag, "🎭 일반 공연 등록 클릭 - 회원 타입: $memberType")
+
                         // 회원 타입에 따른 분기 처리
                         when (memberType) {
                             MemberType.REGULAR -> {
+                                Log.d(tag, "일반 회원 → 아티스트 등록 다이얼로그 표시")
                                 // 일반 회원이면 아티스트 등록 다이얼로그 표시
                                 showArtistRegistrationDialog = true
                             }
 
                             MemberType.ARTIST -> {
+                                Log.d(tag, "아티스트 회원 → 일반 공연 등록 화면으로 이동")
                                 // 아티스트 회원이면 바로 일반 공연 등록 화면으로
                                 onNormalStageRegisterClick()
                             }
                         }
                     },
                     onBuskingRegisterClick = {
+                        Log.d(tag, "🎪 버스킹 등록 클릭 - 모든 회원 가능")
                         // 버스킹은 모든 회원이 가능
                         onBuskingRegisterClick()
                     }
@@ -256,7 +281,10 @@ fun MyPageScreen(
                 // 네 번째 그룹: 로그아웃, 회원 탈퇴
                 MenuItemButton(
                     text = "로그아웃",
-                    onClick = onLogoutClick
+                    onClick = {
+                        Log.d(tag, "🚪 로그아웃 버튼 클릭")
+                        onLogoutClick()
+                    }
                 )
 
                 MenuItemButton(

@@ -53,6 +53,16 @@ fun StageDetailScreen(
     onSignUpClick: () -> Unit = {}, // 회원가입 화면으로 이동하는 콜백 추가
     isLoggedIn: Boolean = false // 로그인 상태 파라미터 추가
 ) {
+    val tag = "🔍 디버깅: StageDetailScreen"
+
+    // 로그인 상태 체크 로그
+    LaunchedEffect(isLoggedIn) {
+        android.util.Log.d(tag, "=== 공연 세부 정보 로그인 상태 체크 ===")
+        android.util.Log.d(tag, "performanceId: $performanceId")
+        android.util.Log.d(tag, "isLoggedIn 파라미터: $isLoggedIn")
+        android.util.Log.d(tag, "신청하기 버튼 동작: ${if (isLoggedIn) "바로 신청" else "로그인 다이얼로그 표시"}")
+    }
+
     var isLiked by remember { mutableStateOf(false) }
 
     // 더미 데이터
@@ -509,9 +519,14 @@ fun StageDetailScreen(
                 LightonButton(
                     text = "신청하기",
                     onClick = {
+                        android.util.Log.d(tag, "🎫 신청하기 버튼 클릭")
+                        android.util.Log.d(tag, "현재 로그인 상태: $isLoggedIn")
+
                         if (!isLoggedIn) {
+                            android.util.Log.d(tag, "❌ 비로그인 상태 → 로그인 다이얼로그 표시")
                             isLoginDialogVisible = true
                         } else {
+                            android.util.Log.d(tag, "✅ 로그인 상태 → 신청 바텀시트 표시")
                             currentStep = "INFO"
                             isBottomSheetVisible = true
                         }
@@ -570,12 +585,17 @@ fun StageDetailScreen(
         // 로그인 필요 다이얼로그
         if (isLoginDialogVisible) {
             com.luckydut97.lighton.core.ui.components.dialog.LoginRequiredDialog(
-                onDismiss = { isLoginDialogVisible = false },
+                onDismiss = {
+                    android.util.Log.d(tag, "🚫 로그인 다이얼로그 닫기")
+                    isLoginDialogVisible = false
+                },
                 onLoginClick = {
+                    android.util.Log.d(tag, "🔐 로그인 다이얼로그에서 로그인 버튼 클릭")
                     isLoginDialogVisible = false
                     onLoginClick()
                 },
                 onSignUpClick = {
+                    android.util.Log.d(tag, "📝 로그인 다이얼로그에서 회원가입 버튼 클릭")
                     isLoginDialogVisible = false
                     onSignUpClick()
                 }

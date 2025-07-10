@@ -17,10 +17,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
@@ -30,21 +34,46 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.luckydut97.lighton.core.data.repository.AuthState
+import com.luckydut97.lighton.core.data.repository.SessionRepository
 import com.luckydut97.lighton.core.ui.theme.LightonTheme
-import com.luckydut97.lighton.feature.auth.R
 import com.luckydut97.lighton.feature_auth.splash.viewmodel.SplashViewModel
+import com.luckydut97.lighton.feature.auth.R
+import kotlinx.coroutines.delay
 import kotlin.math.min
 
 @Composable
 fun SplashScreen(
-    viewModel: SplashViewModel = viewModel(),
-    onNavigateToMain: () -> Unit
+    sessionRepository: SessionRepository,
+    onNavigateToMain: () -> Unit,
+    onNavigateToLogin: () -> Unit
 ) {
-    val isLoading by viewModel.isLoading.collectAsState()
-    val navigateToMain by viewModel.navigateToMain.collectAsState()
+    val viewModel: SplashViewModel = viewModel {
+        SplashViewModel(sessionRepository)
+    }
+    val authState by viewModel.authState.collectAsState()
+    val context = LocalContext.current
+    var timerFinished by remember { mutableStateOf(false) }
+    var logicFinished by remember { mutableStateOf(false) }
 
-    LaunchedEffect(navigateToMain) {
-        if (navigateToMain) {
+    // 2초 타이머 시작
+    LaunchedEffect(Unit) {
+        delay(2000)
+        timerFinished = true
+    }
+
+    // 내부 로직(인증 상태) 완료 체크
+    LaunchedEffect(authState) {
+        if (authState is AuthState.Authenticated
+            || authState is AuthState.Unauthenticated
+        ) {
+            logicFinished = true
+        }
+    }
+
+    // 둘 다 완료되면 메인 이동
+    LaunchedEffect(timerFinished, logicFinished) {
+        if (timerFinished && logicFinished) {
             onNavigateToMain()
         }
     }

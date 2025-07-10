@@ -61,12 +61,14 @@ import com.luckydut97.lighton.core.ui.theme.LightonTheme
 import com.luckydut97.lighton.core.ui.theme.PretendardFamily
 import com.luckydut97.lighton.feature.auth.R
 import com.luckydut97.lighton.feature_auth.login.viewmodel.LoginViewModel
+import com.luckydut97.domain.model.User
 import kotlin.math.min
 
 @Composable
 fun EmailLoginScreen(
     onBackClick: () -> Unit = {},
     onLoginClick: () -> Unit = {},
+    onLoginSuccess: (User, String, String) -> Unit = { _, _, _ -> },
     onKakaoLoginClick: () -> Unit = {},
     onGoogleLoginClick: () -> Unit = {},
     onSignUpClick: () -> Unit = {},
@@ -82,10 +84,13 @@ fun EmailLoginScreen(
     // ViewModel 상태 관찰
     val uiState by viewModel.uiState.collectAsState()
 
-    // 로그인 성공 시 메인 화면으로 이동
-    LaunchedEffect(uiState.isSuccess) {
-        if (uiState.isSuccess) {
-            onLoginClick()
+    // 로그인 성공 시 콜백 호출
+    LaunchedEffect(uiState.isSuccess, uiState.user) {
+        val user = uiState.user
+        if (uiState.isSuccess && user != null) {
+            // 실제 토큰 정보는 아직 도메인에 구현되지 않았으므로 임시로 하드코딩
+            // 추후 서버 연동 완성 시 user 데이터와 토큰 실제 반환값 사용
+            onLoginSuccess(user, "temp_access_token_from_ui", "temp_refresh_token_from_ui")
         }
     }
 
@@ -121,7 +126,7 @@ fun EmailLoginScreen(
                         title = "",
                         onBackClick = onBackClick,
 
-                    )
+                        )
 
                     // TopBar와 로고 사이 11dp 간격
                     Spacer(modifier = Modifier.height((80 * scaleFactor).dp))

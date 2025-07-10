@@ -23,9 +23,9 @@ import android.util.Log
 
 class AuthRepositoryImpl : AuthRepository {
     private val authApi = NetworkModule.authApi
+    private val tag = "🔍 디버깅: AuthRepositoryImpl"
 
     override suspend fun login(email: String, password: String): Flow<Result<User>> = flow {
-        val tag = "🔍 디버깅: AuthRepositoryImpl"
         try {
             Log.d(tag, "🚀 [API] 로그인 요청 전송")
             Log.d(tag, "   - URL: POST ${NetworkModule.getBaseUrl()}api/members/login")
@@ -45,10 +45,10 @@ class AuthRepositoryImpl : AuthRepository {
                     if (loginResponse.success && loginResponse.response != null) {
                         val loginData = loginResponse.response
 
-                        // TODO: 토큰 저장 로직 (나중에 추가)
-                        Log.d(tag, "🔐 [토큰] 저장 준비")
+                        Log.d(tag, "🔐 [토큰] 로그인 성공 - 토큰 정보")
                         Log.d(tag, "   - 액세스 토큰: ${loginData.accessToken.take(20)}...")
                         Log.d(tag, "   - 리프레시 토큰: ${loginData.refreshToken.take(20)}...")
+                        Log.d(tag, "⚠️ [토큰] ViewModel 또는 상위 레이어에서 토큰 저장 필요")
 
                         val user = User(
                             id = "temp_id", // TODO: JWT에서 추출
@@ -201,8 +201,10 @@ class AuthRepositoryImpl : AuthRepository {
                     if (loginResponse.success && loginResponse.response != null) {
                         val loginData = loginResponse.response
 
-                        // TODO: 토큰 저장 로직
-                        Log.d(tag, "소셜 로그인 토큰: ${loginData.accessToken.take(20)}...")
+                        Log.d(tag, "🔐 [토큰] 로그인 성공 - 토큰 정보")
+                        Log.d(tag, "   - 액세스 토큰: ${loginData.accessToken.take(20)}...")
+                        Log.d(tag, "   - 리프레시 토큰: ${loginData.refreshToken.take(20)}...")
+                        Log.d(tag, "⚠️ [토큰] ViewModel 또는 상위 레이어에서 토큰 저장 필요")
 
                         val user = User(
                             id = "temp_id",
@@ -502,8 +504,7 @@ class AuthRepositoryImpl : AuthRepository {
                         Log.d(tag, "  - 액세스 토큰: ${loginData.accessToken.take(50)}...")
                         Log.d(tag, "  - 리프레시 토큰: ${loginData.refreshToken.take(50)}...")
 
-                        // TODO: 토큰 저장 로직 구현
-                        Log.d(tag, "⚠️ TODO: 토큰 저장 로직 필요")
+                        Log.d(tag, "⚠️ [토큰] ViewModel 또는 상위 레이어에서 토큰 저장 필요")
 
                         val user = User(
                             id = temporaryUserId.toString(),

@@ -1,42 +1,44 @@
 package com.luckydut97.lighton.feature_auth.splash.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import com.luckydut97.lighton.core.data.repository.AuthState
+import com.luckydut97.lighton.core.data.repository.SessionRepository
 
-class SplashViewModel : ViewModel() {
-    private val _isLoading = MutableStateFlow(true)
-    val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
+class SplashViewModel(
+    private val sessionRepository: SessionRepository
+) : ViewModel() {
 
-    private val _navigateToMain = MutableStateFlow(false)
-    val navigateToMain: StateFlow<Boolean> = _navigateToMain.asStateFlow()
+    private val tag = "🔍 디버깅: SplashViewModel"
+
+    private val _authState = MutableStateFlow<AuthState>(AuthState.Loading)
+    val authState: StateFlow<AuthState> = _authState.asStateFlow()
 
     init {
-        viewModelScope.launch {
-            // 토큰 체크 및 사용자 정보 로드 로직
-            checkTokenAndLoadUserInfo()
-            
-            // 스플래시 화면 표시 시간
-            delay(2000)
-            
-            _isLoading.value = false
-            _navigateToMain.value = true
-        }
+        startAuthCheck()
     }
-    
-    private suspend fun checkTokenAndLoadUserInfo() {
-        // TODO: 실제 토큰 체크 로직 구현
-        // 1. SharedPreferences에서 토큰 확인
-        // 2. 토큰이 있으면 사용자 정보 조회 API 호출
-        // 3. 사용자 정보를 전역 상태에 저장 (UserState 업데이트)
-        
-        // 임시로 간단한 로직만 구현
-        println("🔍 토큰 체크 및 사용자 정보 로드 중...")
-        delay(500) // 네트워크 요청 시뮬레이션
-        println("✅ 토큰 체크 완료 - 무조건 메인 화면으로 이동")
+
+    fun startAuthCheck() {
+        viewModelScope.launch {
+            try {
+                Log.d(tag, "=== 인증 상태 확인 시작 ===")
+                // 2초 대기와 내부 인증 로직을 launch/async 등으로 동시에 처리 가능, UI 레이어에서 타이머 대기
+                sessionRepository.checkAuthStatus()
+                // SessionRepository의 authState를 collect 하여 상태 반영
+                sessionRepository.authState.collect { state ->
+                    _authState.value = state
+                }
+            } catch (e: kotlinx.coroutines.CancellationException) {
+                // 화면 종료 등 정상 취소는 로그 남기지 않음
+            } catch (e: Exception) {
+                Log.e(tag, "인증 상태 확인 중 오류: ${e.message}", e)
+                _authState.value = AuthState.Unauthenticated
+            }
+        }
     }
 }

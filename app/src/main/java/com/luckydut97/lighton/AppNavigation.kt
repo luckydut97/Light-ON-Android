@@ -1,5 +1,6 @@
 package com.luckydut97.lighton
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -20,6 +21,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.runtime.LaunchedEffect
 import com.luckydut97.lighton.feature_auth.splash.ui.SplashScreen
 import com.luckydut97.lighton.feature_home.main.ui.HomeScreen
 import com.luckydut97.lighton.core.ui.components.BottomNavigationBar
@@ -32,31 +34,25 @@ import com.luckydut97.lighton.feature_auth.signup.ui.PersonalInfoScreen
 import com.luckydut97.lighton.feature_auth.signup.ui.MusicPreferenceScreen
 import com.luckydut97.lighton.feature_auth.signup.ui.SignupCompleteScreen
 import com.luckydut97.lighton.feature_map.main.ui.MapScreen
+import kotlinx.coroutines.launch
 
 /**
  * 간단한 전역 사용자 상태 관리
- * - isArtistMember: 아티스트 회원 여부
- * - isLoggedIn: 로그인 상태
- * - accessToken: 액세스 토큰
- * - userId: 사용자 ID
- * - userName: 사용자 이름
- *
- * - hasValidToken(): 토큰 유효성 확인
- * - login(): 로그인 및 상태 저장
- * - logout(): 로그아웃 및 상태 초기화
+ * SessionRepository와 연동하여 토큰 기반 인증 상태 관리
  */
 object UserState {
-    var isArtistMember: Boolean = false // 테스트를 위해 일반회원으로 초기 설정
-    var isLoggedIn: Boolean = false // 로그인 상태
-    var accessToken: String? = null // 액세스 토큰
+    var isArtistMember: Boolean = false // 아티스트 회원 여부
+    var isLoggedIn: Boolean = false // 로그인 상태 (SessionRepository에서 동기화)
     var userId: String? = null // 사용자 ID
     var userName: String? = null // 사용자 이름
+    var accessToken: String? = null // 액세스 토큰
 
-    // 편의 메서드
-    fun hasValidToken(): Boolean = !accessToken.isNullOrEmpty()
+    // SessionRepository와 동기화하는 함수들
+    fun updateFromSession(sessionRepository: com.luckydut97.lighton.core.data.repository.SessionRepository) {
+        // TODO: SessionRepository에서 사용자 정보 가져와서 동기화
+    }
 
-    fun login(token: String, userId: String, userName: String, isArtist: Boolean = false) {
-        this.accessToken = token
+    fun login(userId: String, userName: String, isArtist: Boolean = false) {
         this.userId = userId
         this.userName = userName
         this.isArtistMember = isArtist
@@ -64,12 +60,13 @@ object UserState {
     }
 
     fun logout() {
-        this.accessToken = null
         this.userId = null
         this.userName = null
         this.isArtistMember = false
         this.isLoggedIn = false
     }
+
+    fun hasValidToken(): Boolean = !accessToken.isNullOrEmpty()
 }
 
 /**
@@ -96,7 +93,7 @@ fun AppNavigation(
     val showPersonalInfoScreen = false  // 개인정보 입력 화면으로 바로 이동
     val showMusicPreferenceScreen = false  // 음악 취향 선택 화면으로 바로 이동
     val showMainScreen = false    // 메인 화면으로 바로 이동
-    val showNormalStageRegisterScreen = true  // 일반공연 등록 화면으로 바로 이동
+    val showNormalStageRegisterScreen = false  // 일반공연 등록 화면으로 바로 이동
     val showBuskingStageRegisterScreen = false  // 버스킹 등록 화면으로 바로 이동
     val showArtistRegisterScreen = false  // 아티스트 등록 화면으로 바로 이동
 
@@ -124,14 +121,30 @@ fun AppNavigation(
     ) {
         // 스플래시 화면
         composable("splash") {
-            SplashScreen(
-                onNavigateToMain = {
-                    // 무조건 메인 화면으로 이동
+            val sessionRepository = MainActivity.globalSessionRepository
+            if (sessionRepository != null) {
+                SplashScreen(
+                    sessionRepository = sessionRepository,
+                    onNavigateToMain = {
+                        // 무조건 메인 화면으로 이동
+                        navController.navigate("main") {
+                            popUpTo("splash") { inclusive = true }
+                        }
+                    },
+                    onNavigateToLogin = {
+                        navController.navigate("login") {
+                            popUpTo("splash") { inclusive = true }
+                        }
+                    }
+                )
+            } else {
+                // SessionRepository가 없으면 임시로 메인으로 이동
+                LaunchedEffect(Unit) {
                     navController.navigate("main") {
                         popUpTo("splash") { inclusive = true }
                     }
                 }
-            )
+            }
         }
 
         // 로그인 화면
@@ -143,15 +156,20 @@ fun AppNavigation(
                         popUpTo("login") { inclusive = true }
                     }
                 },
-                onLoginClick = {
-                    // 로그인 성공 시 UserState 업데이트 (임시)
-                    UserState.login(
-                        token = "temp_access_token",
-                        userId = "temp_user_id",
-                        userName = "테스트 사용자",
-                        isArtist = false
-                    )
-
+                onLoginSuccess = { user, accessToken, refreshToken ->
+                    // 토큰을 SessionRepository에 저장
+                    MainActivity.globalSessionRepository?.let { sessionRepository ->
+                        kotlinx.coroutines.GlobalScope.launch {
+                            sessionRepository.saveTokens(accessToken, refreshToken)
+                            Log.d(
+                                "🔍 디버깅: AppNavigation",
+                                "로그인 성공 - 토큰 저장: $accessToken ... $refreshToken ..."
+                            )
+                        }
+                    }
+                    // UserState 동기화
+                    UserState.login(userId = user.id, userName = user.name)
+                    // 네비게이션
                     navController.navigate("main") {
                         popUpTo("login") { inclusive = true }
                     }
@@ -267,7 +285,6 @@ fun AppNavigation(
                 onConfirmClick = {
                     // 테스트용: 회원가입 완료 시 자동 로그인 상태로 변경
                     UserState.login(
-                        token = "signup_complete_token",
                         userId = "signup_user_id",
                         userName = "신규 회원",
                         isArtist = false
