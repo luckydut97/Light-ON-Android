@@ -34,8 +34,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.luckydut97.lighton.core.data.repository.AuthState
-import com.luckydut97.lighton.core.data.repository.SessionRepository
+import com.luckydut97.lighton.data.repository.AuthState
+import com.luckydut97.lighton.data.repository.SessionRepository
 import com.luckydut97.lighton.core.ui.theme.LightonTheme
 import com.luckydut97.lighton.feature_auth.splash.viewmodel.SplashViewModel
 import com.luckydut97.lighton.feature.auth.R

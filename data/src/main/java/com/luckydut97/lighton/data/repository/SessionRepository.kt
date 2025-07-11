@@ -1,4 +1,4 @@
-package com.luckydut97.lighton.core.data.repository
+package com.luckydut97.lighton.data.repository
 
 import kotlinx.coroutines.flow.StateFlow
 

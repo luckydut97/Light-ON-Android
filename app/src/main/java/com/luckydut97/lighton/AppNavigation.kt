@@ -48,7 +48,7 @@ object UserState {
     var accessToken: String? = null // 액세스 토큰
 
     // SessionRepository와 동기화하는 함수들
-    fun updateFromSession(sessionRepository: com.luckydut97.lighton.core.data.repository.SessionRepository) {
+    fun updateFromSession(sessionRepository: com.luckydut97.lighton.data.repository.SessionRepository) {
         // TODO: SessionRepository에서 사용자 정보 가져와서 동기화
     }
 

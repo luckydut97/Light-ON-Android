@@ -1,4 +1,4 @@
-package com.luckydut97.lighton.core.data.storage
+package com.luckydut97.lighton.data.storage
 
 interface TokenManager {
     suspend fun saveTokens(accessToken: String, refreshToken: String)

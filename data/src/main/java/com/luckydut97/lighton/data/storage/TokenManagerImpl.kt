@@ -1,4 +1,4 @@
-package com.luckydut97.lighton.core.data.storage
+package com.luckydut97.lighton.data.storage
 
 import android.content.Context
 import androidx.datastore.core.DataStore

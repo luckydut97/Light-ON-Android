@@ -7,8 +7,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import com.luckydut97.lighton.core.data.repository.AuthState
-import com.luckydut97.lighton.core.data.repository.SessionRepository
+import com.luckydut97.lighton.data.repository.AuthState
+import com.luckydut97.lighton.data.repository.SessionRepository
 
 class SplashViewModel(
     private val sessionRepository: SessionRepository
